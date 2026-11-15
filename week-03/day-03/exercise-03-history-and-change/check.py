@@ -40,6 +40,8 @@ def left(f: dict) -> list[str]:
     pm, pc = f["predict_mean"], f["predict_change"]
     if pm is None or pc is None:
         out.append(f"Cell 3 has no prediction yet. Work out both values of {NAMED} from the rows of cell 2. Step 2.")
+    elif not all(isinstance(v, (int, float)) for v in (pm, pc)):
+        out.append("Type each prediction in cell 3 as a number, with no comma and no quotes, such as 0.1. Step 2.")
     else:
         if named.get("mean_prior_wages") is None or abs(pm - named["mean_prior_wages"]) >= 1:
             out.append(f"predict_mean is not the mean of the wages before 2023: add the three earlier years and divide by 3. Step 2.")

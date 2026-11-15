@@ -88,7 +88,9 @@ Notebook cell 4:
 history_column = ""  # the column to average
 earlier = (Window.partitionBy("filer_key").orderBy("tax_year")
            .rowsBetween(Window.unboundedPreceding, -1))
-features = features.withColumn("mean_prior_wages", F.avg(history_column).over(earlier))
+added = features.withColumn("mean_prior_wages", F.avg(history_column).over(earlier))
+added.columns  # read the new column now: an error stops here and leaves features as it was
+features = added
 ```
 
 Notebook cell 5:
@@ -97,9 +99,11 @@ Notebook cell 5:
 # 5. Change since last year: this year's wages against last year's, from LAG.
 by_year = Window.partitionBy("filer_key").orderBy("tax_year")
 prior = F.lit(None)  # put the LAG line here, in place of this line
-features = features.withColumn(
+added = features.withColumn(
     "wages_change_pct",
     F.when(prior > 0, (F.col("wages_amt") - prior) / prior))
+added.columns  # read the new column now: an error stops here and leaves features as it was
+features = added
 ```
 
 ### Step 4. Read the values beside your prediction
@@ -108,7 +112,7 @@ Why: one filer worked out by hand catches a frame that reaches the current year.
 
 1. Run cell 6. It prints the two filers' rows, then your prediction.
 2. Compare the two new values of the row F-30037-2023 with your prediction. If they differ, read cell 4's frame again.
-3. Find the row F-30074-2023. Both new columns show `null`: the filer has no earlier return.
+3. Find the row F-30074-2023. Both new columns show `NULL`: the filer has no earlier return.
 
 Notebook cell 6:
 
@@ -146,15 +150,15 @@ names = [r[0] for r in new_rows]
 old = [tuple(r) for r in spark.table(f"{schema}.feature_record")
        .select("feature", "table_read", "columns_read", "code").collect() if r[0] not in names]
 spark.createDataFrame(old + new_rows, "feature string, table_read string, columns_read string, code string") \
-    .write.mode("overwrite").saveAsTable(f"{schema}.feature_record")
-features.write.mode("overwrite").saveAsTable(f"{schema}.features")
+    .write.mode("overwrite").option("overwriteSchema", "true").saveAsTable(f"{schema}.feature_record")
+features.write.mode("overwrite").option("overwriteSchema", "true").saveAsTable(f"{schema}.features")
 print("Wrote", f"{schema}.feature_record")
 print("Wrote", f"{schema}.features")
 ```
 
 ### Step 6. Check
 
-Run cell 8. It prints `Done:` when your prediction, both new columns and the record are right. Otherwise it prints `Not yet:` and each thing still to do. You do not need to read its code.
+Run cell 8. It prints `Done:` when your prediction, both new columns and the record are right. Otherwise it prints `Not yet:` and each thing still to do. You do not need to read its code. Keep the lines you typed in this notebook: on Thursday, `wednesday-tables` runs it from top to bottom, and a cell left as the course gave it stops that run.
 
 Notebook cell 8:
 

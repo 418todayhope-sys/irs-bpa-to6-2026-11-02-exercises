@@ -27,7 +27,7 @@ Why: every column a model could read needs your mark, so it gets a record row fi
 1. In cell 1, type your number in place of `NN`.
 2. Attach the compute the trainer names.
 3. Run cell 1.
-4. Run cell 2. It adds a record row for each column copied from the return table. You should see 10 features, or 9 after cell 4.
+4. Run cell 2. It adds a record row for each column copied from the return table. You should see 10 features.
 
 Notebook cell 1:
 
@@ -97,6 +97,7 @@ Notebook cell 4:
 
 ```python
 # 4. Drop the no's, split by tax year, and write.
+known = {feature: (mark.strip().lower(), why) for feature, (mark, why) in known.items()}  # "No" counts as "no"
 dropped = [feature for feature, (mark, _) in known.items() if mark == "no"]
 kept = features.drop(*dropped)
 sets = {"train": kept.filter(F.col("tax_year") <= 2021),
@@ -105,14 +106,14 @@ sets = {"train": kept.filter(F.col("tax_year") <= 2021),
 record = [r + known.get(r[0], ("", "")) for r in rows]
 spark.createDataFrame(record, "feature string, table_read string, columns_read string, code string, "
                               "known_on_selection_day string, why string") \
-    .write.mode("overwrite").saveAsTable(f"{schema}.feature_record")
+    .write.mode("overwrite").option("overwriteSchema", "true").saveAsTable(f"{schema}.feature_record")
 print("Dropped:", ", ".join(dropped) or "nothing")
 for name, df in sets.items():
-    df.write.mode("overwrite").saveAsTable(f"{schema}.{name}")
+    df.write.mode("overwrite").option("overwriteSchema", "true").saveAsTable(f"{schema}.{name}")
     print("Wrote", f"{schema}.{name}")
 written = [spark.table(f"{schema}.{name}") for name in sets]
 written[0].unionByName(written[1]).unionByName(written[2]) \
-    .write.mode("overwrite").saveAsTable(f"{schema}.features")
+    .write.mode("overwrite").option("overwriteSchema", "true").saveAsTable(f"{schema}.features")
 print("Wrote", f"{schema}.features")
 ```
 
@@ -120,7 +121,7 @@ print("Wrote", f"{schema}.features")
 
 Why: each test fails a bad split. Read each test's comment before you run it.
 
-Tests 3 and 4 compute `mean_prior_wages` again with `mean_mismatches`, which joins each row to the filer's earlier rows. Test 3 reads all three sets: the selection day knows a filer's own history, so a 2023 mean may read 2022 rows in `valid`. Test 4 reads `train` alone: a value fitted across many returns, such as a mean over all filers, must come from training rows only.
+Tests 3 and 4 compute `mean_prior_wages` again with `mean_mismatches`, which joins each row to the filer's earlier rows. Test 3 reads all three sets: the selection day knows a filer's own history, so a 2023 mean may read 2022 rows in `valid`. Test 4 reads `train` alone: each training row's mean, computed again from training rows only, must stay the same. So no training value needs a row of `valid` or `test`.
 
 1. Run cell 5. You should see `The five leakage tests pass`. If an `assert` stops the cell, its message names the test.
 2. Run cell 6. You should see three lines, such as `train: 21 returns, 3 tax-change cases`. Every learner sees the same counts.
@@ -173,7 +174,7 @@ for name, df in (("train", tr), ("valid", va), ("test", te)):
 
 ### Step 5. Check
 
-Run cell 7. It prints `Done:` when your marks follow step 2's rule and the tests passed. Otherwise it prints `Not yet:` and each thing still to do. You do not need to read its code.
+Run cell 7. It prints `Done:` when your marks follow step 2's rule and the tests passed. Otherwise it prints `Not yet:` and each thing still to do. You do not need to read its code. Keep the lines you typed in this notebook: on Thursday, `wednesday-tables` runs it from top to bottom, and a cell left as the course gave it stops that run.
 
 Notebook cell 7:
 

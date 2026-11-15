@@ -124,15 +124,15 @@ record = [
     ("", "", "", ""),  # type the row for w2_wage_share here
 ]
 spark.createDataFrame(record, "feature string, table_read string, columns_read string, code string") \
-    .write.mode("overwrite").saveAsTable(f"{schema}.feature_record")
-features.write.mode("overwrite").saveAsTable(f"{schema}.features")
+    .write.mode("overwrite").option("overwriteSchema", "true").saveAsTable(f"{schema}.feature_record")
+features.write.mode("overwrite").option("overwriteSchema", "true").saveAsTable(f"{schema}.features")
 print("Wrote", f"{schema}.feature_record")
 print("Wrote", f"{schema}.features")
 ```
 
 ### Step 5. Check
 
-Run cell 6. It reads `features`, `feature_record`, `return_table` and `w2s` from your schema. It prints `Done:` when `features` has one row for each return, both ratios are right, and the record has both rows. Otherwise it prints `Not yet:` and each thing still to do. You do not need to read its code.
+Run cell 6. It reads `features`, `feature_record`, `return_table` and `w2s` from your schema. It prints `Done:` when `features` has one row for each return, both ratios are right, and the record has both rows. Otherwise it prints `Not yet:` and each thing still to do. You do not need to read its code. Keep the lines you typed in this notebook: on Thursday, `wednesday-tables` runs it from top to bottom, and a cell left as the course gave it stops that run.
 
 Notebook cell 6:
 

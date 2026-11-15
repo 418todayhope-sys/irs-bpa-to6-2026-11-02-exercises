@@ -15,7 +15,7 @@
 **What you have:**
 
 - The volume `/Volumes/course/returns/raw/`: one XML file for each return, made up by the course. Before class, the trainer wrote the case key into each file in place of the taxpayer identification number, by Tuesday's rule. You need no join.
-- Your schema, `course.learner_NN`. The trainer gives you your number.
+- Your schema, `course.learner_NN`: cell 1 makes it the first time you run it. The trainer gives you your number.
 - Week 2's tested reader, `form1040.py`, in `week-02/day-03/answers/exercise-04-a-repeated-element/files/` of your Git folder. Its function `dependent_relationships` gives the dependents of one return.
 - `check.py`, beside this notebook. Cell 7 runs it.
 
@@ -26,7 +26,7 @@
 Why: every table today goes in your own schema.
 
 1. In cell 1, type the number the trainer gave you in place of `NN`, such as `course.learner_07`.
-2. At the top right, select the compute the trainer names from the compute menu (**Connect**).
+2. At the top right, select the compute the trainer names from the compute menu: it shows **Connect**, or the name of the compute already attached, such as **Serverless**.
 3. Run cell 1. You should see `Your tables go in` and your schema.
 
 Notebook cell 1:
@@ -37,7 +37,11 @@ schema = "course.learner_NN"
 
 import os
 course_folder = os.getcwd().split("/week-03/")[0]  # your Git folder of the course
-print("Your tables go in", schema)
+if schema.endswith("_NN"):
+    print("Type your number in place of NN, then run this cell again.")
+else:
+    spark.sql(f"CREATE SCHEMA IF NOT EXISTS {schema}")  # makes your schema the first time; after that it does nothing
+    print("Your tables go in", schema)
 ```
 
 ### Step 2. Read the files, and keep each row's file name
@@ -45,7 +49,7 @@ print("Your tables go in", schema)
 Why: the return table needs one row for each file, and the file's name.
 
 1. Run cell 2. You should see `52 returns read`, then the column names, `CourseLabel` and `ReturnData` among them.
-2. Read cell 3. Its last line selects `file_name`. In cell 3, type `"yes"` or `"no"` between the quotes of `predict_file_name = ""`: will cell 3 run as it is?
+2. Read cell 3. Its `select` ends with `file_name`. In cell 3, type `"yes"` or `"no"` between the quotes of `predict_file_name = ""`: will cell 3 run as it is?
 3. Run cell 3. Compare what happens with your prediction.
 4. If cell 3 stopped on `file_name`, add the line of the table to cell 2.
 5. Run cell 2 and cell 3 again. Cell 3 should print `52 rows in return_table`.
@@ -126,7 +130,7 @@ Why: the day's reading says: "A table is not finished until its counts reconcile
 
 1. Run cell 5. `saveAsTable` writes each table to your schema. You should see three `Wrote` lines.
 2. In cell 6, type the lines of tests 2 and 3 where the comments say, as the table says. Test 1 is already there.
-3. Run cell 6. You should see `All three tests pass`. If an `assert` stops the cell, its message names the count that is wrong.
+3. Run cell 6. You should see `All three tests pass`. If an `assert` stops the cell, its message names the count that is wrong. If an `OSError` on `/Volumes/course/returns/raw/` stops it, run cell 6 again: the first read of the volume's files can fail once.
 
 | Test | Write this | Why |
 |---|---|---|
@@ -139,7 +143,7 @@ Notebook cell 5:
 ```python
 # 5. Write the three tables. overwrite replaces a table that is there.
 for name, df in [("return_table", return_table), ("dependents", dependents), ("w2s", w2s)]:
-    df.write.mode("overwrite").saveAsTable(f"{schema}.{name}")
+    df.write.mode("overwrite").option("overwriteSchema", "true").saveAsTable(f"{schema}.{name}")
     print("Wrote", f"{schema}.{name}")
 ```
 
@@ -174,7 +178,7 @@ print("All three tests pass:", rt.count(), "returns,", dep.count(), "dependents.
 
 ### Step 5. Check
 
-Run cell 7. It prints `Done:` when your tables and tests are right. Otherwise it prints `Not yet:` and each thing still to do: if cell 6 stopped, it says the tests have not passed. You do not need to read its code.
+Run cell 7. It prints `Done:` when your tables and tests are right. Otherwise it prints `Not yet:` and each thing still to do: if cell 6 stopped, it says the tests have not passed. You do not need to read its code. Keep the lines you typed in this notebook: on Thursday, `wednesday-tables` runs it from top to bottom, and a cell left as the course gave it stops that run.
 
 Notebook cell 7:
 

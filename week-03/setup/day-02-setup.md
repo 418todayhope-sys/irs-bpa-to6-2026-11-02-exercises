@@ -13,12 +13,12 @@ The faults of `batch_dirty`, by `return_id`: completeness, `agi_amt` empty on F-
 ## Before Tuesday
 
 1. **Get the files.** In your Git folder of the course, pull, so that `week-03/setup/day-02-setup.ipynb` is there.
-2. **Make the reviewer group.** In the account console, make an account group that holds you and no learner, such as `week3_reviewers`. It sees every row and every identification number of `batch_governed`. The learners' group sees tax year 2023 only, and `tin` as `***-**-****`.
-3. **Run the setup notebook once.** Open `week-03/setup/day-02-setup.ipynb` and attach it to the compute. In cell 1, set `CLASS_GROUP` as on Monday, and `REVIEWER_GROUP` to the group of step 2. You need `CREATE TABLE` and `CREATE FUNCTION` on `course.returns`, and you own the tables you make. Run cells 1 to 5. Cell 4 should print:
+2. **The reviewer group.** `REVIEWER_GROUP` in cell 1 is `training-admins`, the class workspace's group of trainers and the course team: it holds no learner, except the platform's audit account. It sees every row and every identification number of `batch_governed`. The learners' group sees tax year 2023 only, and `tin` as `***-**-****`.
+3. **Run the setup notebook once.** Open `week-03/setup/day-02-setup.ipynb` and attach it to the compute. Cell 1 holds both groups: `CLASS_GROUP` as on Monday, and `REVIEWER_GROUP` of step 2. You need `CREATE TABLE` and `CREATE FUNCTION` on `course.returns`, and you own the tables you make. Run cells 1 to 5. Cell 4 should print:
    - `batch_clean 30 rows` and `batch_dirty 32 rows`
    - `batch_governed, as you: 2019: 2, 2021: 8, 2022: 12, 2023: 10`
    - a first `tin` in full, such as `000-11-4037`
-4. **If cell 3 prints `FALLBACK`.** The workspace or the compute refused the row filter or the column mask. `batch_governed` is then a plain copy, and every learner sees every row. Tell the class at exercise 3 that they take its written fallback: the step 4 table's second row. Databricks: "Databricks Runtime versions below 12.2 LTS do not support row filters or column masks."; on a dedicated (single user) compute, "You cannot access a table with row filters or column masks from a dedicated access compute resource" on Databricks Runtime 15.3 or below. Use standard access mode compute for the class.
+4. **If cell 3 prints `FALLBACK`.** The workspace or the compute refused the row filter or the column mask. `batch_governed` is then a plain copy, and every learner sees every row. Tell the class at exercise 3 that they take its written fallback: the step 4 table's second row. Databricks: "Databricks Runtime versions below 12.2 LTS do not support row filters or column masks."; on a dedicated (single user) compute, "You cannot access a table with row filters or column masks from a dedicated access compute resource" on Databricks Runtime 15.3 or below. Use standard access mode compute for the class. The class workspace's notebooks run on Serverless, where the filter and the mask held on 2026-11-13.
 5. **Make the Genie Agent "Week 3 returns".** Genie needs a pro or serverless SQL warehouse, and partner-powered AI features turned on for the account.
    1. Select **Genie Agents** in the left bar, then **New** in the upper-right corner.
    2. Choose `course.returns.batch_clean` and `course.returns.batch_dirty`, then **Create**. Do not add `batch_governed`.
@@ -41,15 +41,17 @@ The faults of `batch_dirty`, by `return_id`: completeness, `agi_amt` empty on F-
 
 Run cells 2 to 5 of the setup notebook again only if a table changed. Nothing in the exercises writes to a table.
 
-## Not yet checked in Databricks
+## Checked in Databricks, and not yet checked
 
-The course team ran the exercises' checks on a computer without Databricks, on the same made-up rows in SQLite, and parsed every SQL statement with a Databricks SQL parser. Each answer's `decisions.md` says how, under "Where it ran". Check each item at your run-through, and tell the course team what differs. Each item gives our proposed answer and the page it comes from.
+Checked on 2026-11-13 in the class workspace, on Serverless and the SQL warehouse: the setup notebook run in the catalog `course`, and each exercise run by the course's test learner, a member of `training-students` and not of `training-admins`:
 
-1. Exercise 1: `run_test` in cell 1 runs a rule with a window, `count(*) OVER (PARTITION BY return_id) = 1`, inside `withColumn(..., F.expr(...))`, and filters `NOT _ok`. Proposed: it runs; Spark allows a window expression in a select. Page: https://docs.databricks.com/aws/en/ldp/expectations ("Expectations use standard SQL Boolean statements to specify constraints.").
-2. Exercise 1: each check cell finds its `check.py` beside the notebook, as Monday's do.
-3. Exercise 2: cell 3 runs on the class compute: `secrets.token_hex`, `F.sha2`, `F.concat`, `F.substring`. Proposed: it runs; these are standard Spark functions.
-4. Exercise 3: a learner's query of `batch_governed` returns 2023: 10 and `tin` as `***-**-****` on the class compute. Proposed: yes on standard access mode, Databricks Runtime 12.2 LTS or above. Page: https://docs.databricks.com/aws/en/data-governance/unity-catalog/filters-and-masks/ ("Rows where the function returns `FALSE` are excluded from query results.").
-5. Exercise 3: `SHOW GRANTS ON TABLE` runs for a learner, or is refused and cell 3 shows the learner's own grants. Proposed: refused, since it needs "the owner of the object" or "the `READ METADATA` or `MANAGE` permission on the object"; the fallback query shows the learner's grants. Pages: https://docs.databricks.com/aws/en/sql/language-manual/security-show-grant and https://docs.databricks.com/aws/en/sql/language-manual/information-schema/table_privileges ("the `INFORMATION_SCHEMA` only shows users their own grants on the object.").
-6. Exercise 4: a learner with **CAN RUN** opens "Week 3 returns", starts a new chat, and sees **Show code** under an answer. Page: https://docs.databricks.com/aws/en/genie/talk-to-genie ("Click Show code to inspect the query Genie generated.").
-7. Exercise 4: the check cell runs the pasted query on the class compute; Genie's query may name tables with backticks.
-8. Exercise 5: what Genie answers to step 6's question: does its query read `batch_clean`, and count rows or returns? Proposed: it reads `batch_clean`, so most learners' answers hold, and the kept wrong answer gives every learner one that does not.
+- Setup cells 1 to 4 run. As a learner, `batch_governed` shows 2023: 10, and `tin` as `***-**-****`, in a notebook and in the SQL editor.
+- Exercise 1's `run_test` runs a window rule inside `F.expr`; exercise 2's cell 3 runs (`secrets.token_hex`, `F.sha2`, `F.concat`, `F.substring`). Each check cell finds its `check.py`. Each start prints `Not yet:` and each kept answer `Done:`.
+- `SHOW GRANTS` runs for a learner. On `batch_governed` it lists the class group's `SELECT` twice: on the table (this setup's cell 5) and on the schema `course.returns` (Monday's cell 5).
+- Genie, in the space "Week 3 returns" made on 2026-11-13 and shared with `training-students` (**CAN RUN**) and `training-admins` (**CAN MANAGE**), asked by the test learner: its queries name tables with backticks (`` `course`.`returns`.`batch_clean` ``), add a filter such as `WHERE tax_year IS NOT NULL`, and may end in `;`. Pasted into the check cells, they run, and exercises 4 and 5 reach `Done:`.
+- Exercise 4's question gave 8, 7, 5 and 10, the same both times. Step 6's question read `batch_clean` and counted rows with `COUNT(*)`, so its numbers held: as proposed, most learners' answers hold, and the kept wrong answer gives every learner one that does not.
+
+Not yet checked: check each at your run-through, and tell the course team what differs:
+
+1. A learner with **CAN RUN** opens "Week 3 returns", starts a new chat, and sees **Show code** under an answer.
+2. The left bar's **Genie Agents** entry, and the **Share** and **Configure** menus of step 5, have these names in the class workspace.

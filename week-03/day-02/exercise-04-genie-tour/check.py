@@ -36,7 +36,7 @@ def left(values: dict, runs: bool) -> list[str]:
         out.append("The query you pasted does not run. Copy it again from Show code, all of it. Step 3.")
     elif "course.returns." not in query.replace("`", ""):
         out.append("The query names no table of course.returns. Copy the whole query from Show code. Step 3.")
-    table = (values.get("table_read") or "").strip()
+    table = (values.get("table_read") or "").replace("`", "").strip()
     if not table or table not in query.replace("`", ""):
         out.append("In table_read, write the table the query reads, as its FROM line names it. Step 3.")
     second = (values.get("second") or "").strip().lower()

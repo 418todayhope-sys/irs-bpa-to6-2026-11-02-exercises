@@ -26,7 +26,7 @@
 Why: a check matters most on a question you would act on. Your Monday question names the information it depends on most.
 
 1. Open your notebook of Monday's exercise 2. In its cell 2, find the first item with the verdict `needed` that names wages, adjusted gross income, total income or total tax. Its column is `wages_amt`, `agi_amt`, `total_income` or `total_tax_amt`, in that order. If no item names one, use `wages_amt`.
-2. In the Genie Agent "Week 3 returns", start a new chat.
+2. In the Genie Agent "Week 3 returns", start a new chat. Below the box, select **Chat**, not **Agent**.
 3. Ask this question, with your column in place of `wages_amt`:
 
 Genie:
@@ -35,7 +35,7 @@ Genie:
 For each tax year in the clean batch, how many returns are there and what is their total wages_amt?
 ```
 
-4. Select **Show code**.
+4. Open the answer's result table with the arrow at the right end of its line. Then select **Show code** in its top line.
 5. In cell 1, paste your question into `question`.
 6. Paste the short answer into `genie_answer`.
 7. Paste the whole query into `genie_query`.
@@ -99,13 +99,15 @@ Use the first row of this table that fits:
 | What you found | `verdict` | `deciding_line` |
 |---|---|---|
 | it reads `course.returns.batch_dirty` | `does not hold` | the `FROM` line |
-| a filter your question did not ask for | `does not hold` | the `WHERE` line |
+| a filter your question did not ask for, and a number differs from cell 2's | `does not hold` | the `WHERE` line |
 | it counts rows, and a number differs from cell 2's | `does not hold` | the line with `COUNT(*)` |
 | a number differs from cell 2's for another reason | `does not hold` | the line that names the column it sums |
-| the table you meant, no extra filter, and every number equal to cell 2's | `holds` | the `FROM` line: it reads the table you meant |
+| the table you meant, and every number equal to cell 2's | `holds` | the `FROM` line: it reads the table you meant |
+
+Genie often adds a filter such as `WHERE tax_year IS NOT NULL`. It leaves out only rows with no tax year. When every number equals cell 2's, it changed nothing.
 
 1. In cell 3, write `verdict`.
-2. Copy the deciding line from `genie_query` into `deciding_line`, as it is.
+2. Copy the deciding line from `genie_query` into `deciding_line`, as it is. If that line holds only `FROM` or `WHERE`, copy it with the line after it.
 3. Run cell 3. It prints your verdict and your line.
 
 Notebook cell 3:

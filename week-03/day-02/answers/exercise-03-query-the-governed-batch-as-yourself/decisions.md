@@ -17,20 +17,21 @@ For the trainer. Exercise 3, "Predict, then query the governed batch as yourself
 
 ## 3. The grants
 
-- **The answer.** "The learners' group holds SELECT, granted on the schema course.returns and inherited by the table." Tuesday's setup also grants `SELECT` on the table itself (setup cell 5), so a learner may see both rows.
-- **Reason.** `SHOW GRANTS` needs more than `SELECT`. Databricks, "SHOW GRANTS" (https://docs.databricks.com/aws/en/sql/language-manual/security-show-grant), opened 2026-11-13: "To run this command you must be either: A workspace administrator or the owner of the object. Have the `READ METADATA` or `MANAGE` permission on the object, plus the required usage privileges on its parent containers. The user specified in `principal`." So cell 3 falls back to `course.information_schema.table_privileges`, where "the `INFORMATION_SCHEMA` only shows users their own grants on the object" (https://docs.databricks.com/aws/en/sql/language-manual/information-schema/table_privileges, opened 2026-11-13).
+- **The answer.** "The learners' group holds SELECT twice: on the table itself, and on the schema course.returns, which the table inherits." Monday's cell 5 grants `SELECT` on the schema, and Tuesday's cell 5 on each batch, so `SHOW GRANTS ON TABLE` lists both rows: `TABLE course.returns.batch_governed` and `SCHEMA course.returns`.
+- **Reason.** `SHOW GRANTS` runs for a learner: on 2026-11-13 the course's test learner, a member of `training-students` who owns nothing in `course`, ran cell 3 in the class workspace and got the two rows above (`Principal`, `ActionType`, `ObjectType`, `ObjectKey`). Databricks' page (https://docs.databricks.com/aws/en/sql/language-manual/security-show-grant) names the owner or `MANAGE`; cell 3 keeps the fallback, `course.information_schema.table_privileges`, for a workspace that refuses it: "the `INFORMATION_SCHEMA` only shows users their own grants on the object" (https://docs.databricks.com/aws/en/sql/language-manual/information-schema/table_privileges).
 - **What else the check accepts.** Any text of 3 words or more that names `SELECT`.
 
 ## 4. Why it differs, or the fallback
 
 - **The answer.** "The row filter shows my group tax year 2023 only, and the mask shows my group a pattern in place of tin."
-- **The fallback (no mask or filter).** Every year and every number. Kept in `values-no-mask.json`: "The learners' group could read every identification number: its SELECT on the schema reaches this table, more than need to know." The notebook line: "Restrict access to SBU data (including PII and FTI) to those IRS personnel who have a need for the information in the performance of their duties."
+- **The fallback (no mask or filter).** Every year and every number. Kept in `values-no-mask.json`: "The learners' group could read every identification number: its SELECT on the table and on the schema reaches every row and every number, more than need to know." The notebook line: "Restrict access to SBU data (including PII and FTI) to those IRS personnel who have a need for the information in the performance of their duties."
 - **What else the check accepts.** `why_differs` of 8 words or more where the learner sees less than the batch holds; else `fallback` of 10 words or more. The check finds which by what the table gives the learner; cell 4 prints the same choice for the learner before step 4.
 
 ## Where it ran
 
 - On the author's computer, 2026-11-13, without Databricks: `check.py` read the setup's rows in SQLite, as the learners' group sees them and, with `--plain`, as a workspace with no mask or filter. Start: `Not yet: 5 left.` No mask: `Done: you see 2019: 2, 2021: 8, 2022: 12, 2023: 10; the identifier as 000-11-4037.` Answer: `Done: you see 2023: 10; the identifier as ***-**-****.` The statements were parsed by sqlglot 30.31.0, dialect `databricks`; it reads `ALTER TABLE ... SET ROW FILTER`, `SET MASK` and `SHOW GRANTS` only as commands, so those three rest on the Databricks pages above.
-- Trainer gaps, at the run-through (`week-03/setup/day-02-setup.md`, Not yet checked, items 4 and 5): a learner gets 2023: 10 and the masked number on the class compute; `SHOW GRANTS` is refused for a learner and the fallback query shows their grants.
+- In the class workspace, 2026-11-13, on Serverless, with the setup run in the catalog `course` and the course's test learner (a member of `training-students`, outside `training-instructors`): the filter and the mask held (2023: 10; `***-**-****`), `SHOW GRANTS ON TABLE` listed the class group's `SELECT` on the table and on the schema, the start printed `Not yet:` and the answer `Done:`.
+- Trainer gap, at the run-through: the trainer, a member of `training-instructors`, sees every year and every number in cell 2.
 
 ## Where each quote comes from
 

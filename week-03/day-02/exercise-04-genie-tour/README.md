@@ -26,7 +26,7 @@ Why: Genie is new today. The trainer shows each move on screen first. Wait until
 
 1. In the left bar of Databricks, select **Genie Agents**. If you do not see it, open the link to the Genie Agent that the trainer posted.
 2. Select **Week 3 returns**. It holds the clean batch and the dirty batch.
-3. "Click the New chat button to start a new conversation." You should see an empty chat with a box to type in.
+3. "Click the New chat button to start a new conversation." You should see an empty chat with a box to type in. Below the box, select **Chat**, not **Agent**: Agent answers with a report that has no query to open.
 
 ### Step 2. Ask the given question
 
@@ -40,7 +40,7 @@ Genie:
 How many returns are in the clean batch for each filing status?
 ```
 
-2. Press Enter. You should see a short answer, then a result table.
+2. Press Enter. You should see a short answer, then a line **Result table** with its number of rows. Select the arrow at the right end of that line: the table opens.
 3. In cell 1, put the cursor between the quote marks of `answer`, and paste the short answer.
 4. In `result_table`, type each row of the result table as `status: count`, with a comma between rows.
 
@@ -50,7 +50,7 @@ Why: "Click Show code to inspect the query Genie generated." The query says what
 
 **Show code** is the button that opens the query behind the answer: the trainer called it the query.
 
-1. Under the answer, select **Show code**. You should see a SQL query.
+1. In the top line of the result table, select **Show code**. You should see a SQL query. It may put `FROM` on a line of its own, and the table on the next line.
 2. Copy the whole query into `query` in cell 1, from its first word to its last.
 3. In `table_read`, write the table the query reads: the name after `FROM`.
 
@@ -60,7 +60,7 @@ If Genie gives you no answer, or no **Show code**, use `genie-reply.md` beside t
 
 Why: "This means that you might receive different outputs when submitting the same prompt multiple times." Genie uses a language model to write its query, and the model can write a different query for the same words.
 
-1. Start a new chat.
+1. Start a new chat, and select **Chat** again.
 2. Ask the same question, word for word.
 3. Compare the new result table and query with what cell 1 holds.
 4. In `second`, write `same` if the table read and every number are the same. Other words in the short answer still count as `same`. Write `changed` if a number or the table after `FROM` differs.

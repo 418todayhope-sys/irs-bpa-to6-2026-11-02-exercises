@@ -7,7 +7,7 @@
   "2023": 10
  },
  "identifier_seen": "000-11-4037",
- "grants": "The learners' group holds SELECT, granted on the schema course.returns and inherited by the table.",
+ "grants": "The learners' group holds SELECT twice: on the table itself, and on the schema course.returns, which the table inherits.",
  "why_differs": "",
- "fallback": "The learners' group could read every identification number: its SELECT on the schema reaches this table, more than need to know."
+ "fallback": "The learners' group could read every identification number: its SELECT on the table and on the schema reaches every row and every number, more than need to know."
 }

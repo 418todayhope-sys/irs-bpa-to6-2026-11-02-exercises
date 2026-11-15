@@ -75,7 +75,7 @@ Why: "to run a SELECT query on a table, a user must have the SELECT privilege on
 
 Run cell 3. You should see a table of grants, one row per privilege:
 
-- `SHOW GRANTS` shows each principal (a person or a group) and its privilege (its action type, such as `SELECT`). It also shows the object that holds the grant: the table, or the schema or catalog above it.
+- `SHOW GRANTS` shows each principal (a person or a group) and its privilege (its action type, such as `SELECT`). It also shows the object that holds the grant: the table, or the schema or catalog above it. You should see two rows for the learners' group: `SELECT` on the table, and `SELECT` on the schema `course.returns` above it.
 - If Databricks refuses `SHOW GRANTS`, the cell prints one line. Then it reads `information_schema.table_privileges`, a view that lists the grants you hold on tables. `grantee` is who holds the privilege. `inherited_from` is the object above the table that holds the grant.
 
 Find the rows whose privilege is `SELECT`. In cell 4, in `grants`, write who holds `SELECT`, and the object that holds the grant.
@@ -86,7 +86,7 @@ Notebook cell 3:
 # 3. Who holds which privilege on the table.
 try:
     display(spark.sql("SHOW GRANTS ON TABLE course.returns.batch_governed"))
-except Exception as refused:  # SHOW GRANTS needs more than SELECT: show the grants you hold instead
+except Exception as refused:  # if the workspace refuses SHOW GRANTS: show the grants you hold instead
     print("SHOW GRANTS refused:", str(refused).splitlines()[0][:200])
     display(spark.sql("""
     SELECT grantee, privilege_type, inherited_from

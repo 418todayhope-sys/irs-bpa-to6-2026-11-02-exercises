@@ -61,7 +61,7 @@ def left(values: dict, genie: list | None, own: list | None) -> list[str]:
     if own is None:
         out.append("Your own query does not run. In cell 2, set column to a column of the batch. Step 2.")
     flat = " ".join(query.replace("`", "").split())
-    reads = (values.get("reads") or "").strip()
+    reads = (values.get("reads") or "").replace("`", "").strip()
     if not reads or reads not in flat:
         out.append("In reads, write the table Genie's query reads, as its FROM line names it. Step 3.")
     if len((values.get("filters") or "").split()) < 1:

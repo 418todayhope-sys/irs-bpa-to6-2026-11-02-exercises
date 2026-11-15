@@ -10,7 +10,7 @@
 
 **Done when:** cell 5 prints `Done:`: four tests pass the clean batch, and each has its kind, its action and its result on the dirty batch.
 
-**Optional part:** one return is in the dirty batch twice, under two different `return_id` values, with the same `tin` and `tax_year`. No rule in this exercise's tables sees it. Copy test 3's block in cell 2, and paste it after test 4 as a fifth test. Change its rule to `count(*) OVER (PARTITION BY tin, tax_year) = 1`. Run cell 4 again.
+**Optional part:** one return is in the dirty batch twice, under two different `return_id` values, with the same `tin` and `tax_year`. No rule in this exercise's tables sees it. Copy test 3's block in cell 2, and paste it after test 4 as a fifth test. Change its rule to `count(*) OVER (PARTITION BY tin, tax_year) = 1`. Run cells 2, 3 and 4 again.
 
 **What you have:**
 
@@ -58,9 +58,9 @@ def run_test(test: dict, table: str) -> str:
     bad = checked.filter("NOT _ok").count()
     if bad == 0:
         return f"PASS  {label}"
-    if test["action"] == "fail":
+    if test["action"].strip().lower() == "fail":
         assert bad == 0, f"FAIL  {label}: {bad} rows break the rule"
-    if test["action"] == "drop":
+    if test["action"].strip().lower() == "drop":
         return f"DROP  {label}: {bad} rows left out"
     return f"WARN  {label}: {bad} rows stay in"
 ```
@@ -86,6 +86,8 @@ Write test 1 from your first column. Use the first row of this table that fits:
 Write test 2 from your second column, with the same table.
 
 A rule that meets an empty value is neither true nor false, and that row does not count as breaking it. So a test for empty values uses `IS NOT NULL`, not `>= 0`.
+
+In each test's `name`, write what it expects, in 2 words or more, such as `agi always present`.
 
 Then choose each test's action. Use the first row of this table that fits:
 

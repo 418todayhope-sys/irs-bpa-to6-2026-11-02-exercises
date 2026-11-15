@@ -37,7 +37,7 @@ def test_left(n: int, test: dict, failing: dict) -> list[str]:
         return [f"Test {n} has no rule yet. Step {2 if n < 4 else 5}."]
     out = []
     if len((test.get("name") or "").split()) < 2:
-        out.append(f"Test {n}: give it a name of 2 words or more: what it expects. Step 2.")
+        out.append(f"Test {n}: give it a name of 2 words or more: what it expects. Step {5 if n == 4 else 2}.")
     if (test.get("kind") or "").strip().lower() not in KINDS:
         out.append(f"Test {n}: its kind is one of the five kinds, word for word. Step 2.")
     if (test.get("action") or "").strip().lower() not in ACTIONS:

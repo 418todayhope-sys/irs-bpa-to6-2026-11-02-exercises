@@ -31,7 +31,7 @@ Notebook cell 1:
 
 ```python
 # 1. The batch's fields: name, type and comment.
-display(spark.sql("DESCRIBE TABLE course.returns.batch_dirty"))
+display(spark.sql("DESCRIBE TABLE course.returns.batch_dirty").filter("col_name NOT LIKE '#%' AND col_name != ''"))
 ```
 
 ### Step 2. Fill the record: need, class and action for every field
@@ -136,8 +136,8 @@ import secrets
 from pyspark.sql import functions as F
 
 NAMES_A_PERSON = {"tin", "taxpayer_name", "street_address", "loaded_by"}  # fields that name or identify a person
-removed = [r["field"] for r in record if r["action"] == "remove"]
-transformed = [r["field"] for r in record if r["action"] == "transform"]
+removed = [r["field"] for r in record if r["action"].strip().lower() == "remove"]
+transformed = [r["field"] for r in record if r["action"].strip().lower() == "transform"]
 prepared = spark.table("course.returns.batch_dirty")
 if "tin" in transformed:  # the case key: the number hashed with a secret that is never saved
     secret = secrets.token_hex(16)

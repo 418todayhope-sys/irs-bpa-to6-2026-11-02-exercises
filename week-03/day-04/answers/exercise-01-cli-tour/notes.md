@@ -12,11 +12,11 @@ version_exit: 0
 miss_message: bash: databrick: command not found
 miss_exit: 127
 
-## Step 3. databricks auth login, then databricks auth profiles
+## Step 3. databricks auth profiles
 
 profile: course
-login_exit: 0
 profile_valid: YES
+profiles_exit: 0
 
 ## Step 4. databricks catalogs list
 

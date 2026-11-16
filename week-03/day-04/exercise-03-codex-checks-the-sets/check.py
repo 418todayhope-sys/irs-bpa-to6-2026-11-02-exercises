@@ -16,7 +16,9 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 SHOWN = 6  # the things left that one run prints, in the order of the steps
-READS = {"list", "get", "get-run", "list-runs", "describe", "profiles", "-h", "--help"}
+READS = {"list", "get", "get-run", "list-runs", "describe", "profiles", "exists", "me", "-h", "--help"}
+FLAGS_WITH_VALUE = {"-p", "--profile", "-o", "--output", "-t", "--target", "--log-level", "--log-file",
+                    "--log-format", "--progress-format"}  # global flags of the CLI that take a value
 SAFEGUARD_OFF = {"--force", "-f"}
 CATALOG_LINES = ("label_train", "label_valid", "label_test",
                  "tax_added_features", "tax_added_train", "tax_added_valid", "tax_added_test")
@@ -52,6 +54,28 @@ def yes_no(text: str) -> str:
     return first[0] if first and first[0] in ("yes", "no") else ""
 
 
+def command_parts(command: str) -> tuple[list[str], bool]:
+    """Find the databricks command in what the learner copied.
+
+    Codex may set a variable first (DATABRICKS_CONFIG_PROFILE=course databricks ...) or wrap the
+    command in a loop (for t in train valid; do databricks ...; done).
+
+    Args:
+        command: the command, as the learner copied it.
+
+    Returns:
+        The words from databricks to the end of that command (empty when there is none), and whether
+        a profile variable was set before it.
+    """
+    text = command.strip("` ")
+    found = re.search(r"(?:^|[\s;&|(])(databricks)\s", text)
+    if not found:
+        return [], False
+    before, rest = text[:found.start(1)], text[found.start(1):]
+    rest = re.split(r"\s*(?:;|&&|\|\||\||\bdone\b)\s*", rest)[0]
+    return rest.split(), "DATABRICKS_CONFIG_PROFILE=" in before
+
+
 def facts(command: str, learner: str) -> dict[str, str]:
     """What the command itself shows, for the four questions.
 
@@ -62,10 +86,19 @@ def facts(command: str, learner: str) -> dict[str, str]:
     Returns:
         reads_or_changes, profile, target and safeguard_removed, each as the notes write it, and the decision they give.
     """
-    parts = command.strip("` ").split()
-    verb = parts[2] if len(parts) > 2 else ""
-    reads = "reads" if verb in READS else "changes"
-    profile = "yes" if any(p in ("-p", "--profile") or p.startswith("--profile=") for p in parts) else "no"
+    parts, profile_variable = command_parts(command)
+    plain, skip = [], False  # the words after databricks that are not global flags: group, command, arguments
+    for p in parts[1:]:
+        if skip:
+            skip = False
+        elif p in FLAGS_WITH_VALUE:
+            skip = True
+        elif not p.startswith("-"):
+            plain.append(p)
+    verb = plain[1] if len(plain) > 1 else ""
+    reads = "reads" if verb in READS or any(p in ("-h", "--help") for p in parts) else "changes"
+    profile = "yes" if profile_variable or any(p in ("-p", "--profile") or p.startswith("--profile=")
+                                               for p in parts) else "no"
     schemas = set(re.findall(r"learner_\d+", command))
     if schemas == {learner}:
         target = "yes"
@@ -90,7 +123,7 @@ def command_left(n: int, notes: dict[str, str], learner: str) -> list[str]:
         learner: the learner's schema name, such as learner_07.
     """
     command = notes.get(f"cmd_{n}", "")
-    if not command.strip("` ").startswith("databricks "):
+    if not command_parts(command)[0]:
         return [f"cmd_{n}: copy the whole command, from databricks to its last option. Step 3."]
     shown = facts(command, learner)
     hints = {"reads_or_changes": "read the command word after the group",

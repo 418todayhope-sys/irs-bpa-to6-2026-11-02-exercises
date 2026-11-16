@@ -29,9 +29,9 @@ Where it ran: nowhere with Databricks or Codex. The course team ran the check on
 
 ## 3. Codex's answer, beside Catalog Explorer
 
-- **The answer.** `train`, `valid` and `test` each have `exam_changed_tax`, and none has `tax_added_by_exam`. `features` still has `tax_added_by_exam`: Wednesday's exercise 4 drops each column marked no from the DataFrame it splits (`kept = features.drop(*dropped)`, its cell 4) and leaves the `features` table as exercise 2 wrote it. So Codex's answer does not agree: it says the column is absent from `features`, while its own command 6 printed it and Catalog Explorer shows it. Its part on `valid` and `test` rests on no command: both were declined, so Codex never read them.
+- **The answer.** `train`, `valid` and `test` each have `exam_changed_tax`, and none of `features`, `train`, `valid` and `test` has `tax_added_by_exam`: Wednesday's exercise 4 drops each column marked no and writes `features` again from the three sets (its cell 4). So each part of Codex's answer matches Catalog Explorer, and `agree` is yes. Yet its part on `valid` and `test` rests on no command: both were declined (commands 3 and 4), so Codex never read them. An answer can be right and still unchecked: the learner's Catalog Explorer lines are what check it.
 - **The day's line.** The loop, step 5: "open the workspace and check the result there". Slide 45: "Check the workspace, not the summary".
-- **What else the check accepts.** Any yes or no on the seven lines, read from the learner's own tables; `agree` yes or no; a sentence of 5 words or more. The check never reads the catalog. If Wednesday's notebook is changed to rewrite `features` without the column, `tax_added_features` becomes `no` and Codex's answer agrees; the transcript's command 6 then needs its output changed.
+- **What else the check accepts.** Any yes or no on the seven lines, read from the learner's own tables; `agree` yes or no; a sentence of 5 words or more. The check never reads the catalog. A learner whose Wednesday notebook kept the column in `features` writes `yes` there and `agree` no; the check accepts both.
 
 ## 4. The optional part
 

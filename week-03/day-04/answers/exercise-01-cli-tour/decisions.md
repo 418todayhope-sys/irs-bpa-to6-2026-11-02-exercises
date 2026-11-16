@@ -15,8 +15,8 @@ Where it ran: nowhere with Databricks. The course team ran the check on this mac
 
 ## 2. Sign-in and profile
 
-- **The answer.** Profile `course`; `login_exit` 0; `databricks auth profiles` shows `YES` under Valid for `course`.
-- **Reason.** A profile is a named, saved sign-in. Each later command names it with `-p`, so it runs as the learner in the workspace meant.
+- **The answer.** Profile `course`; `databricks auth profiles` shows `YES` under Valid for `course`, exit status 0.
+- **Reason.** A profile is a named, saved sign-in. Each later command names it with `-p`, so it runs as the learner in the workspace meant. The learner saved it before class (the day's README, "Before Thursday"), because the sign-in from a Workstation needs a second terminal and takes longer than the exercise allows. So the exercise checks it before any other command (deck slide 13: "Check the sign-in before anything else"), and a learner whose profile shows `NO` signs in again with `databricks auth login`.
 - **The day's lines.** `curated.md` § Sign in to the workspace with the Databricks CLI, Step 2 and Step 3; deck slides 29 to 31.
 - **Pages.** Databricks CLI tutorial: "Press `Enter` to accept the suggested profile name, or enter the name of a new or existing profile." Auth commands (https://docs.databricks.com/aws/en/dev-tools/cli/reference/auth-commands): `databricks auth profiles` will "List all available configuration profiles (at `~/.databrickscfg` by default) and check whether they are valid profiles."; "If the command succeeds, a `YES` is displayed; otherwise, a `NO` displays." Global flags (https://docs.databricks.com/aws/en/dev-tools/cli/commands): `-p, --profile`, "The name of the profile in the `~/.databrickscfg` file to use to run the command."
 - **What else the check accepts.** Any profile name. The README asks for `course` so that every command it prints works as written.

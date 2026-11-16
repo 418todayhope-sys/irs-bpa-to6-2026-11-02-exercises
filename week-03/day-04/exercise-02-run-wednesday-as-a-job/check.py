@@ -69,6 +69,9 @@ def job_left(path: Path) -> list[str]:
         out.append("job.json: run_name still needs your learner number in place of NN. Step 2.")
     if "YOUR_USER_NAME" in path_text or not path_text.startswith("/Workspace/Users/"):
         out.append("job.json: notebook_path still needs your user name in place of YOUR_USER_NAME. Step 2.")
+    elif not path_text.endswith("/week-03/day-03/wednesday-tables"):
+        out.append("job.json: notebook_path must end with week-03/day-03/wednesday-tables, with no .ipynb: "
+                   "the workspace names a notebook without it. Step 2.")
     if len(tasks) != 1 or tasks[0].get("task_key") != "features" or "/week-03/day-03/" not in path_text \
             or task.get("source") != "WORKSPACE":
         out.append("job.json: change only the two values. Run git restore job.json and start step 2 again.")

@@ -95,7 +95,7 @@ Copy Codex's last answer after `codex_answer:`. In step 5 you check each part of
 
 Why: Codex's answer rests only on the commands that ran.
 
-In the workspace's left bar, select **Catalog**. Open `course`, then your own schema (also when you judged the transcript). Open each of `features`, `train`, `valid` and `test`. On its **Overview** tab, find the **Columns** list. Write `yes` when the table has the column, and `no` when it does not:
+In the workspace's left bar, select **Catalog**. Open `course`, then your own schema (also when you judged the transcript). Open each of `features`, `train`, `valid` and `test`. On its **Overview** tab, find the **Columns** list. It shows seven columns a page: type `exam` in **Filter columns**, and only the names that hold `exam` stay. Write `yes` when the table has the column, and `no` when it does not:
 
 - `label_train:`, `label_valid:`, `label_test:` for `exam_changed_tax`
 - `tax_added_features:`, `tax_added_train:`, `tax_added_valid:`, `tax_added_test:` for `tax_added_by_exam`

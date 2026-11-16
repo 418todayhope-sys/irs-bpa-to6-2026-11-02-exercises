@@ -32,7 +32,7 @@ Nothing to reset in the workspace. A learner who did the optional part of exerci
 
 ## Checked on a Workstation
 
-The course team wrote Thursday on a computer with no Databricks access. On 2026-11-16 the course team ran the three exercises on a learner's Workstation, as a learner. Exercises 1 and 2 reached `Done:`; in exercise 3, Codex asked before each command that reached the workspace, and its answer matched the tables. Each exercise's `decisions.md` says what ran, under "Where it ran". What the run showed, item by item:
+The course team wrote Thursday on a computer with no Databricks access. On 2026-11-16 the course team ran the three exercises on a learner's Workstation, as a learner, and each reached `Done:`. Each exercise's `decisions.md` says what ran, under "Where it ran". What the run showed, item by item:
 
 1. **Before class: the browser sign-in completes from a Workstation.** Yes, with **Copy** and `curl`, as in step 4. **Open** fails with `state mismatch`. There is no token fallback (step 5). Page: https://docs.databricks.com/aws/en/dev-tools/cli/tutorial ("In your web browser, complete the on-screen instructions to log in").
 2. **Exercise 1: what `tables list` and `tables get` print.** `tables list` prints one line per table, with its full name and type. `tables get` prints JSON whose `columns` entries hold `name` and `type_name` (`INT` for `total_income`), and `comment` only for a column that has one: `total_income` has none, `wages_amt` has one. Pages: https://docs.databricks.com/aws/en/dev-tools/cli/reference/tables-commands; https://docs.databricks.com/api/workspace/tables/get.

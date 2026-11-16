@@ -14,7 +14,7 @@ For the trainer. Monday's four exercises run in the class's Databricks workspace
 5. **Decide how learners get AI generate drafts (exercise 3).** AI generate needs the `MODIFY` privilege on a table. `MODIFY` also lets a learner save a comment, or change rows. Choose one:
    - Run cell 6. It grants `MODIFY` on `return_header`. Learners press **AI generate** themselves. Tell them again: never select the check mark.
    - Or do not run cell 6. Learners take their drafts from `week-03/day-01/exercise-03-find-and-check-two-drafts/drafts.md`, and you show **AI generate** once in the demo.
-6. **Check AI generate.** As yourself, open `return_header` in Catalog Explorer, select the **Columns** tab, and check that **AI generate** shows above the column headings. Reload the browser tab, as exercise 3 tells learners, and check that no comment changed. Databricks says AI generate has no workspace toggle. Its models are Databricks' partner-powered AI features, which an account admin can turn off.
+6. **Check AI generate.** As yourself, open `return_header` in Catalog Explorer. On its **Overview** tab, find the **Columns** list, and check that **AI generate** shows above it. Reload the browser tab, as exercise 3 tells learners, and check that no comment changed. Databricks says AI generate has no workspace toggle. Its models are Databricks' partner-powered AI features, which an account admin can turn off.
 7. **Optional, for exercise 4's extra cell.** The lineage system table `system.access.column_lineage` needs grants from an account or metastore admin: `USE CATALOG` on `system`, `USE SCHEMA` on `system.access`, and `SELECT` on the table. Without them, the extra cell fails with a permission error and you show its result on your screen.
 
 ## Once for each class workspace
@@ -46,6 +46,7 @@ Run cells 2 to 4 of the setup notebook again. They make each table again from th
 Checked on 2026-11-13 in the class workspace, on Serverless: the setup notebook run in the catalog `course`, and each exercise run by the course's test learner, a member of `training-students`:
 
 - The setup notebook runs: cell 1 finds `day-01-course-data.py` beside it, cell 3 registers the Python function `income_band` and builds `return_summary`, and cell 4 prints the expected counts, comments and tags.
+- Checked again on 2026-11-16 in a new, empty catalog, `course_dryrun`, while the class used `course` (the notebooks' catalog name changed, nothing else), by these steps alone: the admin's SQL of "Once for each class workspace", the three setup notebooks in order, the agent of Tuesday's step 5, and the hand-over of `course.returns` to `training-admins`. Each cell printed what its step expects, and the test learner read every table, the volume's 52 files, and made their own schema.
 - Each exercise's check cell finds its `check.py` beside the notebook. Each start prints `Not yet:` and each kept answer `Done:`; the SQL warehouse counts 40 rows.
 - Lineage of `return_summary`: `non_wage_income` comes from `return_header.total_income` and `return_header.wages_amt`; `income_band` comes from `return_header.total_income` (read through the lineage API).
 

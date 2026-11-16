@@ -35,7 +35,7 @@ Nothing to reset. Each learner's notebooks write with `overwrite`, so a second r
 Checked on 2026-11-13 in the class workspace, on Serverless: the setup notebook run in the catalog `course`, and each exercise run by the course's test learner, who made their own schema in exercise 1's cell 1:
 
 1. Cell 2 writes the 52 files to the volume with Python's `open`, and cell 3 prints the numbers of step 4.
-2. The XML reader names the columns `ReturnHeader`, `ReturnData` and `CourseLabel`, with `IRSW2` and `DependentDetail` as arrays.
+2. The XML reader names the columns `ReturnHeader`, `ReturnData` and `CourseLabel`, with `IRSW2` and `DependentDetail` as arrays. Checked again on 2026-11-16 in a new, empty catalog (Monday's setup document says how): cell 3 printed each number of step 4, and the test learner read the 52 files.
 3. Exercise 1 from start: cell 3 fails with "cannot be resolved" on `file_name`, and passes once cell 2 names `_metadata.file_name`. Test 3 imports `form1040` by the path it appends.
 4. Exercises 1 to 4 reach `Done:` in order with the answers' cells, with the numbers of each step: 48,000 and 0.15 for `F-30037-2023`; train 21 returns with 3 tax-change cases, valid 15 with 3, test 16 with 5.
 5. `wednesday-tables.ipynb`, run as a one-off job, runs the four notebooks with `%run` and lists the eight tables; run again, `features` still holds 52 rows.

@@ -99,10 +99,11 @@ def sign_in_left(notes: dict[str, str]) -> list[str]:
     out = []
     if not notes.get("profile"):
         out.append("profile: write the profile name you typed. Step 3.")
-    if notes.get("login_exit") != "0":
-        out.append("login_exit: the sign-in has no exit status 0 yet. Sign in again, or ask the trainer. Step 3.")
     if notes.get("profile_valid", "").upper() != "YES":
-        out.append("profile_valid: databricks auth profiles must show your profile as valid. Step 3.")
+        out.append("profile_valid: databricks auth profiles must show your profile as valid. "
+                   "If it shows NO, sign in again with databricks auth login. Step 3.")
+    if notes.get("profiles_exit") != "0":
+        out.append("profiles_exit: write the number that echo $? prints after databricks auth profiles. Step 3.")
     if len(words(notes.get("predicted_catalogs", ""))) < 3:
         out.append("predicted_catalogs: before you list them, write the catalogs you expect, and why. Step 4.")
     if NEEDED_CATALOG not in words(notes.get("listed_catalogs", "")):

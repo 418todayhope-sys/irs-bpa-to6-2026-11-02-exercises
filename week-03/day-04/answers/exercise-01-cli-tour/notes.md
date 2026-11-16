@@ -4,7 +4,7 @@ Type each answer after its colon, on the same line. The steps of README.md say w
 
 ## Step 1. databricks -v
 
-version: Databricks CLI v0.278.0
+version: Databricks CLI v1.25.0
 version_exit: 0
 
 ## Step 2. databrick -v
@@ -12,18 +12,18 @@ version_exit: 0
 miss_message: bash: databrick: command not found
 miss_exit: 127
 
-## Step 3. databricks auth login, then databricks auth profiles
+## Step 3. databricks auth profiles
 
 profile: course
-login_exit: 0
 profile_valid: YES
+profiles_exit: 0
 
 ## Step 4. databricks catalogs list
 
 predicted_catalogs: course, because the trainer gave our group USE CATALOG on it on Monday; maybe system
-listed_catalogs: course, system
+listed_catalogs: course, system, samples, training
 catalogs_exit: 0
-catalogs_match: It matches: I see course because of the grant, and only catalogs I may use.
+catalogs_match: It matches for course, through the grant; I also see samples and training, so I have rights on them that I did not predict.
 
 ## Step 5. databricks tables list, two schemas
 

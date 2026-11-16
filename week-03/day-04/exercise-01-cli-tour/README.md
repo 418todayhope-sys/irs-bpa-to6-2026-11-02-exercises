@@ -1,8 +1,8 @@
 # Exercise 1: A tour of the Databricks CLI
 
-**Goal:** After this exercise, you can sign in with the Databricks CLI and tell from each command's exit status whether it worked.
+**Goal:** After this exercise, you can check your Databricks CLI sign-in and tell from each command's exit status whether it worked.
 
-**Scenario:** From Monday to Wednesday you worked inside Databricks. Today you reach the same workspace from the Workstation's terminal. You sign in once. Then you look at Monday's return table and your own schema with typed commands, and you check that each command worked.
+**Scenario:** From Monday to Wednesday you worked inside Databricks. Today you reach the same workspace from the Workstation's terminal. You signed in once, before class. You check that sign-in, then you look at Monday's return table and your own schema with typed commands, and you check that each command worked.
 
 **Where you work:** the Workstation's terminal, in this folder: `week-03/day-04/exercise-01-cli-tour/` in your course folder. You type each command at the prompt. You write what you see in `notes.md`, in this folder. Open `notes.md` in the editor: select it in the Explorer panel on the left.
 
@@ -12,7 +12,7 @@
 
 **What you have:**
 
-- The Databricks CLI, which the trainer installed on your Workstation.
+- The Databricks CLI and your profile `course`, both made before class: the day's [README](../README.md), "Before Thursday".
 - The workspace address (its URL). The trainer writes it on the board.
 - Your schema `course.learner_NN`. The trainer gave it to you, as on Wednesday. `NN` is your learner number, such as `07`.
 - `notes.md` and `check.py`, in this folder.
@@ -24,6 +24,15 @@
 Terminal:
 
 ```text
+git pull
+```
+
+If it stops with `Your local changes to the following files would be overwritten by merge`, those files hold your own changes from week 2. Put them aside, then pull again:
+
+Terminal:
+
+```text
+git stash
 git pull
 ```
 
@@ -63,7 +72,7 @@ Terminal:
 databricks -v
 ```
 
-You should see one line with a version number, such as `Databricks CLI v0.278.0`. Write it after `version:`. Then type `echo $?`. Write the number after `version_exit:`.
+You should see one line with a version number, such as `Databricks CLI v1.25.0`. Write it after `version:`. Then type `echo $?`. Write the number after `version_exit:`.
 
 ### Step 2. Make one mistake on purpose
 
@@ -77,21 +86,9 @@ databrick -v
 
 The name has no `s`. You should see a line with `command not found` in it. Copy that line after `miss_message:`. Then type `echo $?`. Write the number after `miss_exit:`. It is not `0`.
 
-### Step 3. Sign in, and save the sign-in as a profile
+### Step 3. Check your profile
 
-Why: a profile is the CLI's saved sign-in to one workspace. Every later command names it with `-p`. Then the command acts as you, in the workspace you meant.
-
-Terminal:
-
-```text
-databricks auth login --host <workspace-url>
-```
-
-Type the trainer's address in place of `<workspace-url>`, without the brackets. The CLI asks for a profile name. Type `course`, then press Enter. A browser sign-in starts. Sign in as yourself, as you do in the workspace. You should see a line that says the CLI saved the profile `course`. Write `course` after `profile:`. Write the exit status after `login_exit:`.
-
-If the sign-in does not complete, stop and ask the trainer. The trainer helps you make the same profile with a token, a password-like key. Never paste a token into Codex.
-
-Then list your profiles:
+Why: a profile is the CLI's saved sign-in to one workspace. You saved the profile `course` before class. Every later command names it with `-p`. Then the command acts as you, in the workspace you meant. So you check the sign-in before anything else.
 
 Terminal:
 
@@ -99,7 +96,9 @@ Terminal:
 databricks auth profiles
 ```
 
-You should see one line for each profile: its name, its host and the column `Valid`. `Valid` shows `YES` when the sign-in works, and `NO` when it does not. Write what it shows for `course` after `profile_valid:`.
+You should see one line for each profile: its name, its host and the column `Valid`. `Valid` shows `YES` when the sign-in works, and `NO` when it does not. Write `course` after `profile:`. Write what it shows for `course` after `profile_valid:`. Write the exit status after `profiles_exit:`.
+
+If `course` shows `NO`, or is not in the list, sign in again as you did before class: `databricks auth login --host <workspace-url> --profile course`, with the trainer's address in place of `<workspace-url>`. Then run `databricks auth profiles` again. If it still shows `NO`, tell the trainer.
 
 ### Step 4. Predict, then list the catalogs you can use
 

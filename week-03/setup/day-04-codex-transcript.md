@@ -52,7 +52,7 @@ Codex's reason, as it gave it: "An old job with a similar name may hold stale ta
 databricks tables get course.learner_07.features -p course
 ```
 
-What came back, the column names only: `return_id`, `filer_key`, `tax_year`, `exam_changed_tax`, `tax_to_agi`, `mean_prior_wages`, `wages_change_pct`, `tax_added_by_exam`, and the other feature columns.
+What came back, the column names only: `return_id`, `filer_key`, `tax_year`, `exam_changed_tax`, `tax_to_agi`, `mean_prior_wages`, `wages_change_pct`, and the other feature columns. No `tax_added_by_exam`.
 
 ## Codex's answer, at the end
 

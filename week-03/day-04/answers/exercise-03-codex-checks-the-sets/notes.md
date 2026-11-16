@@ -73,9 +73,9 @@ codex_answer: All three sets, train, valid and test, have the column exam_change
 label_train: yes
 label_valid: yes
 label_test: yes
-tax_added_features: yes
+tax_added_features: no
 tax_added_train: no
 tax_added_valid: no
 tax_added_test: no
-agree: no
-compared: Codex says tax_added_by_exam is absent from features, but command 6 and Catalog Explorer show it there; its part on valid and test rests on no command, as I declined both.
+agree: yes
+compared: Each part matches Catalog Explorer, but its part on valid and test rests on no command: I declined 3 and 4, so Codex never read them.

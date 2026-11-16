@@ -94,7 +94,7 @@ Terminal:
 databricks jobs get-run <run-id> -p course
 ```
 
-Put your run id in place of `<run-id>`. It prints the run as JSON. Look for `"status": {`. Inside it, read `"state"`:
+Put your run id in place of `<run-id>`. It prints the run as JSON. Look for `"status": {`. Inside it, read `"state"`. Higher up, the JSON also holds an older block, `"state": {` with `"life_cycle_state"`: it can say `INTERNAL_ERROR` for a run that has already ended, so do not read that one.
 
 | `state` | What it means | What you do |
 |---|---|---|

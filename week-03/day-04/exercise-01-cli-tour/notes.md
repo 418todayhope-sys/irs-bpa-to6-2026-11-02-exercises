@@ -13,8 +13,8 @@ miss_exit:
 ## Step 3
 
 profile:
-login_exit:
 profile_valid:
+profiles_exit:
 
 ## Step 4
 

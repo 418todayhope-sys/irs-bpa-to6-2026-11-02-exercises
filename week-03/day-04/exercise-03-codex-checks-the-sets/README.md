@@ -4,7 +4,7 @@
 
 **Scenario:** On Wednesday you split your returns into `train`, `valid` and `test`. Before a model trains on them, you check two things. Does each set hold the label `exam_changed_tax`, the answer the model learns? Is the column `tax_added_by_exam` gone? Codex asks the workspace for you through the Databricks CLI. You approve or decline each command it proposes.
 
-**AI tool:** Codex, in the Workstation's terminal, with the settings it starts with when you type only `codex`. It asks you before it runs a `databricks` command.
+**AI tool:** Codex, in the Workstation's terminal, with the settings it starts with when you type only `codex`. It asks you before it runs a `databricks` command that reaches the workspace.
 
 **Where you work:** the Workstation's terminal, in this folder: `week-03/day-04/exercise-03-codex-checks-the-sets/` in your course folder. You start Codex there. You write in `notes.md`: open it from the Explorer panel on the left. Type each answer on one line, after its colon. You read columns in Catalog Explorer, as on Monday.
 
@@ -75,7 +75,7 @@ Why: a `databricks` command goes to the workspace across the network, so Codex s
 | Is the target the one you named? | the schema, table or job id in the command | you did not name it |
 | Does it carry an option that turns off a safeguard? | the options, such as `--force`, which makes a command skip the checks it makes first | it carries one |
 
-Approve a command only when all four answers are good. Otherwise decline it. In the choices Codex shows, take the one that does not run the command, and type why. For each `databricks` command, fill one block in `notes.md`:
+Approve a command only when all four answers are good. Otherwise decline it. Codex shows three choices. To approve, take `1. Yes, proceed`. To decline, take `3. No, and tell Codex what to do differently`, and type why. Do not take `2. Yes, and don't ask again`: Codex would then run the next commands of that kind without asking. For each `databricks` command, fill one block in `notes.md`:
 
 1. After `cmd_1:`, copy the whole command.
 2. After `reads_or_changes_1:`, write `reads` or `changes`.
@@ -83,9 +83,9 @@ Approve a command only when all four answers are good. Otherwise decline it. In 
 4. After `safeguard_removed_1:`, write `yes` when the command carries such an option.
 5. After `decision_1:`, write `approve` or `decline`. After `reason_1:`, write why.
 
-Number the next blocks 2, 3 and on. Codex may run other commands in this folder without asking, such as `ls`. They need no block.
+Number the next blocks 2, 3 and on. Codex may run other commands in this folder without asking, such as `ls`, or a `databricks` command with `--help`: help is read on the Workstation and never reaches the workspace. They need no block.
 
-If Codex runs a `databricks` command without asking, stop it with Ctrl+C. Then tell the trainer. Use the transcript when your run proposes no `databricks` command, or Codex does not start. Judge its six commands the same way, in six blocks. Write `transcript` after `source:`, and `course.learner_07` after `schema:`.
+If Codex runs any other `databricks` command without asking, stop it with Ctrl+C. Then tell the trainer. Use the transcript when your run proposes no `databricks` command, or Codex does not start. Judge its six commands the same way, in six blocks. Write `transcript` after `source:`, and `course.learner_07` after `schema:`.
 
 ### Step 4. Write Codex's answer
 
@@ -95,7 +95,7 @@ Copy Codex's last answer after `codex_answer:`. In step 5 you check each part of
 
 Why: Codex's answer rests only on the commands that ran.
 
-In the workspace's left bar, select **Catalog**. Open `course`, then your own schema (also when you judged the transcript). Open each of `features`, `train`, `valid` and `test`, then the **Columns** tab. Write `yes` when the table has the column, and `no` when it does not:
+In the workspace's left bar, select **Catalog**. Open `course`, then your own schema (also when you judged the transcript). Open each of `features`, `train`, `valid` and `test`. On its **Overview** tab, find the **Columns** list. Write `yes` when the table has the column, and `no` when it does not:
 
 - `label_train:`, `label_valid:`, `label_test:` for `exam_changed_tax`
 - `tax_added_features:`, `tax_added_train:`, `tax_added_valid:`, `tax_added_test:` for `tax_added_by_exam`

@@ -1,8 +1,8 @@
 # Exercise 1: A tour of the Databricks CLI
 
-**Goal:** After this exercise, you can sign in with the Databricks CLI and tell from each command's exit status whether it worked.
+**Goal:** After this exercise, you can check your Databricks CLI sign-in and tell from each command's exit status whether it worked.
 
-**Scenario:** From Monday to Wednesday you worked inside Databricks. Today you reach the same workspace from the Workstation's terminal. You sign in once. Then you look at Monday's return table and your own schema with typed commands, and you check that each command worked.
+**Scenario:** From Monday to Wednesday you worked inside Databricks. Today you reach the same workspace from the Workstation's terminal. You signed in once, before class. You check that sign-in, then you look at Monday's return table and your own schema with typed commands, and you check that each command worked.
 
 **Where you work:** the Workstation's terminal, in this folder: `week-03/day-04/exercise-01-cli-tour/` in your course folder. You type each command at the prompt. You write what you see in `notes.md`, in this folder. Open `notes.md` in the editor: select it in the Explorer panel on the left.
 
@@ -24,6 +24,15 @@
 Terminal:
 
 ```text
+git pull
+```
+
+If it stops with `Your local changes to the following files would be overwritten by merge`, those files hold your own changes from week 2. Put them aside, then pull again:
+
+Terminal:
+
+```text
+git stash
 git pull
 ```
 

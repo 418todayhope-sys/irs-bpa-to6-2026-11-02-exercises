@@ -1,6 +1,10 @@
 # Week 3, day 4: reach Databricks from the Workstation's terminal
 
-Three exercises, in order. Each runs in your Google Workstation's terminal, in your course folder: run `git pull` first, then go into the exercise's folder. You use the Databricks CLI, and in exercise 3 Codex. Each exercise uses the profile `course`, which you save before class and check in exercise 1. Exercise 2 runs Wednesday's notebook. Exercise 3 reads the tables it writes. The course made up every row. The trainer prepares the day with [`../setup/day-04-setup.md`](../setup/day-04-setup.md).
+Three exercises, in order. Each runs in your Google Workstation's terminal, in your course folder: run `git pull` first, then go into the exercise's folder. You use the Databricks CLI, and in exercise 3 Codex. Each exercise uses the profile `course`, which you save before class ("Before Thursday", below) and check in exercise 1. Exercise 2 runs Wednesday's notebook. Exercise 3 reads the tables it writes. The course made up every row. The trainer prepares the day with [`../setup/day-04-setup.md`](../setup/day-04-setup.md).
+
+1. [A tour of the Databricks CLI](exercise-01-cli-tour/README.md). What you do: check your Databricks CLI sign-in and read each command's output and exit status. Where you work: the terminal, in `exercise-01-cli-tour/`, with `notes.md`. Done when: `python3 check.py` prints `Done:`. [Start](exercise-01-cli-tour/) · [Answer](answers/exercise-01-cli-tour/)
+2. [Run Wednesday's notebook as a one-off job](exercise-02-run-wednesday-as-a-job/README.md). What you do: run Wednesday's notebook as a one-off job from the terminal and read its final state. Where you work: the terminal, in `exercise-02-run-wednesday-as-a-job/`, with `job.json` and `notes.md`, and the SQL editor for one count. Done when: `python3 check.py` prints `Done:`. [Start](exercise-02-run-wednesday-as-a-job/) · [Answer](answers/exercise-02-run-wednesday-as-a-job/)
+3. [Codex checks your three sets, and you approve each command](exercise-03-codex-checks-the-sets/README.md). What you do: judge each Databricks command Codex proposes before it runs, and check its answer in Catalog Explorer. Where you work: Codex in the terminal, in `exercise-03-codex-checks-the-sets/`, with `notes.md`, and Catalog Explorer. Done when: `python3 check.py` prints `Done:`. [Start](exercise-03-codex-checks-the-sets/) · [Answer](answers/exercise-03-codex-checks-the-sets/)
 
 ## Before Thursday: the CLI and your profile
 
@@ -28,7 +32,9 @@ Do this once, on your Workstation, before class. The exercises start from it. Th
    databricks auth login --host <workspace-url> --profile course
    ```
 
-   The workspace's sign-in opens in your browser. Sign in as yourself. The browser then goes to an address that starts with `http://localhost:8020` and says the page cannot be reached: the CLI waits for it on the Workstation, not on your computer. Copy that whole address from the address bar. Open a second terminal and run `curl` with the address in quotes:
+   The Workstation asks whether to open an external website. Select **Copy**, not **Open**: Open changes the address, and the sign-in then fails with `state mismatch`. Paste the address into a new browser tab and go. Sign in as yourself if the workspace asks. It shows **Authorize as** with your name, and continues by itself.
+
+   The browser then goes to an address that starts with `http://localhost:8020` and says the site cannot be reached: the CLI waits for it on the Workstation, not on your computer. Copy that whole address from the address bar. Open a second terminal and run `curl` with the address in quotes:
 
    Terminal:
 
@@ -36,10 +42,6 @@ Do this once, on your Workstation, before class. The exercises start from it. Th
    curl "<the address you copied>"
    ```
 
-   The first terminal then says the profile `course` was saved.
+   The first terminal then says `Profile course was successfully saved`.
 
 3. Check it: `databricks auth profiles` shows `course` with `YES` under `Valid`.
-
-1. [A tour of the Databricks CLI](exercise-01-cli-tour/README.md). What you do: sign in with the Databricks CLI and read each command's output and exit status. Where you work: the terminal, in `exercise-01-cli-tour/`, with `notes.md`. Done when: `python3 check.py` prints `Done:`. [Start](exercise-01-cli-tour/) · [Answer](answers/exercise-01-cli-tour/)
-2. [Run Wednesday's notebook as a one-off job](exercise-02-run-wednesday-as-a-job/README.md). What you do: run Wednesday's notebook as a one-off job from the terminal and read its final state. Where you work: the terminal, in `exercise-02-run-wednesday-as-a-job/`, with `job.json` and `notes.md`, and the SQL editor for one count. Done when: `python3 check.py` prints `Done:`. [Start](exercise-02-run-wednesday-as-a-job/) · [Answer](answers/exercise-02-run-wednesday-as-a-job/)
-3. [Codex checks your three sets, and you approve each command](exercise-03-codex-checks-the-sets/README.md). What you do: judge each Databricks command Codex proposes before it runs, and check its answer in Catalog Explorer. Where you work: Codex in the terminal, in `exercise-03-codex-checks-the-sets/`, with `notes.md`, and Catalog Explorer. Done when: `python3 check.py` prints `Done:`. [Start](exercise-03-codex-checks-the-sets/) · [Answer](answers/exercise-03-codex-checks-the-sets/)

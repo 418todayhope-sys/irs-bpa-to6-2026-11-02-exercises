@@ -170,7 +170,7 @@ def left(notes: dict[str, str]) -> list[str]:
         out.append("codex_answer: copy Codex's last answer. Step 4.")
     for line in CATALOG_LINES:
         if not yes_no(notes.get(line, "")):
-            out.append(f"{line}: write yes or no, from the Columns tab in Catalog Explorer. Step 5.")
+            out.append(f"{line}: write yes or no, from the Columns list in Catalog Explorer. Step 5.")
     if not yes_no(notes.get("agree", "")):
         out.append("agree: write yes or no. Step 5.")
     if len(words(notes.get("compared", ""))) < 5:

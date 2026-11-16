@@ -4,7 +4,7 @@ For the trainer. Exercise 1, "A tour of the Databricks CLI", follows the demo of
 
 Modelled on Microsoft Learning's DP-750T00 lab 12, "Implement Development Lifecycle Processes in Azure Databricks" (https://microsoftlearning.github.io/DP-750T00-Implement-Data-Engineering-Solutions-using-Azure-Databricks/Instructions/Labs/12-implement-development-lifecycle-processes-in-azure-databricks.html), its CLI steps before the bundle only: check the version, `databricks auth login` with the workspace URL, the saved profile ("Profile DEFAULT was successfully saved"). Its own words: "In this part, you create a bundle for the order processing job using the Databricks CLI on your local machine." The bundle is not used. The sign-in and profile steps follow Databricks' CLI tutorial (https://docs.databricks.com/aws/en/dev-tools/cli/tutorial). Shape: "Follow and confirm". Every page below was opened on 2026-11-13.
 
-Where it ran: nowhere with Databricks. The course team ran the check on this machine against the starting notes, this kept answer and one wrong record (`commands.sh`); the column facts come from Monday's made-up rows, `week-03/setup/day-01-course-data.py`. No `databricks` command ran. The run on a Workstation is a trainer gap: `week-03/setup/day-04-setup.md` § Not yet checked, items 1 and 2.
+Where it ran: on a learner's Workstation on 2026-11-16 (the test learner, schema `course.learner_97`), with the CLI v1.25.0 and the profile `course` saved before class. Each command gave the output and exit status in this kept answer, and `check.py` printed `Done:`. The course team also ran the check on this machine against the starting notes, this kept answer and one wrong record (`commands.sh`); the column facts come from Monday's made-up rows, `week-03/setup/day-01-course-data.py`.
 
 ## 1. The version and the deliberate miss
 
@@ -24,7 +24,7 @@ Where it ran: nowhere with Databricks. The course team ran the check on this mac
 ## 3. The catalogs (the predict question)
 
 - **The answer.** A prediction written first; a list that holds `course`; one sentence on why it matches or not.
-- **Reason.** A learner sees only the catalogs they own or may use. Monday's setup gave the learners' group `USE CATALOG` on `course`, so `course` must be there. Other catalogs (such as `system`, or a workspace's own catalog) depend on the workspace.
+- **Reason.** A learner sees only the catalogs they own or may use. Monday's setup gave the learners' group `USE CATALOG` on `course`, so `course` must be there. Other catalogs (such as `system`, or a workspace's own catalog) depend on the workspace: on the class workspace, on 2026-11-16, a learner saw `course`, `system`, `samples` and `training`.
 - **The day's lines.** `curated.md` Step 4, quoting the catalogs reference; deck slide 32.
 - **Pages.** Catalogs commands (https://docs.databricks.com/aws/en/dev-tools/cli/reference/catalogs-commands): "If the caller is the metastore admin, all catalogs will be retrieved. Otherwise, only catalogs owned by the caller (or for which the caller has the `USE_CATALOG` privilege) will be retrieved."
 - **What else the check accepts.** Any list that holds `course`, any prediction of 3 words or more and any sentence of 5 words or more.

@@ -40,12 +40,12 @@ print(len(columns), "columns:", ", ".join(columns))
 
 Why: "If you cannot name that decision for a question, no model of this week's kind can answer it."
 
-In cell 2, type the label and the reason for each question. Write each answer between the quotes. The table gives each answer and its reason. Copy the table's reason, or write it in your own words: 6 words or more.
+In cell 2, type the label and the reason for each question. Write each answer between the quotes. The table gives each answer and its reason. Copy the table's reason, or write it in your own words: 6 words or more. Type no quotation marks inside an answer: they end it early.
 
 | Question | `label` | `why` |
 |---|---|---|
-| `Q1`: Which of this year's returns would an examination most likely change the tax on? | `exam_changed_tax` | The column records the past decision: "It reads `yes` when an examination changed the tax and `no` when it did not." The question asks yes or no, so this is its label. |
-| `Q2`: Which of this year's returns will the taxpayer later correct with an amended return? | `no label` | No column records whether a taxpayer amended a past return. "A model can learn only from a decision someone recorded in the past." |
+| `Q1`: Which of this year's returns would an examination most likely change the tax on? | `exam_changed_tax` | The column records the past decision: yes when an examination changed the tax, no when it did not. The question asks yes or no, so this is its label. |
+| `Q2`: Which of this year's returns will the taxpayer later correct with an amended return? | `no label` | No column records whether a taxpayer amended a past return. A model can learn only from a decision someone recorded in the past. |
 
 Run cell 2. You should see your two answers printed.
 

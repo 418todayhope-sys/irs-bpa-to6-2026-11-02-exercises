@@ -85,12 +85,12 @@ else:
 
 Why: "If you cannot say where each input came from and why it was used, the score cannot be defended, however accurate it is."
 
-In cell 4, fill the two empty rows: `deduction_amt`, and your flag. Keep the two filled rows. Copy each reason, or write it in your own words: 6 words or more. The table gives each answer and its reason.
+In cell 4, fill the two empty rows: `deduction_amt`, and your flag. Keep the two filled rows. Copy each reason, or write it in your own words: 6 words or more. The table gives each answer and its reason. Type each of the four values between its own pair of quotes, in the order the row shows, and keep the commas between them.
 
 | Row | Source field | Reason | Known at selection | Why |
 |---|---|---|---|---|
 | `deduction_amt` | Form 1040 line 12e, standard deduction or itemized deductions | A deduction that is large for the income may be claimed in error. A reason is a claim that a reviewer can disagree with. | `yes` | line 12e is on the return as filed |
-| `deduction_missing` | Form 1040 line 12e, empty or not | "an empty line may itself be a signal" | `yes` | "known when the return is filed" |
+| `deduction_missing` | Form 1040 line 12e, empty or not | an empty line may itself be a signal | `yes` | known when the return is filed |
 
 Run cell 4. You should see `Wrote course.learner_07.model_feature_record: 4 rows`, with your own number.
 

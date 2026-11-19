@@ -111,7 +111,7 @@ Notebook cell 5:
 ### Afterwards, together
 
 1. A model scores 0.81: what else would you check?
-2. Why would counting the 100 empty rows as `no` mislead?
+2. Why would counting the 100 empty rows as no mislead?
 3. If one change in four, how would the baseline move?
 
 The answer: after the talk together, open `week-04/day-01/answers/exercise-02-baseline-accuracy/` in your Git folder of the course ([link](../answers/exercise-02-baseline-accuracy/)).

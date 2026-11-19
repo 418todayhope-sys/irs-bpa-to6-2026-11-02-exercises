@@ -140,6 +140,6 @@ Notebook cell 5:
 
 1. Blanks filled with 0, no flag: what does a model learn?
 2. An all-0 flag: when would it earn its column?
-3. Which column would say `no` for its timing?
+3. Which column would say no for its timing?
 
 The answer: after the talk together, open `week-04/day-01/answers/exercise-03-defend-two-features/` in your Git folder of the course ([link](../answers/exercise-03-defend-two-features/)).

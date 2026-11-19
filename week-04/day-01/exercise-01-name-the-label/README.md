@@ -102,6 +102,6 @@ Notebook cell 4:
 
 1. No exam ever: what could Q1 learn from?
 2. Examiners chose the returns: what could a model miss?
-3. When could a wrong return still read `no`?
+3. When could a wrong return still read no?
 
 The answer: after the talk together, open `week-04/day-01/answers/exercise-01-name-the-label/` in your Git folder of the course ([link](../answers/exercise-01-name-the-label/)).

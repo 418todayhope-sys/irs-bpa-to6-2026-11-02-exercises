@@ -110,8 +110,8 @@ Notebook cell 5:
 
 ### Afterwards, together
 
-1. Tuesday's models must beat 0.8. A model that scores 0.81 still might find few changed returns. What else would you want to know before you trust it, and why?
-2. You left the 100 empty rows out. What would the accuracy be if you counted each as `no`, and why would that number mislead?
-3. Suppose that next year one examined return in four had its tax changed. How would the baseline's accuracy move, and what would that do to the number Tuesday's models must beat?
+1. A model scores 0.81: what else would you want to know before you trust it?
+2. If you counted the 100 empty rows as `no`, what would the accuracy be, and why would it mislead?
+3. If one examined return in four had its tax changed, how would the baseline's accuracy move?
 
 The answer: after the talk together, open `week-04/day-01/answers/exercise-02-baseline-accuracy/` in your Git folder of the course ([link](../answers/exercise-02-baseline-accuracy/)).

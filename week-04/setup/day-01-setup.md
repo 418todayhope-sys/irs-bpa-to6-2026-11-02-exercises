@@ -24,6 +24,8 @@ For the trainer. Every exercise of week 4, Monday to Friday, reads the same five
    ALTER TABLE course.returns.model_test OWNER TO `training-admins`;
    ```
 
+5. **Check each learner's schema.** Exercise 3 on Monday writes two tables in the learner's own schema, `course.learner_NN`, which each learner made in week 3 (`week-03/setup/day-03-setup.md`): `features_flagged` and `model_feature_record`. A learner who has no schema yet makes it as week 3's exercise 1 did; tell each learner their number again.
+
 ## The tables
 
 | Table | Rows | What it holds | Days that read it |
@@ -119,5 +121,6 @@ Not yet checked: check each at your run-through, and tell the course team what d
 
 1. Cells 1 to 4 run in the class workspace on Serverless, and cell 3 prints each number of step 3. New since week 3: each table's rows go in one `INSERT` of up to 1,000 rows, about 130,000 characters, and two columns are `DOUBLE`.
 2. A learner in `training-students` reads each of the five tables with no new grant, through week 3's `SELECT` on the schema.
-3. The class compute's scikit-learn gives the three accuracies of line 1.
-4. The `ALTER TABLE ... OWNER TO` lines of step 4. The measurement used scikit-learn 1.5.2; another version may move them.
+3. The class compute's scikit-learn gives the three accuracies of line 1. The measurement used scikit-learn 1.5.2; another version may move them.
+4. The `ALTER TABLE ... OWNER TO` lines of step 4.
+5. Monday's three exercises (`week-04/day-01/`), each from its start to `Done:`, run as the course's test learner, a member of `training-students`: cell 1 of exercise 1 lists the 18 columns of `course.returns.model_returns`; exercise 2's counting cell shows `NULL` for the 100 empty labels; exercise 3's cells 3 and 4 write `features_flagged` and `model_feature_record` in the learner's own schema, and `.show()` prints the counts each step names. Each ran only against `week-04/day-01/answers/stand_in.py`, which reads the same SQL with DuckDB.

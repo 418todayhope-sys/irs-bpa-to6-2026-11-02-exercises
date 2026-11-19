@@ -138,8 +138,8 @@ Notebook cell 5:
 
 ### Afterwards, together
 
-1. If you fill each empty `deduction_amt` with 0 and keep no flag, what does a model learn about those 63 returns?
-2. The flag on `withholding_amt` held only 0s: when would it earn its column?
-3. Which column of `course.returns.model_features` would say `no` for its timing?
+1. Blanks filled with 0, no flag: what does a model learn?
+2. An all-0 flag: when would it earn its column?
+3. Which column would say `no` for its timing?
 
 The answer: after the talk together, open `week-04/day-01/answers/exercise-03-defend-two-features/` in your Git folder of the course ([link](../answers/exercise-03-defend-two-features/)).

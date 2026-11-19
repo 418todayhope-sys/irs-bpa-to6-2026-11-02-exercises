@@ -110,8 +110,8 @@ Notebook cell 5:
 
 ### Afterwards, together
 
-1. A model scores 0.81: what else would you want to know before you trust it?
-2. If you counted the 100 empty rows as `no`, what would the accuracy be, and why would it mislead?
-3. If one examined return in four had its tax changed, how would the baseline's accuracy move?
+1. A model scores 0.81: what else would you check?
+2. Why would counting the 100 empty rows as `no` mislead?
+3. If one change in four, how would the baseline move?
 
 The answer: after the talk together, open `week-04/day-01/answers/exercise-02-baseline-accuracy/` in your Git folder of the course ([link](../answers/exercise-02-baseline-accuracy/)).

@@ -44,7 +44,7 @@ def left(spark: object, values: dict) -> list[str]:
 
     Args:
         spark: the notebook's Spark session.
-        values: schema, empty_means and flag, as cells 1 and 3 hold them.
+        values: schema, empty_means, why_empty and flag, as cells 1 and 3 hold them.
 
     Returns:
         One line per problem; an empty list when the exercise is done.
@@ -57,7 +57,10 @@ def left(spark: object, values: dict) -> list[str]:
     if meaning not in ("zero", "unknown"):
         out.append('Cell 3: type "zero" or "unknown" for empty_means. Step 3.')
     elif meaning == "zero":
-        out.append("Cell 3: each return takes a standard or an itemized deduction, so an empty line 12e cannot mean none. Step 3.")
+        out.append("Cell 3: read again what line 12e holds, in the form's words, and what a return must put there. "
+                   "Then decide again what an empty line 12e means. Step 3.")
+    if len(str(values.get("why_empty", "")).split()) < 6:
+        out.append("Cell 3: write why_empty, your reason, in 6 words or more. Step 3.")
     flagged = f"{schema}.features_flagged"
     if not flag:
         out.append("Cell 3: type the flag's name between the quotes. Step 3.")

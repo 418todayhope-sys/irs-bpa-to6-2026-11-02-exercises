@@ -7,12 +7,13 @@ The answer is `exercise.ipynb` beside this file, with the schema `course.learner
 | Cell | Answer | Why |
 |---|---|---|
 | 2 | `amount = "deduction_amt"` | It prints 1000 returns, 937 filled, 63 empty. The trainer's `withholding_amt` prints 0 empty. |
-| 3 | `empty_means = "unknown"` | Line 12e is the standard or the itemized deduction: each return takes one, so an empty line cannot mean none. No return in the course tables has a deduction of 0. |
-| 3 | `flag = "deduction_missing"` | The name the reading gives it. Cell 3 writes `course.learner_NN.features_flagged`: every column of `course.returns.model_features` and the flag, 1 on the 63 empty rows. |
+| 3 | `empty_means = "unknown"` | The learner decides it: the step gives no answer, only a folded hint with the reason. Line 12e is the standard or the itemized deduction: every return takes one, so an empty line cannot mean none. No return in the course tables has a deduction of 0. `zero` prints a Not yet line that sends the learner back to what line 12e holds, without the answer. |
+| 3 | `why_empty = "every return takes the standard deduction or itemized deductions, so an empty line 12e cannot mean none"` | The reason above, in the learner's words; the check asks 6 words or more and does not read its meaning. |
+| 3 | `flag = "deduction_missing"`, given | The name the reading gives it (curated line 272); given so the new reason costs no extra typed value. Cell 3 writes `course.learner_NN.features_flagged`: every column of `course.returns.model_features` and the flag, 1 on the 63 empty rows. |
 | 4 | `deduction_amt`: line 12e, a reason, `yes` | Line 12e is on the return as filed. |
 | 4 | the flag's reason | The flag keeps the 63 returns apart from the others. Its source field, `yes` and its timing are given: typing them teaches nothing the `deduction_amt` row does not. |
 
-What else the check accepts: any flag name, any reason of 6 words or more, and `yes` or `no` (the debrief takes the timing). It checks that the flag matches the empty cells and that both source fields name 12e. The optional part (more rows, `name_length` struck) is not checked.
+What else the check accepts: any flag name, any `why_empty` and any reason of 6 words or more, and `yes` or `no` (the debrief takes the timing). It checks that the flag matches the empty cells and that both source fields name 12e. The optional part (more rows, `name_length` struck) is not checked.
 
 The feature record starts in the exercise's own cell 4 with the reading's two rows, `tax_to_agi` and `tax_added_by_exam` (struck), copied from its table. Cells 3 and 4 write two tables in the learner's schema: `features_flagged` and `model_feature_record`, the feature record. Tuesday reads `model_feature_record`.
 

@@ -100,7 +100,7 @@ Notebook cell 4:
 
 ### Afterwards, together
 
-1. What does a model learn from reviewers who set aside too many returns of one kind?
+1. Q2 gets a label once someone records it. Which returns would still have no label?
 2. When can a model learn from today's new decisions?
 3. What would you ask about a label before you trust it?
 

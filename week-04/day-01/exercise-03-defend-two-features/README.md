@@ -58,21 +58,32 @@ spark.sql(f"SELECT COUNT(*) AS returns, COUNT({amount}) AS filled, COUNT(*) - CO
 
 Why: a flag column is "a column that records which amounts were missing." Tuesday's cells fill the empty amounts. After that, only the flag still shows which ones were empty.
 
-In cell 3, type the two values. The table gives each value and its reason.
+You decide what an empty line 12e means. `deduction_amt` is line 12e of Form 1040. Read what the form says that line holds, then decide.
 
-| Value | Type this | Why |
-|---|---|---|
-| `empty_means` | `unknown` | `deduction_amt` is line 12e, "Standard deduction or itemized deductions (from Schedule A)". Each return takes one or the other, so an empty line 12e cannot mean that the taxpayer had none. |
-| `flag` | `deduction_missing` | The flag holds 1 where line 12e is empty and 0 where it is filled. Its name says which amount it is for. |
+In cell 3, type two values between the quotes:
 
-Run cell 3. It writes `features_flagged` in your schema: every column of `course.returns.model_features`, and your flag. You should see two rows: `0` with 937 returns, and `1` with 63.
+| Value | What you type |
+|---|---|
+| `empty_means` | `zero` or `unknown`: what an empty line 12e means |
+| `why_empty` | your reason, 6 words or more: what line 12e holds, and so what its being empty tells you |
+
+The flag's name is given: `deduction_missing`. It holds 1 where line 12e is empty and 0 where it is filled.
+
+<details><summary>Stuck? The reason</summary>
+
+Every return takes the standard deduction or itemized deductions, and line 12e holds the one it took. So an empty line 12e cannot mean that the taxpayer had none.
+
+</details>
+
+Run cell 3. It writes `features_flagged` in your schema: every column of `course.returns.model_features`, and the flag. You should see two rows: `0` with 937 returns, and `1` with 63.
 
 Notebook cell 3:
 
 ```python
-# 3. What an empty amount means, and the flag's name. Type both between the quotes.
+# 3. What an empty line 12e means, and why. Then the flag, named for you.
 empty_means = ""   # "zero" or "unknown"
-flag = ""
+why_empty = ""
+flag = "deduction_missing"
 if schema.endswith("_NN") or not flag:
     print("Type your number in cell 1 and the flag's name here, then run this cell again.")
 else:
@@ -122,8 +133,8 @@ else:
 
 Run cell 5. It prints `Done:` when these things are true:
 
-- `empty_means` is `unknown`.
-- `features_flagged` in your schema has your flag, 1 on each return whose `deduction_amt` is empty and 0 on the others.
+- `empty_means` is the reading that line 12e supports, and `why_empty` has 6 words or more.
+- `features_flagged` in your schema has the flag, 1 on each return whose `deduction_amt` is empty and 0 on the others.
 - `model_feature_record`, the feature record in your schema, holds the two given rows, a row for `deduction_amt` and a row for your flag.
 - Each of these two rows names line 12e, has a reason of 6 words or more, and says `yes` or `no`.
 

@@ -1,0 +1,5 @@
+# Made up by the course for week 4, day 3: the four counts at 0.5 on the 1,000 validation returns, from exercise 2, as in the day's reading. No real return or taxpayer.
+candidate,true_positives,false_positives,false_negatives,true_negatives
+baseline,0,0,50,950
+logistic-regression,22,16,28,934
+decision-tree,8,5,42,945

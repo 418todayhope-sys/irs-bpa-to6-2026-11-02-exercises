@@ -1,0 +1,111 @@
+{
+ "threshold": 0.5,
+ "ten": {
+  "#311": [
+   0.91,
+   "change"
+  ],
+  "#388": [
+   0.84,
+   "change"
+  ],
+  "#458": [
+   0.74,
+   "no change"
+  ],
+  "#206": [
+   0.63,
+   "change"
+  ],
+  "#270": [
+   0.55,
+   "no change"
+  ],
+  "#502": [
+   0.46,
+   "change"
+  ],
+  "#189": [
+   0.38,
+   "no change"
+  ],
+  "#644": [
+   0.27,
+   "no change"
+  ],
+  "#135": [
+   0.15,
+   "no change"
+  ],
+  "#717": [
+   0.08,
+   "no change"
+  ]
+ },
+ "my_sort": {
+  "#311": [
+   "on",
+   "TP"
+  ],
+  "#388": [
+   "on",
+   "TP"
+  ],
+  "#458": [
+   "on",
+   "FP"
+  ],
+  "#206": [
+   "on",
+   "TP"
+  ],
+  "#270": [
+   "on",
+   "FP"
+  ],
+  "#502": [
+   "off",
+   "FN"
+  ],
+  "#189": [
+   "off",
+   "TN"
+  ],
+  "#644": [
+   "off",
+   "TN"
+  ],
+  "#135": [
+   "off",
+   "TN"
+  ],
+  "#717": [
+   "off",
+   "TN"
+  ]
+ },
+ "my_counts": {
+  "TP": 3,
+  "FP": 2,
+  "FN": 1,
+  "TN": 4
+ },
+ "meaning": {
+  "TP": "a case that was worth the examiner's hours",
+  "FP": "an examiner's hours spent on a return whose examination changed nothing",
+  "FN": "a return an examination would have changed, and nobody looked at it",
+  "TN": "a return correctly left alone, no hours spent"
+ },
+ "all_counts": {
+  "TP": 22,
+  "FP": 16,
+  "FN": 28,
+  "TN": 934
+ },
+ "expected_all": {
+  "TP": 22,
+  "FP": 16,
+  "FN": 28,
+  "TN": 934
+ }
+}

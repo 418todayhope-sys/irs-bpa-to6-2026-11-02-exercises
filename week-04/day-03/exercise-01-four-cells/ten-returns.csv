@@ -1,0 +1,12 @@
+# Made up by the course for week 4, day 3: ten validation returns, each with its score from Tuesday's logistic regression and its label, as in the day's reading. No real return or taxpayer.
+return_id,score,label
+#311,0.91,change
+#388,0.84,change
+#458,0.74,no change
+#206,0.63,change
+#270,0.55,no change
+#502,0.46,change
+#189,0.38,no change
+#644,0.27,no change
+#135,0.15,no change
+#717,0.08,no change

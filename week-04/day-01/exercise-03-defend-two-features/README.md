@@ -10,24 +10,29 @@
 
 **Done when:** cell 5 prints `Done:`.
 
-**Optional part:** Finished early? In cell 4, record more columns of `course.returns.model_features`. To list them, run `print(spark.table("course.returns.model_features").columns)` in a new cell. Strike `name_length`, whose source field is in the header: start its reason with `strike:`. Run cells 4 and 5 again: extra rows still give `Done:`.
+**Optional part:** Finished early?
+
+1. In a new cell, run `print(spark.table("course.returns.model_features").columns)`. It lists the columns.
+2. In cell 4, add a row for each column you would keep.
+3. Add a row for `name_length` too. Its source field is `filer_name`, a header field. Type `no` and `struck: header field` in its last two slots.
+4. Run cells 4 and 5 again. Extra rows still give `Done:`.
 
 **What you need to know first:** a feature's defence is "its source field, its reason, and whether it is known when the case is selected." A missing amount is "an amount that is not on the return, which can mean zero or unknown."
 
 **What you have:**
 
-- `course.returns.model_features`, the week's feature table in Unity Catalog: 1,000 returns, made up by the course.
+- `course.returns.model_features`, the week's feature table in Unity Catalog, where Databricks keeps the course's tables: 1,000 returns, made up by the course.
 - Your own schema, `course.learner_NN`, from week 3. Your number is the same as in week 3.
 - The trainer's example, shown before this exercise: two features recorded, and the same count and flag cells on `withholding_amt`.
 - `check.py`, beside this notebook. Cell 5 runs it. It reads the two tables you write.
 
-**Start from:** this notebook as the course gives it, attached to the compute the trainer names. To start again, set the cells you typed back to how the course gives them, and run them again: each one replaces its table. After a restart, run cells 1 to 5 in order: each cell uses a value from the one before it.
+**Start from:** this notebook as the course gives it, attached to the compute the trainer names (the computer in Databricks that runs your cells). To start again, set the cells you typed back to how the course gives them, and run them again: each one replaces its table. After a restart, run cells 1 to 5 in order: each cell uses a value from the one before it.
 
 ### Step 1. Name your schema
 
 Why: cells 3 and 4 write two tables in your own schema.
 
-In cell 1, type your two-digit number in place of `NN`, such as `07`: the number you used in week 3. Ask the trainer if you do not know it. Run cell 1. You should see `Your tables go in course.learner_07`, with your own number.
+In cell 1, type your two-digit number in place of `NN`, such as `07`: the number you used in week 3. To find it: in the Databricks sidebar, select Catalog, then open `course`. Your schema is the `learner_` schema you made in week 3. If you cannot tell which one, ask the trainer. Run cell 1. You should see `Your tables go in course.learner_07`, with your own number.
 
 Notebook cell 1:
 
@@ -85,7 +90,7 @@ empty_means = ""   # "zero" or "unknown"
 why_empty = ""
 flag = "deduction_missing"
 if schema.endswith("_NN") or not flag:
-    print("Type your number in cell 1 and the flag's name here, then run this cell again.")
+    print("Type your number in cell 1 first, then run this cell again.")
 else:
     spark.sql(f"CREATE OR REPLACE TABLE {schema}.features_flagged AS SELECT *, "
               f"CASE WHEN {amount} IS NULL THEN 1 ELSE 0 END AS {flag} FROM course.returns.model_features")
@@ -96,12 +101,11 @@ else:
 
 Why: "A feature you cannot defend is a feature you cannot keep."
 
-Cell 4 holds the feature record, four rows. The first two are given: `tax_to_agi`, and `tax_added_by_exam`, which is struck. In the `deduction_amt` row, type its source field, its reason, and `yes` or `no`. In your flag's row, type its reason only. Copy each reason from the table, or write it in your own words: 6 words or more.
+Cell 4 holds the feature record, four rows. The first two are given: `tax_to_agi`, and `tax_added_by_exam`, which is struck. Your flag's row is given too. In the `deduction_amt` row, type three values: its source field, its reason, and `yes` or `no`. A comment beside each slot names it. Copy the reason from the table, or write it in your own words: 6 words or more.
 
 | Row | Source field | Reason | Known when the case is selected? |
 |---|---|---|---|
-| `deduction_amt` | Form 1040 line 12e, standard deduction or itemized deductions | a deduction lowers the taxable income, so it bears on the tax the return reports | `yes`: line 12e is on the return as filed |
-| `deduction_missing` | given | the flag keeps the returns whose line 12e is empty apart from the others | given |
+| `deduction_amt` | Form 1040 line 12e, standard deduction or itemized deductions | a deduction lowers the taxable income, so it bears on the tax the return reports | `yes`, as line 12e is on the return as filed |
 
 Run cell 4. You should see `Wrote course.learner_07.model_feature_record: 4 rows`, with your own number.
 
@@ -117,8 +121,16 @@ record = [
     ("tax_added_by_exam", "the examination's result",
      "it moves with the examination's outcome", "no",
      "written after selection; struck"),
-    ("deduction_amt", "", "", "", "line 12e is on the return as filed"),
-    (flag, "Form 1040 line 12e, empty or not", "", "yes", "whether line 12e is empty shows on the return as filed"),
+    ("deduction_amt",
+     "",   # source field: the line of Form 1040
+     "",   # reason: 6 words or more
+     "",   # known when the case is selected: "yes" or "no"
+     "line 12e is on the return as filed"),   # why: given
+    (flag,
+     "Form 1040 line 12e, empty or not",   # source field: given
+     "the flag keeps the returns whose line 12e is empty apart from the others",   # reason: given
+     "yes",   # known when the case is selected: given
+     "whether line 12e is empty shows on the return as filed"),   # why: given
 ]
 if schema.endswith("_NN"):
     print("Type your number in cell 1 first, then run this cell again.")

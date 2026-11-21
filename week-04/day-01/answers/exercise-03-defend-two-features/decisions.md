@@ -11,13 +11,15 @@ The answer is `exercise.ipynb` beside this file, with the schema `course.learner
 | 3 | `why_empty = "every return takes the standard deduction or itemized deductions, so an empty line 12e cannot mean none"` | The reason above, in the learner's words; the check asks 6 words or more and does not read its meaning. |
 | 3 | `flag = "deduction_missing"`, given | The name the reading gives it (curated line 272); given so the new reason costs no extra typed value. Cell 3 writes `course.learner_NN.features_flagged`: every column of `course.returns.model_features` and the flag, 1 on the 63 empty rows. |
 | 4 | `deduction_amt`: line 12e, a reason, `yes` | Line 12e is on the return as filed. |
-| 4 | the flag's reason | The flag keeps the 63 returns apart from the others. Its source field, `yes` and its timing are given: typing them teaches nothing the `deduction_amt` row does not. |
+| 4 | the flag's row, all given | Its source field, reason, `yes` and timing are given: typing them teaches nothing the `deduction_amt` row does not. |
 
 What else the check accepts: any flag name, any `why_empty` and any reason of 6 words or more, and `yes` or `no` (the debrief takes the timing). It checks that the flag matches the empty cells and that both source fields name 12e. The optional part (more rows, `name_length` struck) is not checked.
 
 The feature record starts in the exercise's own cell 4 with the reading's two rows, `tax_to_agi` and `tax_added_by_exam` (struck), copied from its table. Cells 3 and 4 write two tables in the learner's schema: `features_flagged` and `model_feature_record`, the feature record. Tuesday reads `model_feature_record`.
 
-The reason for `deduction_amt` is neutral on purpose: which features push case #123's score is Thursday's, and the deduction is one of them.
+The reason for `deduction_amt` is general on purpose: it says nothing about any one return's score, a later day's topic.
+
+The learner types 7 values: the schema number, the amount's name, `empty_means`, `why_empty`, and three slots of the `deduction_amt` row. Step 1 says where the schema's number is (Catalog, `course`).
 
 ## Where each rule comes from (for the trainer, never in a learner cell)
 

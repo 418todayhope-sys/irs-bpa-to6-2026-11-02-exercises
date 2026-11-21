@@ -2,7 +2,7 @@
 
 **Goal:** After this exercise, you can count the outcomes of a label and compute the accuracy of a baseline that always predicts the most common one.
 
-**Scenario:** On Tuesday you train two models on the training set, `model_train`, and each one reports an accuracy. Today you work out the accuracy that you get with no model: you always say the most common outcome. The models of Tuesday must beat that number.
+**Scenario:** On Tuesday you train two models on the training set, `model_train`, and each one reports an accuracy. Today you work out the baseline's accuracy: the baseline always predicts the most common outcome. The models of Tuesday must beat that number.
 
 **AI tool:** none.
 
@@ -16,11 +16,11 @@
 
 **What you have:**
 
-- `course.returns.model_train`, the week's training set in Unity Catalog: the 500 returns of tax years 2020 and 2021, made up by the course.
+- `course.returns.model_train`, the week's training set in Unity Catalog, where Databricks keeps the course's tables: the 500 returns of tax years 2020 and 2021, made up by the course.
 - The trainer's example, shown before this exercise: the same cells, run on the validation set, `model_valid`.
 - `check.py`, beside this notebook. Cell 4 runs it. It counts the table again and compares.
 
-**Start from:** this notebook as the course gives it, attached to the compute the trainer names. To start again, set the cells you typed back to how the course gives them. In a Git folder, Databricks saves your edits as you type.
+**Start from:** this notebook as the course gives it, attached to the compute the trainer names (the computer in Databricks that runs your cells). To start again, set the cells you typed back to how the course gives them. In a Git folder, Databricks saves your edits as you type.
 
 ### Step 1. Count each outcome of the training set
 

@@ -16,17 +16,17 @@
 
 **What you have:**
 
-- `course.returns.model_returns`, the week's return table in Unity Catalog: 1,000 returns, made up by the course.
+- `course.returns.model_returns`, the week's return table in Unity Catalog, where Databricks keeps the course's tables: 1,000 returns, made up by the course.
 - The trainer's example, shown before this exercise.
 - `check.py`, beside this notebook. Cell 4 runs it. It reads your text and the table's column names.
 
-**Start from:** this notebook as the course gives it, attached to the compute the trainer names. To start again, set the cells you typed back to how the course gives them. In a Git folder, Databricks saves your edits as you type.
+**Start from:** this notebook as the course gives it, attached to the compute the trainer names (the computer in Databricks that runs your cells). To start again, set the cells you typed back to how the course gives them. In a Git folder, Databricks saves your edits as you type.
 
 ### Step 1. See which past decisions the table records
 
 Why: a label is a past decision that the table records. So you look first at what the table records.
 
-Run cell 1. You should see 18 column names, from `case_id` to `tax_added_by_exam`. Two of them come from past examinations: `exam_changed_tax` and `tax_added_by_exam`. The other 16 hold what the return showed when it was filed, such as its keys, its header and its amounts. None of them records what happened after filing.
+Run cell 1. You should see 18 column names, from `case_id` to `tax_added_by_exam`. Two of them come from past examinations: `exam_changed_tax` and `tax_added_by_exam`. One, whose name starts with `made_up`, is a code the course made up for a later day: nothing today uses it. The other 15 are keys (numbers that tell one return or filer from another), header fields and the amounts on the return. None of them records what happened after filing.
 
 Notebook cell 1:
 

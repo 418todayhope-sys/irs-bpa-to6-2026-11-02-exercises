@@ -12,7 +12,9 @@ The answer is `exercise.ipynb` beside this file.
 
 What else the check accepts: any `why` of 6 words or more and any `needs` of 8 words or more. It checks the two labels, not the reasons. The debrief takes the reasons.
 
-Step 1 says what the other 16 columns hold in general words (keys, header, amounts) and names none of them: one of them is Thursday's group, which Monday does not name.
+Step 1 says what the other columns hold in general words (keys, header, amounts). Of the one column the course made up for a later day, it says only that nothing today uses it.
+
+What else the check says: a Q2 label that is not a column, such as `none`, prints a line that asks for `no label`, exactly.
 
 ## Where each rule comes from (for the trainer, never in a learner cell)
 

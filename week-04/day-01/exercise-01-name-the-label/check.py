@@ -31,6 +31,8 @@ def left(columns: list[str], values: dict) -> list[str]:
         out.append(f'Cell 2: "{q1}" is a value of the return, not a past decision. Step 2.')
     if not q2:
         out.append('Cell 2: type Q2\'s label: a column name, or "no label". Step 2.')
+    elif q2 != "no label" and q2 not in columns:
+        out.append(f'Cell 2: "{q2}" is not a column. If no column holds Q2\'s label, type no label, exactly. Step 2.')
     elif q2 != "no label":
         out.append(f'Cell 2: Q2\'s label is "{q2}". Does that column record whether a past return was amended? Step 2.')
     for question in ("Q1", "Q2"):

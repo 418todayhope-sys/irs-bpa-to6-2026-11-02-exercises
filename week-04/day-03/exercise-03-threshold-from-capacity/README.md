@@ -209,6 +209,6 @@ print("Your threshold for 25:", tree_threshold, "| why not 10:", why_not_10 or "
 
 1. What would change your sentence on which error costs more?
 2. Why read the threshold from capacity, not keep 0.5?
-3. Why can the tree not fill a list of 10?
+3. Why can the tree's scores not choose a list of 10?
 
 The answer, after you try: [`answers/exercise-03-threshold-from-capacity`](../answers/exercise-03-threshold-from-capacity/).

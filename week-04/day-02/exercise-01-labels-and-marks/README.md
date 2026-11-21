@@ -12,13 +12,15 @@
 
 **Done when:** cell 8 prints `Done:`.
 
+**Cells:** a cell's number is the `# N.` comment on its first line, such as `# 1.`; text cells have no number.
+
 **Optional part:** Finished early? Cell 9 asks for one sentence.
 
 **What you have:**
 
 - `course.returns.model_train`, the course's training set, as on Monday. Its label `exam_changed_tax` is `yes` when an examination changed the tax, `no` when it did not, and empty when nobody examined the return. If it cannot be read, cell 2 makes the same rows from the course's setup file and says so.
 - `course.learner_NN.model_feature_record`, your feature record from Monday, four rows (`NN`: your number). If it cannot be read, cell 2 shows Monday's answer.
-- `fields.csv`: two made-up columns, matched to the returns by `return_id`. Its first lines say what each column holds and when it is written.
+- `fields.csv`: two made-up columns, matched to the returns by `return_id`. Its first lines say what each column holds.
 - `refund-held.csv` (the trainer's demo), `load.py` and `check.py` (given code).
 
 **Start from:** this notebook as the course gives it, on the trainer's compute. No cell changes your tables. New here: a column beside the course tables that gives the label away.
@@ -84,7 +86,7 @@ In cell 4, type an answer of two words or more between each pair of quotes, from
 | Question | The fact that decides it |
 |---|---|
 | `decision` | `yes` means that the examination changed the tax |
-| `made by` | "The course's data gives some returns a label that stands for an examination's result." (the day's reading) |
+| `made by` | on a real return, an examiner; here, "The course's data gives some returns a label that stands for an examination's result." (the day's reading) |
 | `when` | an examination closes after the return was filed and selected |
 
 Notebook cell 4:
@@ -129,7 +131,7 @@ for column, note in read_notes(beside).items():
 "When you find such a feature, trace it to where it came from: which table holds it, which step wrote it, and when. The answer to *when* decides." (the day's reading) Here *step* means a stage of the tax work, not a step of this exercise.
 
 1. In cell 6, type the name of the column that agrees with the label on nearly every return.
-2. Answer which step wrote it and when, from what the file says of it in cell 5. The table is given: the file. Run cell 6.
+2. Answer which step of the tax work wrote it: what changes the tax on an account after a return is filed? The table is given: the file. Its timing, *when*, is your mark in cell 7. Run cell 6.
 
 Notebook cell 6:
 
@@ -138,8 +140,7 @@ Notebook cell 6:
 suspect = ""  # its name, from cell 5's counts
 trace = {
     "which table holds it": beside,  # given: the file cell 5 read
-    "which step wrote it": "",       # from what the file says of the column
-    "when": "",                      # before or after the case was selected
+    "which step wrote it": "",       # which stage of the tax work writes this column
 }
 print("The column:", suspect or "(not yet)")
 for question, answer in trace.items():
@@ -150,7 +151,7 @@ for question, answer in trace.items():
 
 "was it known before the case was selected? Mark each feature *before* or *after*. Train only on the features marked *before*." (the day's reading)
 
-Monday's record already marks its four rows, so cell 7 gives them. In cell 7, for each of the two columns of `fields.csv`, type `before` or `after`, then a reason of three words or more. Run cell 7. You should see four features under `Train on:` and two under `Leave out:`.
+Monday's record already marks its four rows, so cell 7 gives them. In cell 7, mark the two columns cell 5 counted: the first slot holds the column you traced; in the second, type the other column's name. For each, type `before` or `after`, then a reason of three words or more: the reason is *when* it was written. Run cell 7. You should see four features under `Train on:` and two under `Leave out:`.
 
 Notebook cell 7:
 
@@ -166,15 +167,18 @@ marks = {  # Monday's record marks these four: given
     "deduction_missing": ("before", "whether line 12e is empty shows on the filed return"),
     "tax_added_by_exam": ("after", "written when the examination closed"),
 }
-marks[suspect] = ("", "")         # the column you traced in cell 6: before or after, then a reason
-marks["days_to_file"] = ("", "")  # the other column of fields.csv: before or after, then a reason
+file_marks = [  # each column of fields.csv: its name, "before" or "after", then a reason
+    (suspect, "", ""),  # the column you traced in cell 6
+    ("", "", ""),       # the other column cell 5 counted
+]
+marks.update({name: (mark, reason) for name, mark, reason in file_marks})
 print("Train on:", ", ".join(f for f, (mark, _) in marks.items() if mark.strip().lower() == "before"))
 print("Leave out:", ", ".join(f for f, (mark, _) in marks.items() if mark.strip().lower() == "after"))
 ```
 
 ### Step 7. Check
 
-Run cell 8. It prints `Done:`, or `Not yet:` and what is left. Exercise 2's given cells train on twelve features of the course tables, all marked `before`; they read nothing from `fields.csv`.
+Run cell 8. It prints `Done:`, or `Not yet:` and what is left. Exercise 2's given cells train on twelve features of the course tables: Monday's three marked `before`, and nine more from the filed return (the filing status, amounts and a ratio), which the day's reading marks `before`. They read nothing from `fields.csv`.
 
 Notebook cell 8:
 
@@ -192,7 +196,7 @@ print(_check["in_notebook"](schema, {
 
 Optional: cell 8 does not check it.
 
-In cell 9, write one sentence: why does the column you traced miss one return labelled `yes`? What the file says of it holds the fact. Run cell 9.
+In cell 9, write one sentence: why does the column you traced miss one return labelled `yes`? What the file says of it holds the clue. Run cell 9.
 
 Notebook cell 9:
 

@@ -1,6 +1,6 @@
 # Made up by the course for week 4, day 2. No real return, taxpayer, amount or account.
-# days_to_file: days from 1 January of the year after the tax year to the day the return was received. Written when the return is received, before any case is selected.
-# account_change_amt: a change to the tax on the taxpayer's account. Written when an examination closes, months after the case was selected. 0 when no tax was added, or when none was written yet on the day the course made the data.
+# days_to_file: the number of days from 1 January of the year after the tax year to the day the return arrived.
+# account_change_amt: a change to the tax on the taxpayer's account, in dollars. 0 when the account showed no change on the day the course made the data.
 return_id,days_to_file,account_change_amt
 F-40619-2021,53,0
 F-40927-2020,54,0

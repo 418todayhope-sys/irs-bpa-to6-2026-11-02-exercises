@@ -9,12 +9,12 @@ The answer is `exercise.ipynb` beside this file. Its cell 5 holds the second run
 | 2 | run as given | The two candidates of exercise 2, fitted again with the same cells, so the run cell has them in memory. Split: train, tax years 2020 to 2021; validation, tax year 2022, 200 returns with a label. |
 | 4 | run as given | It prints what each run should record, exercise 2's two accuracies as cell 2 fitted them again: `logistic-regression` 0.955, `decision-tree` 0.895. The record must show the same numbers; if it does not, a run recorded the wrong value. |
 | 5, first run | `run_name = "logistic-regression"` | One run, with its model type (`LogisticRegression`, read from inside its pipeline by the given `model_name`), split and measure as parameters, its validation accuracy as a metric, and the fitted pipeline. |
-| 5, second run | `run_name = "decision-tree"` | The second run, with `max_depth` 3 too. Only the name changes: the cell takes the candidate of that name. |
+| 5, second run | `run_name = "decision-tree"` | The second run, with `max_depth` 3 too. Only the name changes: the cell takes the candidate of that name. Each run ends with `set_tag("model_logged", "yes")`, reached only once `log_model` has saved the model. |
 | 6 | run as given | `2 runs in your experiment`, then the newest run of each name: logistic-regression 0.955, decision-tree 0.895, both on the same split and measure, and `Not what cell 4 expects`, with what to do, where a run differs from cell 4. |
 | 7 | `higher = "logistic-regression"` | Its run's validation accuracy is the higher, 0.955 against 0.895, on the same split and the same measure, so the comparison is fair. The learner names the higher; Wednesday judges the two candidates. |
 | 9, optional | one sentence: when should it be retrained | For example: once a year, after the next tax year's examinations close and give new labels. The reading's own answer is that the schedule follows the tax year; any reasoned schedule is a good answer. |
 
-What else the check accepts: either run name when the two accuracies are equal; more than two runs in the experiment (the newest of each name counts), so a learner who runs cell 5 again loses nothing.
+What the check refuses: a run with no `model_logged` tag, which is what MLflow 2 leaves when `log_model` stops with a `TypeError` on `name` after the parameters and the metric were logged (`Not yet`, with what to do). Step 4's look at the logged model is optional and not checked. What else the check accepts: either run name when the two accuracies are equal; more than two runs in the experiment (the newest of each name counts), so a learner who runs cell 5 again loses nothing.
 
 The trainer's demo (deck slide 44) records one run with cell 5 as the course gives it: `logistic-regression`, validation accuracy 0.955, split "train: tax years 2020 to 2021; validation: tax year 2022, 200 returns with a label", measure accuracy. Then the Experiments page, then the retraining job, which the learners watch.
 
@@ -46,7 +46,7 @@ None beyond the course's tables.
 ## Where it ran
 
 - Not run in Databricks: a trainer gap. What only a run there confirms: `spark.table` on `course.returns.model_train` and `model_valid` for a learner in `training-students`, and `toPandas()` on them; MLflow's `set_experiment`, `log_param`, `log_metric`, `sklearn.log_model` and `search_runs` on the workspace.
-- Run on a laptop, 2026-11-21, Python 3.11.5, scikit-learn 1.3.0, pandas 2.0.3, on a stand-in for the Spark calls and for MLflow, over the course's week 4 tables made by `week-04/setup/day-01-course-data.py`, and again with no table readable (load.py makes the same rows from that file): start `Not yet: 2 left.` (the notebook as given records the run `logistic-regression`), answer `Done:` on both. The same numbers as the week's setup measurement, which used scikit-learn 1.5.2.
+- Run on a laptop, 2026-11-21, Python 3.11.5, scikit-learn 1.3.0, pandas 2.0.3, on a stand-in for the Spark calls and for MLflow, over the course's week 4 tables made by `week-04/setup/day-01-course-data.py`, and again with no table readable (load.py makes the same rows from that file): start `Not yet: 2 left.` (the notebook as given records the run `logistic-regression`), answer `Done:` on both; with `log_model` raising the `TypeError` on `name`, the answer prints `Not yet: 2 left.`, one line for each run with no logged model. The same numbers as the week's setup measurement, which used scikit-learn 1.5.2.
 
 ## Modelled on
 

@@ -2,7 +2,7 @@
 
 **Goal:** After this exercise, you can record two fits as MLflow runs and name the candidate with the higher accuracy from what the runs recorded. Wednesday judges the two.
 
-**Scenario:** Three weeks from now, someone asks which of your two models was better, on which rows, and with which settings. You record both fits now, so that the answer comes from the record and not from memory.
+**Scenario:** Three weeks from now, someone asks which of your two models had the higher accuracy, on which rows, and with which settings. You record both fits now, so that the answer comes from the record and not from memory.
 
 **AI tool:** none.
 
@@ -11,6 +11,8 @@
 **Where you work:** this notebook, `week-04/day-02/exercise-03-record-two-runs/exercise.ipynb`, in your Git folder of the course in Databricks, then the workspace's Experiments page.
 
 **Done when:** cell 8 prints `Done:`.
+
+**Cells:** a cell's number is the `# N.` comment on its first line, such as `# 1.`; text cells have no number.
 
 **Optional part:** Finished early? Cell 9 asks for one sentence on retraining.
 
@@ -82,7 +84,7 @@ for name, accuracy in expected.items():
 1. Run cell 5. You should see `Recorded the run logistic-regression`.
 2. In cell 5, type `decision-tree` in place of `logistic-regression`. Change nothing else. Run cell 5 again. You should see `Recorded the run decision-tree`.
 
-`start_run` starts a run; each `log_param` writes one parameter, a setting, into it; `log_metric` writes the measured accuracy; `log_model` saves the fitted model with the run. Red warnings while the model is saved are normal. If cell 5 stops with a `TypeError` on `name`, ask the trainer.
+`start_run` starts a run; each `log_param` writes one parameter, a setting, into it; `log_metric` writes the measured accuracy; `log_model` saves the fitted model with the run, and `set_tag` notes that it did. Red warnings while the model is saved are normal. If cell 5 stops with a `TypeError` on `name`, the model was not saved: ask the trainer, then run cell 5 again for that run name.
 
 Notebook cell 5:
 
@@ -100,6 +102,7 @@ with mlflow.start_run(run_name=run_name):
     mlflow.log_param("measure", "accuracy")               # how it was measured
     mlflow.log_metric("validation_accuracy", accuracy)    # a measured result
     mlflow.sklearn.log_model(model, name="model")         # the fitted model itself
+    mlflow.set_tag("model_logged", "yes")                 # reached only once the model is saved
 print("Recorded the run", run_name)
 ```
 
@@ -125,13 +128,13 @@ for _, run in newest.iterrows():
 
 1. In the workspace's left sidebar, click **Experiments**, then open `week-04-candidates`. You should see one row for each run.
 2. Tick the boxes of the two newest runs, one of each name, then click **Compare**. You should see each run's parameters and its `validation_accuracy`, the same numbers as cell 6.
-3. Open one run and find its logged model. The trainer shows where it is.
+3. Optional: open one run and look for its logged model. The trainer shows where it is.
 
 This step has no cell.
 
 ### Step 5. Name the candidate with the higher accuracy, and check
 
-1. In cell 7, type the name of the run with the higher validation accuracy in cell 6. Run cell 7. You should see both runs' accuracies.
+1. In cell 7, type the name of the run that cell 6 shows with the higher validation accuracy. Run cell 7. You should see both runs' accuracies.
 2. Run cell 8. It prints `Done:`, or `Not yet:` and what is left.
 
 Notebook cell 7:

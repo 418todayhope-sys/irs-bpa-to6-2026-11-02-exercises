@@ -10,6 +10,10 @@
    },
    "metrics": {
     "validation_accuracy": 0.895
+   },
+   "tags": {
+    "mlflow.runName": "decision-tree",
+    "model_logged": "yes"
    }
   },
   "logistic-regression": {
@@ -20,6 +24,10 @@
    },
    "metrics": {
     "validation_accuracy": 0.955
+   },
+   "tags": {
+    "mlflow.runName": "logistic-regression",
+    "model_logged": "yes"
    }
   }
  },

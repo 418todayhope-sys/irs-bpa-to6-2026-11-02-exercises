@@ -20,7 +20,8 @@ def left(f: dict) -> list[str]:
     """Return what is left: one line for each thing that is not yet right.
 
     Args:
-        f: the facts: runs (the newest run of each name: its params and its metrics), accuracy
+        f: the facts: runs (the newest run of each name: its params, its metrics, and its tags, where
+            cell 5 notes model_logged once the model is saved), accuracy
             (each candidate's, as cell 2 fitted it) and higher (the run name typed in cell 7).
 
     Returns:
@@ -41,11 +42,15 @@ def left(f: dict) -> list[str]:
         elif m.get("validation_accuracy") is None or abs(m["validation_accuracy"] - f["accuracy"][name]) > 0.0005:
             out.append(f"The run {name} records another accuracy than its candidate's. Run cells 2 and 5 again for "
                        "it. Step 2.")
+        elif run.get("tags", {}).get("model_logged") != "yes":
+            out.append(f"The run {name} has no logged model: cell 5 stopped before log_model finished. Ask the "
+                       "trainer, then run cell 5 again for it. Step 2.")
     recorded = {n: r["metrics"].get("validation_accuracy") for n, r in f["runs"].items() if n in RUNS}
     values = [v for v in recorded.values() if v is not None]
     best = [n for n, v in recorded.items() if v is not None and v == max(values)] if values else []
     if str(f["higher"]).strip() not in best or len(values) < 2:
-        out.append("Cell 7: type the name of the run with the higher validation accuracy in cell 6. Step 5.")
+        out.append("In cell 7, type the name of the run that cell 6 shows with the higher validation accuracy. "
+                   "Step 5.")
     return out
 
 
@@ -72,7 +77,8 @@ def facts_of(g: dict) -> dict:
         if name in newest:
             continue
         newest[name] = {"params": {k[7:]: v for k, v in row.items() if k.startswith("params.") and isinstance(v, str)},
-                        "metrics": {k[8:]: float(v) for k, v in row.items() if k.startswith("metrics.") and v == v}}
+                        "metrics": {k[8:]: float(v) for k, v in row.items() if k.startswith("metrics.") and v == v},
+                        "tags": {k[5:]: v for k, v in row.items() if k.startswith("tags.") and isinstance(v, str)}}
     return {"experiment": g["experiment"], "runs": newest,
             "accuracy": {n: float(a) for n, (_, a) in g["candidates"].items()}, "higher": g.get("higher", "")}
 

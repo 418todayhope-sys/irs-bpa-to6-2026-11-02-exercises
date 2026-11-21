@@ -16,12 +16,13 @@ LABEL = "exam_changed_tax"
 FILE = "fields.csv"
 GIVEN = {"tax_to_agi": "before", "deduction_amt": "before", "deduction_missing": "before",
          "tax_added_by_exam": "after"}  # Monday's record marks these four; cell 7 gives them
+EXAMINER = ("exam", "auditor", "agent")  # "exam" covers examiner and examination
 MADE_BY = ("course", "synthetic", "made up", "made-up", "simulated", "fake", "not real", "generated", "invented")
 START = {"schema": "course.learner_NN", "label_column": "refund_held",
          "origin": {"decision": "", "made by": "", "when": ""},
          "beside": "refund-held.csv", "agreement_label": "refund_held", "agreement": {"refund_hold_days": 16},
          "labelled": 16, "suspect": "", "file_agreement": {},
-         "trace": {"which table holds it": "refund-held.csv", "which step wrote it": "", "when": ""},
+         "trace": {"which table holds it": "refund-held.csv", "which step wrote it": ""},
          "marks": dict({name: [mark, "given in cell 7"] for name, mark in GIVEN.items()}, **{"": ["", ""]}),
          "counts": {"no": 320, "yes": 80}, "empty": 100}
 
@@ -52,8 +53,8 @@ def left(f: dict) -> list[str]:
     decision, missing = origin.get("decision", ""), []
     if not ("exam" in decision or "audit" in decision or ("tax" in decision and "chang" in decision)):
         missing.append("decision (which decision: the examination's result)")
-    if not any(word in origin.get("made by", "") for word in MADE_BY):
-        missing.append("made by (who made these labels: the returns are made up)")
+    if not any(word in origin.get("made by", "") for word in MADE_BY + EXAMINER):
+        missing.append("made by (who made these labels)")
     if len(origin.get("when", "").split()) < 2:
         missing.append("when (two words or more)")
     if missing:
@@ -67,14 +68,9 @@ def left(f: dict) -> list[str]:
         out.append(f"Cell 6: type the name of the column of {FILE} that agrees with {LABEL} on nearly every "
                    "return, as cell 5 counted it. Step 5.")
     trace = {k: plain(v) for k, v in f["trace"].items()}
-    missing = []
-    if not any(w in trace.get("which step wrote it", "") for w in ("exam", "audit")):
-        missing.append("which step wrote it (what the file says writes it)")
-    if not any(w in trace.get("when", "") for w in ("after", "clos", "later", "month")):
-        missing.append("when (before or after the case was selected)")
-    if missing:
-        out.append("Cell 6: answer " + "; ".join(missing) + ". Cell 5 printed what the file says of each column. "
-                   "Then run cell 6. Step 5.")
+    if not any(w in trace.get("which step wrote it", "") for w in ("exam", "audit", "assess", "adjust")):
+        out.append("Cell 6: answer which step of the tax work wrote the column: what changes the tax on an account "
+                   "after a return is filed? Then run cell 6. Step 5.")
     wanted = dict(GIVEN, **{column: ("after" if column == leak else "before") for column in found})
     wrong = set()
     for name, right in wanted.items():
@@ -83,12 +79,21 @@ def left(f: dict) -> list[str]:
             wrong.add(name)
     given_changed, file_wrong = bool(wrong & set(GIVEN)), bool(wrong - set(GIVEN))
     if file_wrong or not found:
-        out.append(f"Cell 7: give each column of {FILE} the mark its timing says, before or after, and a reason of "
-                   "three words or more. Then run cell 7. Step 6.")
+        out.append(f"Cell 7: give each column of {FILE} its name, the mark its timing says, before or after, and a "
+                   "reason of three words or more. Then run cell 7. Step 6.")
     if given_changed:
         out.append("Cell 7: the four rows of Monday's record are given. Set them back as the course gives them. "
                    "Step 6.")
     return out
+
+
+def note(f: dict) -> str:
+    """One line when cell 4 names an examiner: right for a real return, but these labels are the course's."""
+    made_by = plain(f["origin"].get("made by", ""))
+    if any(w in made_by for w in EXAMINER) and not any(w in made_by for w in MADE_BY):
+        return ("\nNote: on a real return an examiner makes this label; in this course no examiner did, and the "
+                "labels themselves are made up by the course.")
+    return ""
 
 
 def report(f: dict) -> str:
@@ -99,8 +104,9 @@ def report(f: dict) -> str:
         return (f"Done: {LABEL} counts no {counts.get('no', 0)}, yes {counts.get('yes', 0)}, and {f['empty']} empty, "
                 f"not counted. Of the columns of {FILE}, {f['suspect']} agrees with it on "
                 f"{f['file_agreement'][f['suspect']]} of {n} returns; you traced it to a step after selection and "
-                "marked it after, beside tax_added_by_exam. Exercise 2 trains on twelve features, all marked before.")
-    return "\n".join([f"Not yet: {len(out)} left."] + ["- " + item for item in out])
+                "marked it after, beside tax_added_by_exam. Exercise 2 trains on twelve features, all marked before."
+                + note(f))
+    return "\n".join([f"Not yet: {len(out)} left."] + ["- " + item for item in out]) + note(f)
 
 
 def facts_of(schema: str, values: dict, folder: str) -> dict:

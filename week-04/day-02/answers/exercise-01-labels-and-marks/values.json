@@ -20,8 +20,7 @@
  },
  "trace": {
   "which table holds it": "fields.csv",
-  "which step wrote it": "the examination, when it closed",
-  "when": "after the case was selected, months later"
+  "which step wrote it": "the examination, when it closed"
  },
  "marks": {
   "tax_to_agi": [
@@ -42,11 +41,11 @@
   ],
   "account_change_amt": [
    "after",
-   "the examination writes it when it closes"
+   "written when the examination closed, months after selection"
   ],
   "days_to_file": [
    "before",
-   "written when the return is received"
+   "the return is received before any selection"
   ]
  },
  "counts": {

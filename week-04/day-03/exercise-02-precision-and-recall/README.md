@@ -1,43 +1,88 @@
-# Exercise 2: Count both candidates' matrices, then precision and recall for each
+# Exercise 2: Count both candidates' matrices, then precision and recall for each (we do)
 
 **Goal:** After this exercise, you can compute each candidate's precision and recall at 0.5 from its four counts and set them beside its accuracy in its run.
 
-**Scenario:** The made-up examination group's manager asks two questions of each candidate's list: how many of the returns it sends are worth an examiner's time, and how many of the returns worth the time it sends. You count both candidates' matrices at 0.5, divide by hand, and log the answers into each candidate's run.
+**Scenario:** The examiners' manager asks two questions of each candidate's list: how many of the returns it sends would be worth an examiner's time, and how many of the returns worth the time it sends. A given cell counts both candidates' matrices on the 200 examined returns of `model_valid` at 0.5; you divide by hand and log the answers into each candidate's run from Tuesday.
 
 **AI tool:** none.
 
-**Time:** 25 minutes: 21 to do it, 4 for setup problems.
+**Time:** 15 minutes: 11 to do it, 4 for setup problems.
 
 **Where you work:** this notebook, `week-04/day-03/exercise-02-precision-and-recall/exercise.ipynb`, in your Git folder of the course in Databricks, then the workspace's Experiments page.
 
-**Done when:** cell 5 prints `Done:`.
+**Done when:** cell 7 prints `Done:`.
 
-**Optional part:** Finished early? Cell 6 checks your divisions with scikit-learn.
+**Cells:** a cell's number is the `# N.` comment on its first line, such as `# 1.`; text cells have no number.
+
+**Optional part:** Finished early? Cell 8 checks your divisions with scikit-learn, then asks for the baseline's recall.
 
 **What you have:**
 
-- `validation-scores.csv`: the 1,000 made-up validation returns of exercise 1, each with its label and its score from each of Tuesday's two candidates.
-- Tuesday's two runs, `logistic-regression` and `decision-tree`, in your experiment `week-04-candidates`. If they are not there, cell 4 makes them and tells you.
-- `load.py` and `check.py`: given code that cells 1 and 5 run.
+- `course.returns.model_train` and `course.returns.model_valid`, as in exercise 1. If they cannot be read, cell 1 makes the same rows from the course's setup file and says so.
+- Your experiment `week-04-candidates`, with Tuesday's two runs, `logistic-regression` and `decision-tree`. If a run is not there, cell 6 makes one of that name and says so.
+- `load.py` and `check.py`, given code that cells 1 and 7 run.
 
-**Start from:** this notebook as the course gives it, attached to the compute the trainer names. No cell changes your tables. New here: precision and recall.
+**Start from:** this notebook as the course gives it, attached to the compute the trainer names. No cell changes your tables. New here: precision and recall, from each candidate's own counts.
 
-### Step 1. Read the validation returns, then guess
+### Step 1. Score the validation returns
 
-Why: you understand a result when you said what you expected first.
+Run cells 1 and 2. You do not need to change them. You should see:
 
-1. Run cell 1. You do not need to read its first three lines. You should see `Read 1000 made-up validation returns`.
-2. In cell 1, type your guess between the quotes: which candidate has the higher recall, and which the higher precision? Type `logistic-regression` or `decision-tree` in each.
-3. Run cell 1 again. You should see your guess.
+1. Which tables cell 1 uses, then 500 returns in `model_train` and 250 in `model_valid`.
+2. Cell 2 fits Tuesday's two candidates again, with Tuesday's lines, on the 400 examined returns of `model_train`. Then each one gives a score to every return of `model_valid`: `predict_proba` gives the score from 0 to 1, where Tuesday's `predict` cut it at 0.5. You should see 40 returns labelled `change`, 160 `no change` and 50 `never examined`.
+
+A score is one return's number from 0 to 1: a relative risk indicator that a person acts on, never a finding about the taxpayer. A label records a past examination: `change` means it changed the tax, `exam_changed_tax` `yes`.
 
 Notebook cell 1:
 
 ```python
-# 1. The 1,000 made-up validation returns, then your guess.
+# 1. Read the course's training and validation sets. You do not need to change this cell.
 import os
-folder = os.getcwd().split("/week-04/")[0] + "/week-04/day-03/exercise-02-precision-and-recall"
-exec(open(f"{folder}/load.py", encoding="utf-8").read())  # reads the file beside this notebook
+course_folder = os.getcwd().split("/week-04/")[0]  # your Git folder of the course
+folder = f"{course_folder}/week-04/day-03/exercise-02-precision-and-recall"
+try:
+    train_table = spark.table("course.returns.model_train")  # the training set: tax years 2020 and 2021
+    valid_table = spark.table("course.returns.model_valid")  # the validation set: tax year 2022
+except Exception:
+    train_table, valid_table = None, None  # not there: load.py makes the same rows
+exec(open(f"{folder}/load.py", encoding="utf-8").read())  # you do not need to read load.py
+train, valid = load_sets(train_table, valid_table)
+```
 
+Notebook cell 2:
+
+```python
+# 2. Tuesday's two candidates, fitted again as Tuesday fitted them; each scores every return of model_valid.
+assert "valid" in globals(), "Run cell 1 first."
+from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.tree import DecisionTreeClassifier
+
+features = ["filing_status", "wages_amt", "taxable_interest_amt", "other_income_amt",
+            "total_income", "agi_amt", "deduction_amt", "deduction_missing",
+            "total_tax_amt", "withholding_amt", "tax_to_agi", "deduction_to_agi"]  # Tuesday's twelve
+examined = train[train["exam_changed_tax"].notna()]  # the 400 examined returns of model_train
+X_train, y_train = examined[features].fillna(0), examined["exam_changed_tax"]
+logistic = make_pipeline(StandardScaler(), LogisticRegression()).fit(X_train, y_train)
+tree = DecisionTreeClassifier(max_depth=3, random_state=0).fit(X_train, y_train)
+
+scores = valid[["case_id", "exam_changed_tax"]].copy()  # all 250 returns of model_valid
+scores["label"] = scores["exam_changed_tax"].map({"yes": "change", "no": "no change"}).fillna("never examined")
+scores["logistic_score"] = logistic.predict_proba(valid[features].fillna(0))[:, 1]  # column 1 is "yes"
+scores["tree_score"] = tree.predict_proba(valid[features].fillna(0))[:, 1]
+print(len(scores), "returns of model_valid scored by both candidates:", scores["label"].value_counts().to_dict())
+```
+
+### Step 2. Guess, then count both candidates' matrices
+
+1. In cell 3, type your guess between the quotes: at 0.5, which candidate has the higher recall, and which the higher precision? Type `logistic-regression` or `decision-tree` in each. Run cell 3.
+2. Run cell 4. It counts each candidate's four cells at 0.5 on the 200 examined returns, as exercise 1's code did. You should see, for each candidate, its four counts by name and the two sums: 200, and `TP + FN` 40.
+
+Notebook cell 3:
+
+```python
+# 3. Your guess, before the counts: which candidate has the higher recall, and which the higher precision?
 guess = {
     "higher recall": "",     # logistic-regression or decision-tree
     "higher precision": "",  # logistic-regression or decision-tree
@@ -45,119 +90,89 @@ guess = {
 print("Your guess:", guess)
 ```
 
-### Step 2. Count both candidates' matrices
-
-Why: precision and recall are each one division on the four counts.
-
-Run cell 2. It counts each candidate's four cells at 0.5 with exercise 1's counting code, once for each candidate. You should see, for each candidate, scikit-learn's table, then its four counts by name and the two sums. Sum 1 is 1000, and sum 2, `TP + FN`, is the 50 returns labelled change.
-
-Notebook cell 2:
+Notebook cell 4:
 
 ```python
-# 2. The counting code of exercise 1, for each candidate, at 0.5.
-from sklearn.metrics import confusion_matrix
-threshold = 0.5
+# 4. Each candidate's four counts at 0.5, on the 200 examined returns. You do not need to change this cell.
+assert "scores" in globals(), "Run cells 1 and 2 first."
+examined_scores = scores[scores["label"] != "never examined"]  # the 200 examined returns
+change = examined_scores["label"] == "change"
 counts = {}
-for name in ("logistic-regression", "decision-tree"):
-    on_list = ["change" if score >= threshold else "no change" for score in valid[name]]
-    table = confusion_matrix(valid["label"], on_list, labels=["change", "no change"])
-    (tp, fn), (fp, tn) = table  # rows: the label, change then no change
-    counts[name] = {"TP": int(tp), "FP": int(fp), "FN": int(fn), "TN": int(tn)}
-    print(name, "at", threshold)
-    print(table)
-    print("  ", counts[name], " Sum 1:", table.sum(), " Sum 2, TP + FN:", tp + fn)
+for name, column in (("logistic-regression", "logistic_score"), ("decision-tree", "tree_score")):
+    on = examined_scores[column] >= 0.5  # on the list at 0.5
+    counts[name] = {"TP": int((on & change).sum()), "FP": int((on & ~change).sum()),
+                    "FN": int((~on & change).sum()), "TN": int((~on & ~change).sum())}
+if "" in guess.values():
+    print("Type your guess in cell 3 and run it, then run this cell again.")
+else:
+    for name, c in counts.items():
+        print(f"{name} at 0.5: {c}  Sum 1: {sum(c.values())}  Sum 2, TP + FN: {c['TP'] + c['FN']}")
 ```
 
 ### Step 3. Divide by hand
 
-Why: "*Precision* is the share of the returns on the list that are labelled *change*." "*Recall* is the share of the returns labelled *change* that are on the list." (the day's reading)
+"*Precision* is the share of the returns on the list that are labelled *change*." "*Recall* is the share of the returns labelled *change* that are on the list." (the day's reading)
 
-| | You divide | Example: the ten returns at 0.5 |
+1. In cell 5, type each candidate's precision and recall in place of `None`, as a division of two counts from cell 4, such as `3 / 5`. The table says what to divide.
+
+| Value | Type this | Why |
 |---|---|---|
-| Precision | `TP` by all the returns on the list, `TP + FP` | `3 / 5` |
-| Recall | `TP` by all the returns labelled change, `TP + FN` | `3 / 4` |
+| `precision` | `TP / (TP + FP)`, with the candidate's two numbers from cell 4 | of the returns on the list, the share labelled change |
+| `recall` | `TP / (TP + FN)`, with the candidate's two numbers from cell 4 | of the returns labelled change, the share on the list |
 
-1. In cell 3, type each candidate's precision and recall in place of `None`, as a division of two counts from cell 2, such as `3 / 5`. A result such as `0.6` passes too, but the division shows what you divided by.
-2. Run cell 3. You should see each division's result, beside the candidate's accuracy on the same returns.
-
-Notebook cell 3:
-
-```python
-# 3. Precision and recall at 0.5, by hand. Type each as a division of two counts, such as 3 / 5.
-by_hand = {
-    "logistic-regression": {"precision": None, "recall": None},
-    "decision-tree": {"precision": None, "recall": None},
-}
-for name, measures in by_hand.items():
-    c = counts[name]
-    accuracy = (c["TP"] + c["TN"]) / sum(c.values())
-    shown = {k: (round(v, 3) if v is not None else "not yet") for k, v in measures.items()}
-    print(name, "| accuracy", round(accuracy, 3), "| precision", shown["precision"], "| recall", shown["recall"])
-```
-
-### Step 4. Compare with your guess
-
-Look at cell 3's two lines beside your guess of cell 1. This step has no cell.
-
-- Which candidate picks out more of the 50 returns labelled change? That is the higher recall.
-- Which candidate's list holds the larger share of returns labelled change? That is the higher precision.
-- The accuracies are almost the same. Precision and recall are not.
-
-### Step 5. Log the measures into each candidate's run
-
-Why: "the comparison still comes from the record" (the day's reading). Each run keeps its measures, with the threshold they belong to.
-
-Run cell 4. For each candidate, it finds Tuesday's run of that name and adds:
-
-1. `log_param("threshold", 0.5)`: the threshold, a parameter.
-2. `log_metric` three times: `precision` and `recall`, your divisions of cell 3, and `accuracy_same_rows`, the accuracy on the same 1,000 returns.
-3. `log_param("rows", ...)`: the returns they were counted on.
-
-The `validation_accuracy` already in each run was measured on Tuesday, on your own week 3 validation rows, not on these 1,000 made-up returns. So these three keep names of their own.
-
-You should see `Logged into Tuesday's run` twice, with each run's measures. If a line says `made a new run`, Tuesday's run was not found; that is fine.
-
-Notebook cell 4:
-
-```python
-# 4. Log precision, recall and the threshold into each candidate's run from Tuesday.
-import mlflow
-assert None not in [v for m in by_hand.values() for v in m.values()], "Type the four divisions of cell 3 first."
-user = spark.sql("SELECT current_user()").first()[0]  # your user name in the workspace
-experiment = f"/Users/{user}/week-04-candidates"
-mlflow.set_experiment(experiment)
-runs = mlflow.search_runs(experiment_names=[experiment])  # every run, newest first
-for name, measures in by_hand.items():
-    found = runs[runs["tags.mlflow.runName"] == name] if len(runs) else runs
-    run_id = found["run_id"].iloc[0] if len(found) else None  # Tuesday's run, the newest of this name
-    c = counts[name]
-    with mlflow.start_run(run_id=run_id, run_name=None if run_id else name):
-        mlflow.log_param("threshold", threshold)
-        mlflow.log_param("rows", "the course's 1,000 made-up validation returns")
-        mlflow.log_metric("precision", measures["precision"])
-        mlflow.log_metric("recall", measures["recall"])
-        mlflow.log_metric("accuracy_same_rows", (c["TP"] + c["TN"]) / sum(c.values()))
-    shown = {k: round(v, 3) for k, v in measures.items()}
-    print("Logged into Tuesday's run" if run_id else "No run from Tuesday: made a new run", name, shown)
-```
-
-### Step 6. Read the measures side by side on the Experiments page
-
-1. In the workspace's left sidebar, select **Experiments**, then open `week-04-candidates`.
-2. Select the boxes of the newest run named `logistic-regression` and the newest named `decision-tree`, then select **Compare**. You should see each run's `threshold`, `precision`, `recall` and `accuracy_same_rows`, the numbers of cell 3.
-
-This step has no cell.
-
-### Step 7. Check
-
-Run cell 5. It prints `Done:` when your guess is typed, your four divisions are right, and each run holds them with the threshold. Otherwise it prints `Not yet:` and what is left. If you change a division, run cells 3, 4 and 5 again.
-
-Keep this notebook. Exercise 3 uses these measures.
+2. Run cell 5. You should see each division's result beside the candidate's accuracy on the same 200 returns, Tuesday's 0.955 and 0.895. Compare with your guess of cell 3.
 
 Notebook cell 5:
 
 ```python
-# 5. Check. You do not need to read this code. It runs check.py, beside this notebook.
+# 5. Precision and recall at 0.5, by hand. Type each as a division of two counts from cell 4, such as 3 / 5.
+by_hand = {
+    "logistic-regression": {"precision": None, "recall": None},
+    "decision-tree": {"precision": None, "recall": None},
+}
+assert "counts" in globals(), "Run cell 4 first."
+for name, measures in by_hand.items():
+    c = counts[name]
+    shown = {k: ("not yet" if v is None else round(v, 3)) for k, v in measures.items()}
+    print(f"{name} at 0.5 | accuracy {(c['TP'] + c['TN']) / sum(c.values()):.3f} | precision {shown['precision']} | recall {shown['recall']}")
+```
+
+### Step 4. Log the measures into each candidate's run, and compare them
+
+"write the threshold beside every precision and every recall" (the day's reading). Each run keeps its measures with the threshold they belong to.
+
+1. Run cell 6. For each candidate, it opens the newest run of that name in `week-04-candidates`, Tuesday's run, and adds `threshold` 0.5 as a parameter and your `precision` and `recall` as metrics. You should see `Logged into Tuesday's run` twice.
+2. In the workspace's left sidebar, click **Experiments**, then open `week-04-candidates`. Tick the newest run of each name and click **Compare**. You should see each run's `threshold`, `precision` and `recall` beside Tuesday's `validation_accuracy`: the same 200 returns.
+3. Run cell 7. It prints `Done:`, or `Not yet:` and what is left. If you change a division, run cells 5, 6 and 7 again.
+
+Notebook cell 6:
+
+```python
+# 6. Log the threshold, precision and recall into each candidate's run from Tuesday.
+import mlflow
+assert "by_hand" in globals(), "Run cell 5 first."
+user = spark.sql("SELECT current_user()").first()[0]  # your user name in the workspace
+experiment = f"/Users/{user}/week-04-candidates"      # Tuesday's experiment
+mlflow.set_experiment(experiment)
+runs = mlflow.search_runs(experiment_names=[experiment])  # every run, newest first
+for name, measures in by_hand.items():
+    if None in measures.values():
+        print(f"Type the two divisions of {name} in cell 5 first.")
+        continue
+    found = runs[runs["tags.mlflow.runName"] == name] if len(runs) else runs
+    run_id = found["run_id"].iloc[0] if len(found) else None  # the newest run of this name
+    with mlflow.start_run(run_id=run_id, run_name=None if run_id else name):
+        mlflow.log_param("threshold", 0.5)
+        mlflow.log_metric("precision", measures["precision"])
+        mlflow.log_metric("recall", measures["recall"])
+    print("Logged into Tuesday's run" if run_id else "No run from Tuesday, so made a new run:", name,
+          {k: round(v, 3) for k, v in measures.items()})
+```
+
+Notebook cell 7:
+
+```python
+# 7. Check. You do not need to read this code. It runs check.py, beside this notebook.
 _check = {"__name__": "check"}
 exec(open(f"{folder}/check.py", encoding="utf-8").read(), _check)
 check_now = _check["in_notebook"]
@@ -166,27 +181,27 @@ print(check_now(globals()))
 
 ### Finished early?
 
-Optional: cell 5 does not check it.
+Optional: cell 7 does not check it.
 
-1. Run cell 6. scikit-learn computes each candidate's precision and recall: compare them with yours.
-2. In cell 6, type the baseline's recall in place of `None`, as a division. The baseline says no change for every return. Run cell 6 again. Why can its precision not be computed?
+1. Run cell 8. scikit-learn computes each candidate's precision and recall at 0.5: compare them with yours.
+2. In cell 8, type the baseline's recall in place of `None`, as a division. The baseline says no change for every return. Run cell 8 again. Why can its precision not be computed?
 
-Notebook cell 6:
+Notebook cell 8:
 
 ```python
-# 6. Optional: scikit-learn's precision and recall, then the baseline's recall.
+# 8. Optional: scikit-learn's precision and recall, then the baseline's recall.
 from sklearn.metrics import precision_score, recall_score
-for name in ("logistic-regression", "decision-tree"):
-    on_list = ["change" if score >= threshold else "no change" for score in valid[name]]
-    print(name, "| precision", round(precision_score(valid["label"], on_list, pos_label="change"), 3),
-          "| recall", round(recall_score(valid["label"], on_list, pos_label="change"), 3))
+for name, column in (("logistic-regression", "logistic_score"), ("decision-tree", "tree_score")):
+    on_list = ["change" if s >= 0.5 else "no change" for s in examined_scores[column]]
+    print(name, "| precision", round(precision_score(examined_scores["label"], on_list, pos_label="change"), 3),
+          "| recall", round(recall_score(examined_scores["label"], on_list, pos_label="change"), 3))
 baseline_recall = None  # the baseline puts no return on the list
 print("The baseline's recall, yours:", baseline_recall)
 ```
 
 ### Afterwards, together
 
-1. Which candidate would you send to the examiners if a missed return costs more?
+1. Which candidate is ahead at 0.5, and on which measure?
 2. Why can a precision not be computed for an empty list?
 3. Why write the threshold beside every precision and recall?
 

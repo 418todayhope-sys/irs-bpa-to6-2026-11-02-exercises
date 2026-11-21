@@ -1,40 +1,43 @@
 # Exercise 2: decisions
 
-The answer is `exercise.ipynb` beside this file. It reads the made-up `validation-scores.csv` beside the exercise's notebook, and writes into the learner's experiment `week-04-candidates`.
+The answer is `exercise.ipynb` beside this file. It reads the course's shared tables and scores `model_valid` with Tuesday's two candidates, fitted again in cell 2 as in exercise 1. Cell 6 writes into Tuesday's two runs in `week-04-candidates`.
 
 ## Each answer, and why
 
 | Cell | Answer | Why |
 |---|---|---|
-| 1 | higher recall `logistic-regression`, higher precision `decision-tree` | Any of the two names passes: a guess cannot be wrong. The reading's table already shows the made-up counts; the guess is still asked before the divisions, as the demo asks for it in the chat. |
-| 2 | run as given | logistic regression 22, 16, 28, 934; tree 8, 5, 42, 945; sum 1 is 1000, sum 2 is 50 for both. |
-| 3 | `22 / 38`, `22 / 50`; `8 / 13`, `8 / 50` | Precision divides TP by all returns on the list (TP + FP); recall by all returns labelled change (TP + FN). 0.579 and 0.44; 0.615 and 0.16. A decimal within 0.006 passes; a swapped pair gets its own `Not yet` line. |
-| 4 | run as given | It finds the newest run of each name in `/Users/<user>/week-04-candidates` and adds the parameters `threshold` (0.5) and `rows`, and the metrics `precision`, `recall` and `accuracy_same_rows` (0.956, 0.953). With no run of that name, it makes one and says so. |
-| 5 | run as given | `Done:` when the guess is typed, the four divisions are right, and each newest run holds them with `threshold` 0.5. |
-| 6, optional | `0 / 50` | The baseline lists nothing: recall 0. Its precision is 0 of 0, which cannot be computed: an empty list, not a precision of zero. |
+| 1, 2 | run as given | As exercise 1. |
+| 3 | `logistic-regression` or `decision-tree` in each (the answer types `decision-tree` for recall, `logistic-regression` for precision) | A guess cannot be wrong; the check asks only that both are typed. Cell 4 shows the counts only once both are typed. The answer's recall guess turns out wrong, as a learner's may: the reading asks for this guess before its table. |
+| 4 | run as given | logistic-regression 34, 3, 6, 157; decision-tree 31, 12, 9, 148; both sums 200 and 40. |
+| 5 | logistic-regression `34 / 37`, `34 / 40`; decision-tree `31 / 43`, `31 / 40` | 0.919, 0.85; 0.721, 0.775; beside the accuracies 0.955 and 0.895 on the same 200 returns. The check accepts any value within 0.0005, so `0.92` fails and `0.919` passes: the division is the way to type it. At 0.5 the logistic regression is ahead on both measures. |
+| 6 | run as given | Opens the newest run of each name and logs `threshold` 0.5 (a parameter), `precision` and `recall` (metrics). Tuesday's `validation_accuracy` was measured on the same 200 examined returns, so the three sit on the same rows. Run again, it logs the same values: MLflow accepts a parameter logged again with the same value. |
+| 8, optional | `0 / 40` | The baseline puts no return on the list: recall 0 of 40, and precision cannot be computed, since there is nothing to divide by. |
 
-Two things for the trainer to know:
+## What version 2.0 cut, and why
 
-- The runs already hold Tuesday's `validation_accuracy`, measured on each learner's own week 3 validation rows (4 labelled returns). Today's numbers are counted on the course's 1,000 made-up returns, so the accuracy on those rows is logged as `accuracy_same_rows`, and `rows` says which rows. MLflow refuses to change a logged parameter, so nothing of Tuesday's is overwritten. Say it: a comparison is fair only on the same rows.
-- Running cell 4 again with the same divisions is accepted (the same parameter values). With other divisions the metrics take the new values; the parameters are unchanged.
+Learners of this cohort could not finish some exercises. 25 minutes became 15.
+
+- The made-up file `validation-scores.csv` (1,000 returns) is gone; the counts are the course's, and they are the reading's own table. Version 1 logged `accuracy_same_rows` because its rows were not Tuesday's; on the course's tables Tuesday's `validation_accuracy` is on the same rows, so that metric and the `rows` parameter are gone.
+- Steps, 7 to 4. Typed values stay six: the two guesses and the four divisions, each part of the goal.
 
 ## Where each rule comes from (for the trainer, never in a learner cell)
 
 | Quote in the exercise | From |
 |---|---|
-| "*Precision* is the share ..."; "*Recall* is the share ..." | `days/day-03/curated.md` § Count precision and recall from the matrix, In general |
-| "the comparison still comes from the record" | the same section, Two candidates, side by side |
+| "*Precision* is the share of the returns on the list that are labelled *change*." "*Recall* is the share of the returns labelled *change* that are on the list." | `days/day-03/curated.md` § Count precision and recall from the matrix, In general |
+| "write the threshold beside every precision and every recall" | the same section, In general |
+| the guess before the counts | the same section, Why this matters to you |
 
 The exercise is deck slide 32; its debrief is slide 33; the demo is slide 31.
 
 ## Simulated data added
 
-`validation-scores.csv`, exercise 1's file.
+None beyond the course's tables.
 
 ## Where it ran
 
-- Not run in Databricks or MLflow: a trainer gap. What only a run there confirms: `mlflow.start_run(run_id=...)` resuming Tuesday's finished run and adding parameters and metrics; `search_runs` ordering newest first; the Experiments page's **Compare** showing the new metrics; `spark.sql("SELECT current_user()")`.
-- Run on a laptop, 2026-11-20, Python 3.11.5, scikit-learn 1.3.0, on stand-ins for Spark and MLflow (seeded with Tuesday's two runs, and again with none): start `Not yet: 3 left.`, answer `Done:` both ways. Rerun after the cold read (a decimal accepted, the newest run named, the rows of Tuesday's accuracy said). `check.py --start` prints `Not yet: 3 left.` and `check.py values.json` prints `Done:` on Python 3.10 and 3.11.
+- Not run in Databricks: a trainer gap. What only a run there confirms: `mlflow.start_run(run_id=...)` adding to Tuesday's finished runs for a learner, and **Compare** showing the new metrics.
+- Run on a laptop, 2026-11-21, Python 3.11, on a stand-in for Spark and MLflow over the course's week 4 tables made by `week-04/setup/day-01-course-data.py`: with Tuesday's two runs present (`Logged into Tuesday's run` twice) and with none (`made a new run` twice), and with no table readable: start `Not yet: 7 left.`, answer `Done:`. `commands.sh` prints `Not yet: 7 left.`, then `Done:`.
 
 ## Pages behind the steps (opened 2026-11-20)
 

@@ -1,44 +1,50 @@
 # Exercise 3: decisions
 
-The answer is `exercise.ipynb` beside this file. Every value it reads is in the made-up files beside the exercise's notebook.
+The answer is `exercise.ipynb` beside this file. It reads the course's shared tables and scores all 250 returns of `model_valid` with Tuesday's two candidates, fitted again in cell 2 as in exercise 1.
 
 ## Each answer, and why
 
 | Cell | Answer | Why |
 |---|---|---|
-| 2 | "In this scenario a false negative costs more than a false positive, because a missed return leaves tax an examination would have changed as filed, and nobody ever sees it." | Either direction passes; the check asks for the form and a reason of five words or more after `because`. `missed return` and `wrongly listed return` are accepted for the two errors. |
-| 3 | `k = 3` | Three cases for every ten returns scored, and there are ten. The SQL prints #311, #388, #458. |
-| 4 | threshold 0.74; 2 labelled change on the list; 2 missed (#206, #502); the trade names both errors | The k-th score. Against 0.5 (2 false positives, 1 false negative), one false positive fewer (#270 off) and one false negative more (#206 off). The check asks that the trade names both kinds. |
-| 5 | run as given | #311, #388, #123 (0.82, `no label yet`). |
-| 6 | 0.82; `#458` | The new k-th score; #458 is on cell 3's list and not on cell 5's. `458` without `#` passes. Case #123 is in no cell. |
-| 7 | `logistic-regression`, with a sentence that gives the counts | A sentence that says a missed return costs more must choose the logistic regression (22 of 50 picked out, against 8): the check says so. A sentence that says a false positive costs more may choose either: the tree is a little ahead on precision (8 of 13 against 22 of 38) but lists far fewer returns. Eight words or more, with a number. |
-| 9, optional | `2 / 3`; a tie rule in a sentence | Precision at k on the ten. On the 1,000 at k of 300 the list never holds more than 300: the logistic regression's threshold 0.169, a score 4 returns share and all 4 fit, 300 on the list, 42 labelled change; the tree's 0.09, a score 150 returns share with room for 127 of them, so the learner breaks the tie and writes down how (the cell takes them by return ID): 300 on the list, 44 labelled change. Any rule passes if it says which tied returns go on and why. |
+| 1, 2 | run as given | As exercise 1. |
+| 3 | either way round, with a reason of five words or more after `because` | The answer: a false negative costs more, because a missed return stays as filed and nobody sees it, while a wasted examination shows in the no-change rate. The check reads only the form and the reason's length; the debrief questions the reason. |
+| 4 | guess `on` or `off`; `k = 25` | The cell shows nothing until both are typed. Then places 1 to 26 by the logistic regression's score: case #123 is at place 11, on the list. Four returns show 1.000, which is a score rounded to three places. |
+| 5 | `threshold = 0.844` | The score at place 25 (case 890, 0.8443); place 26, 0.818, stays off. The cell counts with the exact 25th score, not the typed one, so rounding never moves a return. On the list: 25 returns, 4 never examined (no label, in no cell), 20 of 21 right, 1 wrong; 20 of 40 labelled change picked out, 20 missed. At 0.5, beside it: 42 returns, 5 never examined, 34 of 37 right, 3 wrong, 6 missed. |
+| 6 | `logistic-regression`; `accept` or `more capacity`; one sentence of eight words or more with a count | If the learner accepts the list of 25, the sentence must give the 20 missed: the reading says "say how many returns labelled *change* it misses". The answer accepts and names 20 of 21 right and 20 of 40 missed. `decision-tree` passes the check too; the debrief can ask why, since the logistic regression is ahead on both measures at 0.5 and only it fills a list of exactly k. |
+| 8, optional | `tree_threshold = 1.0`; why not 10: 25 returns tie at 1.0 | The tree gives seven scores. At 1.0 exactly 25 returns fill the list (19 right of the examined, against the logistic regression's 20); any higher threshold puts none on it, so a list of 10 or 20 cannot be filled without breaking a tie. |
 
-Two things for the trainer to know:
+For the trainer: the cost sentence decides the choice the reading poses, 0.5 (34 right, 3 wrong, 6 missed) against a capacity of 25 (20 right, 1 wrong, 20 missed). Thursday starts from the chosen candidate at 0.844.
 
-- The ten returns and case #123 were scored by the logistic regression, so 0.74 and 0.82 are its thresholds. A learner who chooses the tree has its threshold only from the optional cell (its own scores on the 1,000): say so, and Thursday reads it again.
-- On the 1,000, three in ten is 300 returns, and at most 50 of them can be labelled change: the honest report the reading describes (few of the list are worth the hours). The tree's scores have one value per leaf, so ties at the k-th score are large: the list still holds 300, and the learner breaks the tie and writes down how.
+## What version 2.0 cut, and why
+
+Learners of this cohort could not finish some exercises. 25 minutes became 15.
+
+- The made-up files (`ten-returns.csv`, `case-123.csv`, `candidate-counts.csv`, `validation-scores.csv`) are gone. The capacity is the reading's own question: 25 cases from the 250 returns of `model_valid`. Case #123 has a label in the course's tables, so version 1's step on an unlabelled case #123 is gone.
+- Version 1's two thresholds (the ten, then with case #123) are one: the reading's threshold, 0.844. The trade against 0.5 is printed by cell 5, not typed.
+- Typed values, 10 to 7; steps, 8 to 5. A guess of case #123's place comes before the sort is shown.
 
 ## Where each rule comes from (for the trainer, never in a learner cell)
 
 | Quote in the exercise | From |
 |---|---|
-| "No model or formula makes that judgment ..." | `days/day-03/curated.md` § Say which error costs more, Why this matters to you |
-| "A *threshold from capacity* is the score of the k-th return ..." | § Set the threshold from the examiners' capacity, In general |
-| "every return at or above"; "scored in the same batch as the ten, and the examiners still take three cases" | the same section, One return first |
-| "If a missed return costs more, recall matters more to you" | § Say which error costs more, Which costs more |
-| the list never holds more than k; a tie at the k-th score is broken and written down | § Set the threshold from the examiners' capacity, its two practical points; the Checkpoint `thin-air-cp-9897150a` |
+| "No model or formula makes that judgment. The people who run the examinations make it, and you must be able to state it in a sentence and defend it." | `days/day-03/curated.md` § Say which error costs more, Why this matters to you |
+| the two errors' costs (step 2, our words) | the same section, the table under In general |
+| "A *threshold from capacity* is the score of the k-th return when the returns are sorted by score, highest first." | § Set the threshold from the examiners' capacity, In general |
+| "a logistic regression never gives exactly 0 or 1" | § opening, Case #123, and ten returns with labels |
+| "The list never holds more returns than the examiners can take" | § Set the threshold from the examiners' capacity, Then the whole set |
+| "You cannot say whether they are right: they have no label" | the same, Then the whole set |
+| "If a missed return costs more, the list at 0.5 is better, ..." | the same section, Which error the threshold trades |
 
-The exercise is deck slide 46; its debrief is slide 47; the demo is slide 45.
+The exercise is deck slide 47; its debrief is slide 48; the demo is slide 46.
 
 ## Simulated data added
 
-`ten-returns.csv` and `validation-scores.csv` (exercise 1's), `case-123.csv` (Monday's made-up case, score 0.82, no label) and `candidate-counts.csv` (the reading's four counts for the baseline and both candidates). The group and its two errors are made up; nothing describes how the IRS selects returns.
+None beyond the course's tables.
 
 ## Where it ran
 
-- Not run in Databricks: a trainer gap. What only a run there confirms: the two views and their SQL (`ORDER BY score DESC LIMIT k`), `.show()`'s layout, a pandas table with the text `no label yet` passed to `spark.createDataFrame`.
-- Run on a laptop, 2026-11-20, Python 3.11.5, pandas 2.0.3, on a stand-in for Spark (sqlite): start `Not yet: 10 left.`, answer `Done:`. Rerun after the cold read (either direction said to be possible, the trade's words named, the eight-word rule stated, cell 9's message with no choice). `check.py --start` prints `Not yet: 10 left.` and `check.py values.json` prints `Done:` on Python 3.10 and 3.11. Wrong answers tried: the tree with a missed-return sentence, a trade naming one error, a swapped precision in exercise 2: each `Not yet` with its line.
+- Not run in Databricks: a trainer gap. What only a run there confirms: the scores on the course compute giving 0.844 at place 25 (Tuesday's fit; scikit-learn's logistic regression is deterministic on the same rows).
+- Run on a laptop, 2026-11-21, Python 3.11, on a stand-in for Spark over the course's week 4 tables made by `week-04/setup/day-01-course-data.py`, and with no table readable: start `Not yet: 7 left.`, answer `Done:`. `commands.sh` prints `Not yet: 7 left.`, then `Done:`.
 
 ## Pages behind the steps (opened 2026-11-20)
 

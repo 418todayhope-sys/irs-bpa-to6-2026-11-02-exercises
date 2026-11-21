@@ -1,58 +1,11 @@
 {
- "ten": {
-  "#311": [
-   0.91,
-   "change"
-  ],
-  "#388": [
-   0.84,
-   "change"
-  ],
-  "#458": [
-   0.74,
-   "no change"
-  ],
-  "#206": [
-   0.63,
-   "change"
-  ],
-  "#270": [
-   0.55,
-   "no change"
-  ],
-  "#502": [
-   0.46,
-   "change"
-  ],
-  "#189": [
-   0.38,
-   "no change"
-  ],
-  "#644": [
-   0.27,
-   "no change"
-  ],
-  "#135": [
-   0.15,
-   "no change"
-  ],
-  "#717": [
-   0.08,
-   "no change"
-  ]
- },
- "case_123": [
-  "#123",
-  0.82
- ],
- "cost_sentence": "In this scenario a false negative costs more than a false positive, because a missed return leaves tax an examination would have changed as filed, and nobody ever sees it.",
- "k": 3,
- "threshold": 0.74,
- "listed_change": 2,
- "missed_change": 2,
- "trade": "Compared with 0.5, one false positive fewer (#270 is off the list) and one more false negative (#206 is missed).",
- "threshold_with_123": 0.82,
- "pushed_off": "#458",
+ "cost_sentence": "In this scenario a false negative costs more than a false positive, because a missed return stays as filed and nobody ever sees it, while a wasted examination shows in the no-change rate.",
+ "guess_123": "on",
+ "k": 25,
+ "threshold": 0.844,
+ "expected_threshold": 0.8443128903195795,
+ "missed_at_k": 20,
  "chosen": "logistic-regression",
- "why": "A missed return costs more here, and the logistic regression picks out 22 of the 50 returns labelled change, against 8 for the tree."
+ "decision": "accept",
+ "why": "Accept the list of 25 from the logistic regression: 20 of its 21 examined returns are right, but it misses 20 of the 40 returns labelled change, so more capacity would pick out more."
 }

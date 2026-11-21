@@ -1,167 +1,186 @@
-# Exercise 3: Say which error costs more, then read the threshold from capacity
+# Exercise 3: Say which error costs more, then read the threshold from capacity (we do)
 
 **Goal:** After this exercise, you can state which error costs more in a scenario and set a threshold from the examiners' capacity, with the error it trades.
 
-**Scenario:** A made-up examination group can take three cases for every ten returns scored. Its manager asks where the line goes, what it misses, whether case #123 makes the list, and which candidate to use. You write which error costs more for this group and why, read the threshold from its capacity, then choose the candidate.
+**Scenario:** The examiners can take 25 cases from the 250 returns of `model_valid`. Their manager asks where the line goes, what it misses, whether case #123 makes the list, and whether to accept a list of 25 or ask for more capacity.
 
 **AI tool:** none.
 
-**Time:** 25 minutes: 21 to do it, 4 for setup problems.
+**Time:** 15 minutes: 11 to do it, 4 for setup problems.
 
 **Where you work:** this notebook, `week-04/day-03/exercise-03-threshold-from-capacity/exercise.ipynb`, in your Git folder of the course in Databricks.
 
-**Done when:** cell 8 prints `Done:`.
+**Done when:** cell 7 prints `Done:`.
 
-**Optional part:** Finished early? Cell 9 reads the threshold on every validation return.
+**Cells:** a cell's number is the `# N.` comment on its first line, such as `# 1.`; text cells have no number.
+
+**Optional part:** Finished early? Cell 8 reads the tree's threshold from the same capacity.
 
 **What you have:**
 
-- `ten-returns.csv`: exercise 1's ten made-up returns, scored by Tuesday's logistic regression.
-- `case-123.csv`: Monday's made-up case #123, score 0.82, no label.
-- `candidate-counts.csv`: the four counts at 0.5 of exercise 2.
-- `validation-scores.csv`: exercise 1's 1,000 made-up validation returns, for the optional part.
-- `load.py` and `check.py`: given code that cells 1 and 8 run.
+- `course.returns.model_train` and `course.returns.model_valid`, as in exercises 1 and 2. If they cannot be read, cell 1 makes the same rows from the course's setup file and says so.
+- `load.py` and `check.py`, given code that cells 1 and 7 run.
 
-**Start from:** this notebook as the course gives it, attached to the compute the trainer names. No cell reads or changes your tables. New here: a threshold set from capacity.
+**Start from:** this notebook as the course gives it, attached to the compute the trainer names. No cell changes your tables. New here: a threshold set from capacity, on all 250 returns.
 
-### Step 1. Read the files and the group's capacity
+### Step 1. Score the validation returns
 
-Run cell 1. You do not need to read its code. You should see `Read the ten returns, case #123 and exercise 2's counts`, then the group's capacity.
+Run cells 1 and 2. You do not need to change them. You should see:
 
-The group's two errors, in its terms:
+1. Which tables cell 1 uses, then 500 returns in `model_train` and 250 in `model_valid`.
+2. Cell 2 fits Tuesday's two candidates again, with Tuesday's lines, on the 400 examined returns of `model_train`. Then each one gives a score to every return of `model_valid`: `predict_proba` gives the score from 0 to 1, where Tuesday's `predict` cut it at 0.5. You should see 40 returns labelled `change`, 160 `no change` and 50 `never examined`.
 
-- **A false positive:** one of its examiners spends hours on a return whose examination changes nothing, and the taxpayer goes through an examination that changes nothing.
-- **A false negative:** a return whose tax an examination would have changed stays as filed, and nobody looks at it.
+A score is one return's number from 0 to 1: a relative risk indicator that a person acts on, never a finding about the taxpayer. A label records a past examination: `change` means it changed the tax, `exam_changed_tax` `yes`.
 
 Notebook cell 1:
 
 ```python
-# 1. The made-up files, and the group's capacity. You do not need to read this code.
+# 1. Read the course's training and validation sets. You do not need to change this cell.
 import os
-folder = os.getcwd().split("/week-04/")[0] + "/week-04/day-03/exercise-03-threshold-from-capacity"
-exec(open(f"{folder}/load.py", encoding="utf-8").read())  # reads the files beside this notebook
-print("The group can take 3 cases for every 10 returns scored.")
+course_folder = os.getcwd().split("/week-04/")[0]  # your Git folder of the course
+folder = f"{course_folder}/week-04/day-03/exercise-03-threshold-from-capacity"
+try:
+    train_table = spark.table("course.returns.model_train")  # the training set: tax years 2020 and 2021
+    valid_table = spark.table("course.returns.model_valid")  # the validation set: tax year 2022
+except Exception:
+    train_table, valid_table = None, None  # not there: load.py makes the same rows
+exec(open(f"{folder}/load.py", encoding="utf-8").read())  # you do not need to read load.py
+train, valid = load_sets(train_table, valid_table)
 ```
-
-### Step 2. Say which error costs more, and why
-
-Why: "No model or formula makes that judgment. The people who run the examinations make it, and you must be able to state it in a sentence and defend it." (the day's reading)
-
-1. In cell 2, between the quotes, write one sentence in this form: `In this scenario a false negative costs more than a false positive, because ...`, or the other way round. After `because`, give a reason of five words or more: who bears the cost, and what it is. Either direction can be right for this group; the reason is what a reviewer questions.
-2. Run cell 2. You should see your sentence.
 
 Notebook cell 2:
 
 ```python
-# 2. Which error costs more for this group, and why. One sentence.
-cost_sentence = ""
-print(cost_sentence or "Write your sentence between the quotes.")
+# 2. Tuesday's two candidates, fitted again as Tuesday fitted them; each scores every return of model_valid.
+assert "valid" in globals(), "Run cell 1 first."
+from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.tree import DecisionTreeClassifier
+
+features = ["filing_status", "wages_amt", "taxable_interest_amt", "other_income_amt",
+            "total_income", "agi_amt", "deduction_amt", "deduction_missing",
+            "total_tax_amt", "withholding_amt", "tax_to_agi", "deduction_to_agi"]  # Tuesday's twelve
+examined = train[train["exam_changed_tax"].notna()]  # the 400 examined returns of model_train
+X_train, y_train = examined[features].fillna(0), examined["exam_changed_tax"]
+logistic = make_pipeline(StandardScaler(), LogisticRegression()).fit(X_train, y_train)
+tree = DecisionTreeClassifier(max_depth=3, random_state=0).fit(X_train, y_train)
+
+scores = valid[["case_id", "exam_changed_tax"]].copy()  # all 250 returns of model_valid
+scores["label"] = scores["exam_changed_tax"].map({"yes": "change", "no": "no change"}).fillna("never examined")
+scores["logistic_score"] = logistic.predict_proba(valid[features].fillna(0))[:, 1]  # column 1 is "yes"
+scores["tree_score"] = tree.predict_proba(valid[features].fillna(0))[:, 1]
+print(len(scores), "returns of model_valid scored by both candidates:", scores["label"].value_counts().to_dict())
 ```
 
-### Step 3. Sort the ten returns, and take the top k
+### Step 2. Say which error costs more, and why
 
-Why: "A *threshold from capacity* is the score of the k-th return when the returns are sorted by score, highest first." (the day's reading) *Capacity* is the number of cases the examiners can take, written k.
+"No model or formula makes that judgment. The people who run the examinations make it, and you must be able to state it in a sentence and defend it." (the day's reading)
 
-1. In cell 3, type in place of `None` the number of cases the group can take from these ten returns.
-2. Run cell 3. The SQL sorts the ten by score, highest first, and keeps the top k. You should see k returns.
+- **A false positive:** an examiner spends hours on a return whose examination changes nothing, and the taxpayer goes through an examination that changes nothing.
+- **A false negative:** a return an examination would have changed stays as filed, and nobody looks at it.
+
+1. In cell 3, between the quotes, write one sentence in this form: `In this scenario a false negative costs more than a false positive, because ...`, or the other way round. After `because`, give a reason of five words or more. Either way round can be right; the reason is what a reviewer questions.
+2. Run cell 3. You should see your sentence.
 
 Notebook cell 3:
 
 ```python
-# 3. Sort the ten returns, highest score first, and keep the top k. Change only k.
-k = None  # the cases the group can take from these ten returns
-assert isinstance(k, int), "Type a whole number in place of None."
-spark.sql(f"SELECT return_id, score, label FROM ten_returns ORDER BY score DESC LIMIT {k}").show()
+# 3. Which error costs more in this scenario, and why. One sentence.
+cost_sentence = ""
+print(cost_sentence or "Write your sentence between the quotes.")
 ```
 
-### Step 4. Read the threshold, count, and name the error it trades
+### Step 3. Guess, then sort all 250 and keep the top k
 
-Why: "every return at or above" the k-th score goes on the list (the day's reading).
+"A *threshold from capacity* is the score of the k-th return when the returns are sorted by score, highest first." (the day's reading) *Capacity* is the number of cases the examiners can take, written k.
 
-1. In cell 4, type in place of each `None`:
-   - `threshold`: the score of the last return cell 3 printed, the k-th.
-   - `listed_change`: how many of the k returns are labelled change.
-   - `missed_change`: how many of the ten returns labelled change are not among the k.
-2. Between the quotes, write which error this threshold trades, compared with 0.5. At 0.5 the ten had 2 false positives and 1 false negative (exercise 1). Use the words `false positive` and `false negative`.
-3. Run cell 4. You should see your answers.
+1. In cell 4, type your guess between the quotes: on a list of 25, is case #123 `on` or `off`? Its score is 0.964.
+2. In cell 4, type k in place of `None`: the cases the examiners can take.
+3. Run cell 4. It sorts all 250 returns of `model_valid` by the logistic regression's score, highest first, and shows the top k and the next one down. You should see `place`, `case_id`, `logistic_score` and `label`, and where case #123 stands.
+
+The 50 never-examined returns are sorted with the others: the list is drawn from every return the examiners could take.
+
+Scores are shown to three places. A score shown as `1.000` is not a certainty: "a logistic regression never gives exactly 0 or 1" (the day's reading).
 
 Notebook cell 4:
 
 ```python
-# 4. The threshold read from cell 3, the counts, and the error it trades.
-threshold = None      # the k-th score
-listed_change = None  # how many of the k are labelled change
-missed_change = None  # how many returns labelled change are not on the list
-trade = ""            # compared with 0.5: which error goes down, which goes up
-print("Threshold:", threshold, "| labelled change on the list:", listed_change, "| missed:", missed_change)
-print("The trade:", trade or "(not yet)")
+# 4. Your guess, then the sort. Type both, then run this cell.
+guess_123 = ""  # on a list of 25, is case #123 "on" or "off"?
+k = None        # the cases the examiners can take
+
+assert "scores" in globals(), "Run cells 1 and 2 first."
+if not guess_123 or not isinstance(k, int):
+    print("Type your guess and k, then run this cell again.")
+else:
+    ranked = scores.sort_values("logistic_score", ascending=False).reset_index(drop=True)
+    ranked.insert(0, "place", range(1, len(ranked) + 1))
+    print(ranked.head(k + 1)[["place", "case_id", "logistic_score", "label"]].round(3).to_string(index=False))
+    place_123 = int(ranked.loc[ranked["case_id"] == 123, "place"].iloc[0])
+    print(f"Places 1 to {k} are on the list; place {k + 1}, the next score down, stays off.")
+    print(f"Case #123 is at place {place_123}: {'on' if place_123 <= k else 'off'} the list. Your guess: {guess_123}")
 ```
 
-### Step 5. Put case #123 in with the ten
+### Step 4. Read the threshold, and count what it trades
 
-Why: case #123 is "scored in the same batch as the ten, and the examiners still take three cases" (the day's reading).
+"The list never holds more returns than the examiners can take" (the day's reading).
 
-Run cell 5. It sorts the eleven returns, the ten and case #123, with your k of cell 3. You should see k returns. Case #123's label says `no label yet`: it has not been examined.
+1. In cell 5, type the threshold in place of `None`: the score at place k of cell 4, to three places.
+2. Run cell 5. You should see the list counted against the labels, beside the list at 0.5. A never-examined return on the list is in no cell: "You cannot say whether they are right: they have no label" (the day's reading).
 
 Notebook cell 5:
 
 ```python
-# 5. The same sort, on the ten returns and case #123, with the same k.
-assert isinstance(k, int), "Type k in cell 3 and run it first."
-spark.sql(f"SELECT return_id, score, label FROM today_batch ORDER BY score DESC LIMIT {k}").show()
+# 5. The threshold you read from cell 4: the score at place k, to three places. Type it in place of None.
+threshold = None
+
+if threshold is None or "ranked" not in globals():
+    print("Run cell 4, then type the threshold and run this cell again.")
+elif round(threshold, 3) != round(ranked["logistic_score"].iloc[k - 1], 3):
+    print(f"That is not the score at place {k} of cell 4. Look at the last row on the list.")
+else:
+    examined_scores = scores[scores["label"] != "never examined"]
+    for name, on in ((f"A list of {k}, threshold {threshold}", ranked.head(k)),
+                     ("The list at 0.5", scores[scores["logistic_score"] >= 0.5])):
+        labelled = on[on["label"] != "never examined"]
+        right = int((labelled["label"] == "change").sum())
+        print(f"{name}: {len(on)} returns, {len(on) - len(labelled)} never examined; right {right} of "
+              f"{len(labelled)}; wrong {len(labelled) - right}; labelled change picked out {right} of 40, missed {40 - right}")
 ```
 
-### Step 6. Say what case #123 changes
+### Step 5. Decide, and check
 
-1. In cell 6, type in place of `None` the new threshold, the k-th score of cell 5. Between the quotes, type the return that case #123 pushes off the list, such as `#311`.
-2. Run cell 6. You should see your answers.
+"If a missed return costs more, the list at 0.5 is better, and a capacity of 25 is a known weakness: say how many returns labelled *change* it misses, and that more capacity would pick out more. If an examiner's wasted hours cost more, the list at 25 is better." (the day's reading)
 
-Case #123 has no label, so it is in no cell. Nobody can say yet whether it is a true positive. The list is a recommendation, and a person decides.
+1. In cell 6, type your decision for the examiners' manager. The table says what each value holds.
+
+| Value | Type this | Why |
+|---|---|---|
+| `chosen` | `logistic-regression` or `decision-tree` | the candidate you put in front of the manager; exercise 2's counts at 0.5 can decide it |
+| `decision` | `accept` or `more capacity` | accept the list of 25, or ask for more capacity |
+| `why` | one sentence of eight words or more, with the counts of cell 5; if you accept, say how many returns labelled change the list misses | your cost sentence of cell 3 decides between the two |
+
+2. Run cell 6. You should see your decision.
+3. Run cell 7. It prints `Done:`, or `Not yet:` and what is left.
+
+The list is a recommendation: the model recommends, and a person decides. Keep this notebook. Thursday starts from the candidate you chose and the threshold of cell 5.
 
 Notebook cell 6:
 
 ```python
-# 6. What case #123 changes.
-threshold_with_123 = None  # the k-th score of cell 5
-pushed_off = ""            # the return case #123 pushes off the list
-print("New threshold:", threshold_with_123, "| pushed off:", pushed_off or "(not yet)")
+# 6. Your decision for the examiners' manager.
+chosen = ""    # logistic-regression or decision-tree
+decision = ""  # accept, or more capacity
+why = ""       # one sentence, with the counts of cell 5
+print("Chosen:", chosen or "(not yet)", "| decision:", decision or "(not yet)")
+print("Why:", why or "(not yet)")
 ```
-
-### Step 7. Choose the candidate, and say why
-
-Why: "If a missed return costs more, recall matters more to you", and if the wasted hours cost more, precision does (the day's reading).
-
-1. Run cell 7. You should see exercise 2's counts at 0.5 for the baseline and both candidates.
-2. In cell 7, type the candidate you put in front of the manager: `logistic-regression` or `decision-tree`. Choose by your sentence of cell 2.
-3. Between the quotes, write why, in one sentence of eight words or more, with the counts.
-4. Run cell 7 again. You should see your choice.
-
-The ten returns were scored by the logistic regression, so its threshold is the one of cell 6. The tree's threshold is read from its own scores: the optional part does it.
 
 Notebook cell 7:
 
 ```python
-# 7. Exercise 2's counts, then your choice.
-for _, c in counts.iterrows():
-    tp, fp, fn = c["true_positives"], c["false_positives"], c["false_negatives"]
-    precision = f"{tp} of {tp + fp}" if tp + fp else "cannot be computed"
-    print(f"{c['candidate']}: on the list {tp + fp}, precision {precision}, recall {tp} of {tp + fn}")
-
-chosen = ""  # logistic-regression or decision-tree
-why = ""     # one sentence, with the counts
-print("Chosen:", chosen or "(not yet)", "| why:", why or "(not yet)")
-```
-
-### Step 8. Check
-
-Run cell 8. It prints `Done:`, or `Not yet:` and what is left.
-
-Keep this notebook. Thursday starts from the candidate you chose and the threshold of cell 6.
-
-Notebook cell 8:
-
-```python
-# 8. Check. You do not need to read this code. It runs check.py, beside this notebook.
+# 7. Check. You do not need to read this code. It runs check.py, beside this notebook.
 _check = {"__name__": "check"}
 exec(open(f"{folder}/check.py", encoding="utf-8").read(), _check)
 check_now = _check["in_notebook"]
@@ -170,37 +189,26 @@ print(check_now(globals()))
 
 ### Finished early?
 
-Optional: cell 8 does not check it.
+Optional: cell 7 does not check it.
 
-1. In cell 9, type in place of `None` how many of the top k of cell 3 are labelled change, as a division, such as `1 / 3`. This share is called precision at k.
-2. Run cell 9. It reads the threshold of the candidate you chose on all 1,000 validation returns, at 3 cases for every 10: k is 300. The list never holds more than 300 returns, because that is all the examiners can take. When returns share the k-th score, not all of them may fit: you break the tie and write down how. Cell 9 takes the tied returns in order of their ID; in `tie_rule`, type which of the tied returns you would put on the list, and why. You should see the threshold, how many returns share it, how many returns are on the list, and how many of them are labelled change.
+1. Run cell 8. You should see how many of the 250 returns share each of the tree's highest scores.
+2. In cell 8, type in place of `None` the tree's threshold for a list of 25, and between the quotes, why the tree cannot fill a list of 10. Run cell 8 again.
 
-Notebook cell 9:
+Notebook cell 8:
 
 ```python
-# 9. Optional: precision at k on the ten, then the threshold on all 1,000 validation returns.
-precision_at_k = None  # on the ten: how many of the top k are labelled change, divided by k
-print("Precision at k on the ten, yours:", precision_at_k if precision_at_k is None else round(precision_at_k, 2))
+# 8. Optional: the tree's highest scores, and how many returns share each.
+tree_threshold = None  # the tree's threshold for a list of 25
+why_not_10 = ""        # why the tree cannot fill a list of 10
 
-k_all = 300  # 3 cases for every 10 of the 1,000 returns: the list never holds more
-tie_rule = None  # if returns share the k-th score: which of them go on the list, and why
-if chosen in valid:
-    kth = valid[chosen].sort_values(ascending=False).iloc[k_all - 1]
-    above = valid[valid[chosen] > kth]
-    tied = valid[valid[chosen] == kth]
-    room = k_all - len(above)
-    on_list = pd.concat([above, tied.sort_values("return_id").head(room)])  # the tie broken by return ID
-    print(f"{chosen}: threshold {kth}; {len(tied)} returns share it, room for {room} of them")
-    print(f"{len(on_list)} returns on the list, {(on_list['label'] == 'change').sum()} of them labelled change, of 50")
-    print("How you broke the tie:", tie_rule)
-else:
-    print("Type your choice in cell 7 and run it first.")
+print(scores["tree_score"].round(3).value_counts().sort_index(ascending=False).head(3).to_string())
+print("Your threshold for 25:", tree_threshold, "| why not 10:", why_not_10 or "(not yet)")
 ```
 
 ### Afterwards, together
 
 1. What would change your sentence on which error costs more?
 2. Why read the threshold from capacity, not keep 0.5?
-3. What can you say about case #123 here, and what not?
+3. Why can the tree not fill a list of 10?
 
 The answer, after you try: [`answers/exercise-03-threshold-from-capacity`](../answers/exercise-03-threshold-from-capacity/).

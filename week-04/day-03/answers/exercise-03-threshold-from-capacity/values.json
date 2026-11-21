@@ -1,11 +1,11 @@
 {
  "cost_sentence": "In this scenario a false negative costs more than a false positive, because a missed return stays as filed and nobody ever sees it, while a wasted examination shows in the no-change rate.",
- "guess_123": "on",
+ "guess_30": 22,
  "k": 25,
  "threshold": 0.844,
  "expected_threshold": 0.8443128903195795,
  "missed_at_k": 20,
  "chosen": "logistic-regression",
- "decision": "accept",
- "why": "Accept the list of 25 from the logistic regression: 20 of its 21 examined returns are right, but it misses 20 of the 40 returns labelled change, so more capacity would pick out more."
+ "decision": "more capacity",
+ "why": "A list of 25 picks out only 20 of the 40 returns labelled change and misses 20, where the list at 0.5 misses 6, so more capacity would pick out more."
 }

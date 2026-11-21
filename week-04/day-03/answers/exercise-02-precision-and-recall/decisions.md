@@ -7,9 +7,9 @@ The answer is `exercise.ipynb` beside this file. It reads the course's shared ta
 | Cell | Answer | Why |
 |---|---|---|
 | 1, 2 | run as given | As exercise 1. |
-| 3 | `logistic-regression` or `decision-tree` in each (the answer types `decision-tree` for recall, `logistic-regression` for precision) | A guess cannot be wrong; the check asks only that both are typed. Cell 4 shows the counts only once both are typed. The answer's recall guess turns out wrong, as a learner's may: the reading asks for this guess before its table. |
+| 3 | a whole number from 0 to 40 (the answer types 36) | The guess: at a threshold of 0.4, how many of the 40 labelled change the logistic regression puts on the list; the reading does not give it. A guess cannot be wrong. Cell 4 shows the counts only once it is typed: 37, the 34 at 0.5 and the 3 scoring from 0.4 to 0.5. |
 | 4 | run as given | logistic-regression 34, 3, 6, 157; decision-tree 31, 12, 9, 148; both sums 200 and 40. |
-| 5 | logistic-regression `34 / 37`, `34 / 40`; decision-tree `31 / 43`, `31 / 40` | 0.919, 0.85; 0.721, 0.775; beside the accuracies 0.955 and 0.895 on the same 200 returns. The check accepts any value within 0.0005, so `0.92` fails and `0.919` passes: the division is the way to type it. At 0.5 the logistic regression is ahead on both measures. |
+| 5 | logistic-regression `34 / 37`, `34 / 40`; decision-tree `31 / 43`, `31 / 40` | 0.919, 0.85; 0.721, 0.775; beside the accuracies 0.955 and 0.895 on the same 200 returns. The check accepts any value within 0.0005; a rounded value such as `0.92` gets `Not yet` with the division to type, `34 / 37`. At 0.5 the logistic regression is ahead on both measures. |
 | 6 | run as given | Opens the newest run of each name and logs `threshold` 0.5 (a parameter), `precision` and `recall` (metrics). Tuesday's `validation_accuracy` was measured on the same 200 examined returns, so the three sit on the same rows. Run again, it logs the same values: MLflow accepts a parameter logged again with the same value. |
 | 8, optional | `0 / 40` | The baseline puts no return on the list: recall 0 of 40, and precision cannot be computed, since there is nothing to divide by. |
 
@@ -18,7 +18,7 @@ The answer is `exercise.ipynb` beside this file. It reads the course's shared ta
 Learners of this cohort could not finish some exercises. 25 minutes became 15.
 
 - The made-up file `validation-scores.csv` (1,000 returns) is gone; the counts are the course's, and they are the reading's own table. Version 1 logged `accuracy_same_rows` because its rows were not Tuesday's; on the course's tables Tuesday's `validation_accuracy` is on the same rows, so that metric and the `rows` parameter are gone.
-- Steps, 7 to 4. Typed values stay six: the two guesses and the four divisions, each part of the goal.
+- Steps, 7 to 4. Typed values, 6 to 5: one guess and the four divisions. The Compare page is optional: cell 7 checks the runs themselves.
 
 ## Where each rule comes from (for the trainer, never in a learner cell)
 

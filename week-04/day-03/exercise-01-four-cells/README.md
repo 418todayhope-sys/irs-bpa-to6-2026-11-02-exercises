@@ -2,7 +2,7 @@
 
 **Goal:** After this exercise, you can sort scored returns into the four cells at 0.5 and say what each cell means for an examiner.
 
-**Scenario:** The examiners' manager asks how Tuesday's logistic regression would have done on ten returns of `model_valid` whose examinations have closed, case #123 among them. You sort each one into its cell at 0.5 and say what the two errors mean for an examiner. Then a given cell counts the 200 examined returns of `model_valid`.
+**Scenario:** The examiners' manager asks how Tuesday's logistic regression would have done on ten returns of `model_valid` whose examinations have closed, case #123 among them. Six are sorted for you; you sort the other four into their cells at 0.5 and say what the two errors mean for an examiner. Then a given cell counts the 200 examined returns of `model_valid`.
 
 **AI tool:** none.
 
@@ -28,9 +28,9 @@
 Run cells 1 and 2. You do not need to change them. You should see:
 
 1. Which tables cell 1 uses, then 500 returns in `model_train` and 250 in `model_valid`.
-2. Cell 2 fits Tuesday's two candidates again, with Tuesday's lines, on the 400 examined returns of `model_train`. Then each one gives a score to every return of `model_valid`: `predict_proba` gives the score from 0 to 1, where Tuesday's `predict` cut it at 0.5. You should see 40 returns labelled `change`, 160 `no change` and 50 `never examined`.
+2. Cell 2 fits Tuesday's two candidates again, with Tuesday's lines, on the 400 examined returns of `model_train`. Then each one gives a score to every return of `model_valid`. `predict_proba` gives each return's score from 0 to 1; Tuesday's `predict` gave only `yes` or `no`. You should see 40 returns labelled `change`, 160 `no change` and 50 `never examined`.
 
-A score is one return's number from 0 to 1: a relative risk indicator that a person acts on, never a finding about the taxpayer. A label records a past examination: `change` means it changed the tax, `exam_changed_tax` `yes`.
+A score is one return's number from 0 to 1: a relative risk indicator that a person acts on, never a finding about the taxpayer. A label records a past examination: `change` means it changed the tax (`exam_changed_tax` is `yes`).
 
 Then run cell 3. You should see the day's ten returns, highest score first: `case_id`, `logistic_score` and `label`.
 
@@ -89,7 +89,7 @@ print(ten[["case_id", "logistic_score", "label"]].round(3).to_string(index=False
 
 "The first word of each cell's name, *true* or *false*, says whether the list agreed with the label." (the day's reading)
 
-The threshold is 0.5. A score at or above 0.5 puts the return on the list; "in this course, it goes on the list" when the score equals the threshold. Below 0.5, the return stays off.
+The threshold is 0.5. A score at or above 0.5 puts the return on the list; below 0.5, the return stays off. For a score exactly at the threshold, the day's reading says: "in this course, it goes on the list".
 
 | Type | Where the return landed | Its label |
 |---|---|---|
@@ -98,24 +98,26 @@ The threshold is 0.5. A score at or above 0.5 puts the return on the list; "in t
 | `FN`, false negative | off the list | change |
 | `TN`, true negative | off the list | no change |
 
-1. In cell 4, type each return's cell between its quotes. The comment beside it gives its score and label. Case 205, for example: score 0.997, on the list; label change: `"TP"`.
+Six of the ten are sorted for you. Case 205, for example: score 0.997, on the list; label change: `"TP"`.
+
+1. In cell 4, type the cell of the four returns left, cases 905, 463, 37 and 471, between their quotes. The comment beside each gives its score and label.
 2. Run cell 4. It counts your four cells and prints the two sums: all four should add up to 10, and `TP + FN` to the 5 returns labelled change. If a sum does not hold, look again at cell 4.
 
 Notebook cell 4:
 
 ```python
-# 4. Your sort at 0.5. Type each return's cell: TP, FP, FN or TN.
+# 4. Your sort at 0.5. Type the cell of cases 905, 463, 37 and 471: TP, FP, FN or TN.
 my_cells = {
-    205: "",  # score 0.997, label change
-    224: "",  # score 0.983, label change
-    123: "",  # case #123: score 0.964, label change
+    205: "TP",  # score 0.997, label change
+    224: "TP",  # score 0.983, label change
+    123: "TP",  # case #123: score 0.964, label change
     905: "",  # score 0.942, label no change
     463: "",  # score 0.652, label no change
     37: "",   # score 0.474, label no change
     471: "",  # score 0.179, label change
-    50: "",   # score 0.071, label change
-    4: "",    # score 0.058, label no change
-    11: "",   # score 0.000, label no change
+    50: "FN",   # score 0.071, label change
+    4: "TN",    # score 0.058, label no change
+    11: "TN",   # score 0.000, label no change
 }
 assert "ten" in globals(), "Run cell 3 first."
 my_counts = {cell: sum(str(v).strip().upper() == cell for v in my_cells.values()) for cell in ("TP", "FP", "FN", "TN")}
@@ -147,8 +149,8 @@ for cell, words in meaning.items():
 
 ### Step 4. Guess, then count the 200 examined returns with the given code
 
-1. In cell 6, type your guess in place of `None`: of the 40 examined returns labelled change, how many does the logistic regression put on the list at 0.5? Any whole number from 0 to 40 counts.
-2. Run cell 6. It puts each of the 200 examined returns on the list or off it at 0.5, and `confusion_matrix` from scikit-learn counts the four cells. You should see a table of two rows, two numbers in each, then your guess.
+1. In cell 6, type your guess in place of `None`: the logistic regression leaves 6 returns labelled change off the list at 0.5. How many of those 6 score above 0.4, close to the line? Any whole number from 0 to 6 counts.
+2. Run cell 6. It puts each of the 200 examined returns on the list or off it at 0.5, and `confusion_matrix` from scikit-learn counts the four cells. You should see a table of two rows, two numbers in each, then the scores of the returns labelled change that stay off the list, beside your guess.
 
 "Tools arrange the rows and columns differently" (the day's reading). scikit-learn puts the label in the rows: the first row is the returns labelled `change`, the second those labelled `no change`. In each row, the first number is the returns on the list, the second those off it.
 
@@ -156,7 +158,7 @@ Notebook cell 6:
 
 ```python
 # 6. Your guess first, then the counting code on the 200 examined returns at 0.5.
-guess = None  # of the 40 labelled change: how many does the logistic regression put on the list?
+guess = None  # of the 6 returns labelled change off the list at 0.5: how many score above 0.4?
 
 from sklearn.metrics import confusion_matrix
 assert "scores" in globals(), "Run cells 1 and 2 first."
@@ -167,7 +169,9 @@ else:
     on_list = ["change" if s >= 0.5 else "no change" for s in examined_scores["logistic_score"]]  # on the list counts as change
     table = confusion_matrix(examined_scores["label"], on_list, labels=["change", "no change"])
     print(table)
-    print(len(examined_scores), "examined returns,", (examined_scores["label"] == "change").sum(), "labelled change. Your guess:", guess)
+    print(len(examined_scores), "examined returns,", (examined_scores["label"] == "change").sum(), "labelled change.")
+    missed = examined_scores[(examined_scores["label"] == "change") & (examined_scores["logistic_score"] < 0.5)]
+    print("Labelled change, off the list, their scores:", sorted(missed["logistic_score"].round(3)), " Your guess:", guess)
 ```
 
 ### Step 5. Name each count of the table, then check
@@ -183,7 +187,7 @@ else:
 | `FP` | row 2, the first number | labelled no change, on the list |
 | `TN` | row 2, the second number | labelled no change, off the list |
 
-2. Run cell 7. You should see sum 1 beside 200 and sum 2 beside 40. Compare `TP` with your guess.
+2. Run cell 7. You should see sum 1 beside 200 and sum 2 beside 40.
 3. Run cell 8. It prints `Done:`, or `Not yet:` and what is left.
 
 Notebook cell 7:

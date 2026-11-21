@@ -57,7 +57,7 @@
   "FP": "an examiner spends hours on a return whose examination changes nothing",
   "FN": "a return an examination would have changed, and nobody looks at it"
  },
- "guess": 25,
+ "guess": 2,
  "all_counts": {
   "TP": 34,
   "FP": 3,

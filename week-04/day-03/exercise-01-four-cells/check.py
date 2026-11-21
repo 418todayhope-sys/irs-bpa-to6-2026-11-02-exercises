@@ -17,7 +17,8 @@ NAMES = {"tp": "TP", "true positive": "TP", "fp": "FP", "false positive": "FP",
 TEN = {205: (0.997, "change"), 224: (0.983, "change"), 123: (0.964, "change"), 905: (0.942, "no change"),
        463: (0.652, "no change"), 37: (0.474, "no change"), 471: (0.179, "change"), 50: (0.071, "change"),
        4: (0.058, "no change"), 11: (0.0, "no change")}
-START = {"ten": {str(k): list(v) for k, v in TEN.items()}, "my_cells": {str(k): "" for k in TEN},
+GIVEN = {205: "TP", 224: "TP", 123: "TP", 50: "FN", 4: "TN", 11: "TN"}  # cell 4 sorts these six for the learner
+START = {"ten": {str(k): list(v) for k, v in TEN.items()}, "my_cells": {str(k): GIVEN.get(k, "") for k in TEN},
          "meaning": {"FP": "", "FN": ""}, "guess": None, "all_counts": {c: None for c in CELLS},
          "expected_all": {"TP": 34, "FP": 3, "FN": 6, "TN": 157}}
 
@@ -61,8 +62,8 @@ def left(f: dict) -> list[str]:
         out.append(f"Cell 5: write what {' and '.join(short)} {'mean' if len(short) > 1 else 'means'} for an examiner, "
                    "four words or more. Step 3.")
     guess = f.get("guess")
-    if not isinstance(guess, (int, float)) or isinstance(guess, bool) or not 0 <= guess <= 40:
-        out.append("Cell 6: type your guess, a whole number from 0 to 40, in place of None. Step 4.")
+    if not isinstance(guess, (int, float)) or isinstance(guess, bool) or not 0 <= guess <= 6:
+        out.append("Cell 6: type your guess, a whole number from 0 to 6 with no quotes, in place of None. Step 4.")
     if any(f["all_counts"].get(c) is None for c in CELLS):
         out.append("Cell 7: type the four counts of cell 6's table. Step 5.")
     elif {c: f["all_counts"][c] for c in CELLS} != f["expected_all"]:
@@ -81,7 +82,7 @@ def report(f: dict) -> str:
         a = f["all_counts"]
         return (f"Done: at 0.5, the ten returns are {m['TP']} TP, {m['FP']} FP, {m['FN']} FN, {m['TN']} TN; "
                 f"the 200 examined returns are {a['TP']} TP, {a['FP']} FP, {a['FN']} FN, {a['TN']} TN. "
-                f"Your guess was {f['guess']} of the 40 labelled change; the list holds {a['TP']}.")
+                f"Your guess was {f['guess']} of the {a['FN']} missed scoring above 0.4.")
     return "\n".join([f"Not yet: {len(out)} left."] + ["- " + item for item in out])
 
 

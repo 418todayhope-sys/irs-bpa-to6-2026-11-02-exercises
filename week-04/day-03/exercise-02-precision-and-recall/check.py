@@ -12,7 +12,7 @@ import sys
 from pathlib import Path
 
 NAMES = ("logistic-regression", "decision-tree")
-START = {"guess": {"higher recall": "", "higher precision": ""},
+START = {"guess": None,
          "by_hand": {n: {"precision": None, "recall": None} for n in NAMES},
          "counts": {"logistic-regression": {"TP": 34, "FP": 3, "FN": 6, "TN": 157},
                     "decision-tree": {"TP": 31, "FP": 12, "FN": 9, "TN": 148}},
@@ -39,14 +39,19 @@ def left(f: dict) -> list[str]:
         One line per problem; an empty list when the exercise is done.
     """
     out = []
-    if any(plain(v) not in NAMES for v in f["guess"].values()):
-        out.append("Cell 3: type logistic-regression or decision-tree in each guess. Step 2.")
+    guess = f.get("guess")
+    if not isinstance(guess, (int, float)) or isinstance(guess, bool) or not 0 <= guess <= 40:
+        out.append("Cell 3: type your guess, a whole number from 0 to 40 with no quotes, in place of None. Step 2.")
     for name in NAMES:
         c, typed = f["counts"][name], f["by_hand"].get(name, {})
         want = {"precision": c["TP"] / (c["TP"] + c["FP"]), "recall": c["TP"] / (c["TP"] + c["FN"])}
         for measure, divide in (("precision", "TP + FP"), ("recall", "TP + FN")):
             if typed.get(measure) is None:
                 out.append(f"Cell 5: type the {measure} of {name}. Step 3.")
+            elif abs(float(typed[measure]) - want[measure]) < 0.006 and not close(typed[measure], want[measure]):
+                top, bottom = c["TP"], c["TP"] + (c["FP"] if measure == "precision" else c["FN"])
+                out.append(f"Cell 5: the {measure} of {name} is rounded. Type it as a division, such as "
+                           f"`{top} / {bottom}`. Step 3.")
             elif not close(typed[measure], want[measure]):
                 out.append(f"Cell 5: the {measure} of {name} is TP divided by {divide}, from cell 4's line for "
                            f"{name}. Step 3.")
@@ -71,7 +76,7 @@ def report(f: dict) -> str:
             c = f["counts"][name]
             parts.append(f"{name} precision {c['TP']} of {c['TP'] + c['FP']}, recall {c['TP']} of {c['TP'] + c['FN']}")
         return ("Done: at 0.5, " + "; ".join(parts) + ". Both are logged with the threshold in their runs. "
-                f"Your guess: higher recall {f['guess']['higher recall']}, higher precision {f['guess']['higher precision']}.")
+                f"Your guess at 0.4: {f['guess']} of the 40.")
     return "\n".join([f"Not yet: {len(out)} left."] + ["- " + item for item in out])
 
 
@@ -103,7 +108,7 @@ def facts_of(g: dict) -> dict:
         counts[name] = {"TP": int((on & change).sum()), "FP": int((on & ~change).sum()),
                         "FN": int((~on & change).sum()), "TN": int((~on & ~change).sum())}
     number = lambda v: None if v is None else float(v)
-    return {"guess": dict(g["guess"]),
+    return {"guess": g.get("guess"),
             "by_hand": {n: {k: number(v) for k, v in m.items()} for n, m in g["by_hand"].items()},
             "counts": counts,
             "logged": {n: {k: (float(v) if k != "threshold" and v is not None else v) for k, v in r.items()}

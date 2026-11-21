@@ -2,7 +2,7 @@
 
 **Goal:** After this exercise, you can compute each candidate's precision and recall at 0.5 from its four counts and set them beside its accuracy in its run.
 
-**Scenario:** The examiners' manager asks two questions of each candidate's list: how many of the returns it sends would be worth an examiner's time, and how many of the returns worth the time it sends. A given cell counts both candidates' matrices on the 200 examined returns of `model_valid` at 0.5; you divide by hand and log the answers into each candidate's run from Tuesday.
+**Scenario:** The examiners' manager asks two questions of each candidate's list. Of the returns it sends, how many are worth an examiner's time? And of the returns worth the time, how many does it send? A given cell counts both candidates' matrices on the 200 examined returns of `model_valid` at 0.5; you divide by hand and log the answers into each candidate's run from Tuesday.
 
 **AI tool:** none.
 
@@ -29,9 +29,9 @@
 Run cells 1 and 2. You do not need to change them. You should see:
 
 1. Which tables cell 1 uses, then 500 returns in `model_train` and 250 in `model_valid`.
-2. Cell 2 fits Tuesday's two candidates again, with Tuesday's lines, on the 400 examined returns of `model_train`. Then each one gives a score to every return of `model_valid`: `predict_proba` gives the score from 0 to 1, where Tuesday's `predict` cut it at 0.5. You should see 40 returns labelled `change`, 160 `no change` and 50 `never examined`.
+2. Cell 2 fits Tuesday's two candidates again, with Tuesday's lines, on the 400 examined returns of `model_train`. Then each one gives a score to every return of `model_valid`. `predict_proba` gives each return's score from 0 to 1; Tuesday's `predict` gave only `yes` or `no`. You should see 40 returns labelled `change`, 160 `no change` and 50 `never examined`.
 
-A score is one return's number from 0 to 1: a relative risk indicator that a person acts on, never a finding about the taxpayer. A label records a past examination: `change` means it changed the tax, `exam_changed_tax` `yes`.
+A score is one return's number from 0 to 1: a relative risk indicator that a person acts on, never a finding about the taxpayer. A label records a past examination: `change` means it changed the tax (`exam_changed_tax` is `yes`).
 
 Notebook cell 1:
 
@@ -76,17 +76,14 @@ print(len(scores), "returns of model_valid scored by both candidates:", scores["
 
 ### Step 2. Guess, then count both candidates' matrices
 
-1. In cell 3, type your guess between the quotes: at 0.5, which candidate has the higher recall, and which the higher precision? Type `logistic-regression` or `decision-tree` in each. Run cell 3.
-2. Run cell 4. It counts each candidate's four cells at 0.5 on the 200 examined returns, as exercise 1's code did. You should see, for each candidate, its four counts by name and the two sums: 200, and `TP + FN` 40.
+1. In cell 3, type your guess in place of `None`: lower the threshold to 0.4. How many of the 40 returns labelled change would the logistic regression put on the list? Any whole number from 0 to 40 counts. Run cell 3.
+2. Run cell 4. It counts each candidate's four cells at 0.5 on the 200 examined returns, as exercise 1's code did. You should see, for each candidate, its four counts by name and the two sums: 200, and `TP + FN` 40. Then the logistic regression's true positives at 0.4, beside your guess.
 
 Notebook cell 3:
 
 ```python
-# 3. Your guess, before the counts: which candidate has the higher recall, and which the higher precision?
-guess = {
-    "higher recall": "",     # logistic-regression or decision-tree
-    "higher precision": "",  # logistic-regression or decision-tree
-}
+# 3. Your guess, before the counts: at a threshold of 0.4, how many of the 40 labelled change are on the list?
+guess = None
 print("Your guess:", guess)
 ```
 
@@ -102,11 +99,13 @@ for name, column in (("logistic-regression", "logistic_score"), ("decision-tree"
     on = examined_scores[column] >= 0.5  # on the list at 0.5
     counts[name] = {"TP": int((on & change).sum()), "FP": int((on & ~change).sum()),
                     "FN": int((~on & change).sum()), "TN": int((~on & ~change).sum())}
-if "" in guess.values():
+if guess is None:
     print("Type your guess in cell 3 and run it, then run this cell again.")
 else:
     for name, c in counts.items():
         print(f"{name} at 0.5: {c}  Sum 1: {sum(c.values())}  Sum 2, TP + FN: {c['TP'] + c['FN']}")
+    at_04 = int((change & (examined_scores["logistic_score"] >= 0.4)).sum())
+    print(f"logistic-regression at 0.4: {at_04} of the 40 labelled change on the list. Your guess: {guess}")
 ```
 
 ### Step 3. Divide by hand
@@ -142,8 +141,8 @@ for name, measures in by_hand.items():
 "write the threshold beside every precision and every recall" (the day's reading). Each run keeps its measures with the threshold they belong to.
 
 1. Run cell 6. For each candidate, it opens the newest run of that name in `week-04-candidates`, Tuesday's run, and adds `threshold` 0.5 as a parameter and your `precision` and `recall` as metrics. You should see `Logged into Tuesday's run` twice.
-2. In the workspace's left sidebar, click **Experiments**, then open `week-04-candidates`. Tick the newest run of each name and click **Compare**. You should see each run's `threshold`, `precision` and `recall` beside Tuesday's `validation_accuracy`: the same 200 returns.
-3. Run cell 7. It prints `Done:`, or `Not yet:` and what is left. If you change a division, run cells 5, 6 and 7 again.
+2. Run cell 7. It prints `Done:`, or `Not yet:` and what is left. If you change a division, run cells 5, 6 and 7 again.
+3. Optional: in the workspace's left sidebar, click **Experiments**, then open `week-04-candidates`. Tick the newest run of each name. Then click **Compare**. You should see each run's `threshold`, `precision` and `recall` beside Tuesday's `validation_accuracy`: the same 200 returns.
 
 Notebook cell 6:
 

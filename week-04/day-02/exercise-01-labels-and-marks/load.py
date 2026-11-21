@@ -1,0 +1,61 @@
+"""Given code for exercise 1: cell 2 runs it. It reads the course's training set,
+course.returns.model_train, and puts three made-up columns beside it: account_change_amt from
+fields.csv, and the demo's label refund_held with refund_hold_days from refund-held.csv. It also reads
+your feature record from Monday, model_feature_record. It changes no table. You do not need to read it."""
+import pandas as pd
+
+FOLDER = f"{course_folder}/week-04/day-02/exercise-01-labels-and-marks"
+COPY = ("The table course.returns.model_train couldn't be read, so this notebook makes the same rows from "
+        "the course's setup file, week-04/setup/day-01-course-data.py. Every count is the same.")
+# Monday's feature record as the answer to Monday's exercise 3 gives it: used when yours is not there.
+MONDAY_RECORD = [
+    ("tax_to_agi", "Form 1040 line 24, total tax, divided by line 11a, adjusted gross income", "yes"),
+    ("wages_amt", "Form 1040 line 1a, total amount from Form(s) W-2, box 1", "yes"),
+    ("deduction_amt", "Form 1040 line 12e, standard deduction or itemized deductions", "yes"),
+    ("deduction_missing", "Form 1040 line 12e, empty or not", "yes"),
+]
+SETUP = f"{course_folder}/week-04/setup/day-01-course-data.py"
+
+
+def course_rows(name: str) -> pd.DataFrame:
+    """The rows of one of the course's sets, made by the course's setup file, as the table holds them."""
+    made = {"__name__": "course_data"}
+    exec(open(SETUP, encoding="utf-8").read(), made)
+    return pd.DataFrame(made["set_rows"](name))
+
+
+def read_csv(name: str) -> pd.DataFrame:
+    """Read a CSV file beside the notebook. Its first line, which starts with #, is skipped."""
+    return pd.read_csv(f"{FOLDER}/{name}", comment="#", dtype={"return_id": str})
+
+
+def load_day(train_table, record_table, schema: str):
+    """Return (the training set with the three made-up columns, your feature record as
+    (feature, source field, known at selection)). Print which table is used, then the record."""
+    try:
+        train = train_table.toPandas() if train_table is not None else None
+    except Exception:
+        train = None
+    if train is None or not len(train):
+        train = course_rows("model_train")
+        print(COPY)
+    else:
+        print("Using the course's training set, course.returns.model_train:", len(train), "returns.")
+    train = train.merge(read_csv("fields.csv"), on="return_id", how="left")
+    train = train.merge(read_csv("refund-held.csv"), on="return_id", how="left")
+    for column in ("exam_changed_tax", "refund_held"):
+        train[column] = train[column].where(train[column].notna(), None)
+    record = []
+    try:
+        if record_table is not None:
+            record = [(r["feature"], r["source_field"], r["known_at_selection"]) for r in record_table.collect()]
+    except Exception:
+        record = []
+    if not record:
+        record = MONDAY_RECORD
+        print("Your table model_feature_record wasn't found" + (" (cell 1 still says learner_NN)" if
+              schema.endswith("_NN") else "") + ", so the rows below are Monday's answer.")
+    print("Your feature record:")
+    for feature, source, known in record:
+        print(f"  {feature}: {source}. Known at selection: {known}")
+    return train, record

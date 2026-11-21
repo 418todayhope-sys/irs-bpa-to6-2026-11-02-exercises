@@ -1,0 +1,36 @@
+{
+ "experiment": "/Users/learner00@example.com/week-04-candidates",
+ "guess": {
+  "logistic-regression": 0.955,
+  "decision-tree": 0.895
+ },
+ "runs": {
+  "decision-tree": {
+   "params": {
+    "model_type": "DecisionTreeClassifier",
+    "split": "train: tax years 2020 to 2021; validation: tax year 2022, 200 returns with a label",
+    "measure": "accuracy",
+    "max_depth": "3"
+   },
+   "metrics": {
+    "validation_accuracy": 0.895
+   }
+  },
+  "logistic-regression": {
+   "params": {
+    "model_type": "LogisticRegression",
+    "split": "train: tax years 2020 to 2021; validation: tax year 2022, 200 returns with a label",
+    "measure": "accuracy"
+   },
+   "metrics": {
+    "validation_accuracy": 0.955
+   }
+  }
+ },
+ "accuracy": {
+  "logistic-regression": 0.955,
+  "decision-tree": 0.895
+ },
+ "chosen": "logistic-regression",
+ "why": "Its run recorded 0.955 against 0.895, on the same split and measure"
+}

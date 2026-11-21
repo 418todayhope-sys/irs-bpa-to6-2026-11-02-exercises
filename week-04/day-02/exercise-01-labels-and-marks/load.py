@@ -1,7 +1,8 @@
 """Given code for exercise 1: cell 2 runs it. It reads the course's training set,
-course.returns.model_train, and puts three made-up columns beside it: account_change_amt from
-fields.csv, and the demo's label refund_held with refund_hold_days from refund-held.csv. It also reads
-your feature record from Monday, model_feature_record. It changes no table. You do not need to read it."""
+course.returns.model_train, and puts the made-up columns of two files beside it, matched by
+return_id: the columns of fields.csv, and the demo's label refund_held with refund_hold_days from
+refund-held.csv. It also reads your feature record from Monday, model_feature_record. It changes no
+table. You do not need to read it."""
 import pandas as pd
 
 FOLDER = f"{course_folder}/week-04/day-02/exercise-01-labels-and-marks"
@@ -9,8 +10,8 @@ COPY = ("The table course.returns.model_train couldn't be read, so this notebook
         "the course's setup file, week-04/setup/day-01-course-data.py. Every count is the same.")
 # Monday's feature record as the answer to Monday's exercise 3 gives it: used when yours is not there.
 MONDAY_RECORD = [
-    ("tax_to_agi", "Form 1040 line 24, total tax, divided by line 11a, adjusted gross income", "yes"),
-    ("wages_amt", "Form 1040 line 1a, total amount from Form(s) W-2, box 1", "yes"),
+    ("tax_to_agi", "Form 1040 line 24, total tax; line 11a, adjusted gross income", "yes"),
+    ("tax_added_by_exam", "the examination's result", "no"),
     ("deduction_amt", "Form 1040 line 12e, standard deduction or itemized deductions", "yes"),
     ("deduction_missing", "Form 1040 line 12e, empty or not", "yes"),
 ]
@@ -25,12 +26,25 @@ def course_rows(name: str) -> pd.DataFrame:
 
 
 def read_csv(name: str) -> pd.DataFrame:
-    """Read a CSV file beside the notebook. Its first line, which starts with #, is skipped."""
+    """Read a CSV file beside the notebook. Its first lines, which start with #, are skipped."""
     return pd.read_csv(f"{FOLDER}/{name}", comment="#", dtype={"return_id": str})
 
 
+def read_notes(name: str) -> dict:
+    """What a CSV file beside the notebook says of each column: its lines '# <column>: <note>'."""
+    notes = {}
+    with open(f"{FOLDER}/{name}", encoding="utf-8") as lines:
+        for line in lines:
+            if not line.startswith("#"):
+                break
+            column, _, note = line[1:].strip().partition(": ")
+            if note and " " not in column:
+                notes[column] = note
+    return notes
+
+
 def load_day(train_table, record_table, schema: str):
-    """Return (the training set with the three made-up columns, your feature record as
+    """Return (the training set with the files' made-up columns, your feature record as
     (feature, source field, known at selection)). Print which table is used, then the record."""
     try:
         train = train_table.toPandas() if train_table is not None else None
@@ -57,5 +71,5 @@ def load_day(train_table, record_table, schema: str):
               schema.endswith("_NN") else "") + ", so the rows below are Monday's answer.")
     print("Your feature record:")
     for feature, source, known in record:
-        print(f"  {feature}: {source}. Known at selection: {known}")
+        print(f"  {feature}: {source}. Known when the case is selected: {known}")
     return train, record

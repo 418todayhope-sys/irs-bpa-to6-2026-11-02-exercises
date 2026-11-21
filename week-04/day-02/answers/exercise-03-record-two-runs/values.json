@@ -1,9 +1,5 @@
 {
  "experiment": "/Users/learner00@example.com/week-04-candidates",
- "guess": {
-  "logistic-regression": 0.955,
-  "decision-tree": 0.895
- },
  "runs": {
   "decision-tree": {
    "params": {
@@ -31,6 +27,5 @@
   "logistic-regression": 0.955,
   "decision-tree": 0.895
  },
- "chosen": "logistic-regression",
- "why": "Its run recorded 0.955 against 0.895, on the same split and measure"
+ "higher": "logistic-regression"
 }

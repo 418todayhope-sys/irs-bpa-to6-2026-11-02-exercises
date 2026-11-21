@@ -6,7 +6,7 @@
 
 **AI tool:** none.
 
-**Time:** 25 minutes: 18 to do it, 7 for setup problems.
+**Time:** 15 minutes: 11 to do it, 4 for setup problems.
 
 **Where you work:** this notebook, `week-04/day-02/exercise-02-fit-two-candidates/exercise.ipynb`, in your Git folder of the course in Databricks.
 
@@ -19,13 +19,17 @@
 - `course.returns.model_train` and `course.returns.model_valid`, the course's training and validation sets, as on Monday. If they cannot be read, cell 2 makes the same rows from the course's setup file and says so. Cell 2 adds Monday's flag `deduction_missing`.
 - `load.py` and `check.py`, given code that cells 2 and 8 run.
 
-**Start from:** this notebook as the course gives it, attached to the compute the trainer names. No cell changes your tables. New here: fitting a model.
+**Start from:** this notebook as the course gives it, attached to the compute the trainer names. No cell changes your tables. New here: you change the line that names the model.
 
-### Step 1. Find the course's files
+### Step 1. Read the rows, keep the features, measure the baseline
 
-Why: cell 2 runs a file beside this notebook, in your Git folder of the course.
+"A comparison is fair only on the same rows." (the day's reading)
 
-Run cell 1. You should see your Git folder of the course.
+Run cells 1 to 4. You do not need to change them. You should see:
+
+1. Which tables cell 2 uses.
+2. 400 training rows and 200 validation rows with a label. Cell 3 keeps the twelve features known before selection and reads an empty amount as 0; `deduction_missing` still says which deduction lines were empty.
+3. The baseline, always `no`: 0.8 on the training rows, Monday's way, and 0.8 on the validation rows. One more return right moves an accuracy by 0.005.
 
 Notebook cell 1:
 
@@ -35,12 +39,6 @@ import os
 course_folder = os.getcwd().split("/week-04/")[0]  # your Git folder of the course
 print("Your Git folder of the course:", course_folder)
 ```
-
-### Step 2. Read the training and validation sets
-
-Why: a candidate is fitted on the training rows and measured on the validation rows.
-
-Run cell 2. You do not need to read its code. You should see which tables it uses, then how many returns are in each.
 
 Notebook cell 2:
 
@@ -57,12 +55,6 @@ folder = f"{course_folder}/week-04/day-02/exercise-02-fit-two-candidates"
 exec(open(f"{folder}/load.py", encoding="utf-8").read())
 train, valid = load_sets(train_table, valid_table)
 ```
-
-### Step 3. Keep the features known `before`, and read an empty amount as 0
-
-Why: "Train only on the columns marked *before*." (the day's reading) These twelve are the filing status, every amount of the filed return, two ratios built from them, and Monday's flag: each known before selection. A model cannot read an empty value, so an empty amount is read as 0. In the course's data only the deduction line is ever empty, and `deduction_missing` says which deduction lines were, as on Monday.
-
-Run cell 3. It keeps the returns with a label, puts the features into `X` and the label into `y`, and reads each empty amount as 0. You should see how many rows have a label, then how many deduction lines were empty.
 
 Notebook cell 3:
 
@@ -89,16 +81,6 @@ print("Deduction lines read as 0 because they were empty:", int(train["deduction
       int(valid["deduction_missing"].sum()), "in validation")
 ```
 
-### Step 4. Measure the baseline again, on the validation rows
-
-Why: "A comparison is fair only on the same rows." (the day's reading)
-
-Run cell 4. It measures Monday's baseline, always `no`, on the validation rows. You should see:
-
-1. How many validation returns have a label. One more return right moves the accuracy by 1 divided by that number.
-2. How many of them are `no` and `yes`.
-3. The baseline's accuracy Monday's way, on the training rows, then on the validation rows.
-
 Notebook cell 4:
 
 ```python
@@ -114,15 +96,13 @@ print("The baseline on the training rows, Monday's way:", round((y_train == "no"
 print("The baseline on the validation rows:", round(baseline_accuracy, 3))
 ```
 
-### Step 5. Guess, before you fit
+### Step 2. Write your guess, before you fit
 
-Why: you understand a result when you said what you expected first.
+In cell 5, type your guess for each candidate: will it beat the baseline? Then run cell 5.
 
-1. In cell 5, for each candidate, type your guess: will it beat the baseline of cell 4?
-   - `a lot`: twenty or more returns more right than the baseline, of 200.
-   - `a little`: one to nineteen returns more right.
-   - `not better`: the same or fewer. A tie is `not better`.
-2. Run cell 5.
+- `a lot`: twenty or more returns more right than the baseline, of 200.
+- `a little`: one to nineteen more right.
+- `not better`: the same or fewer.
 
 Notebook cell 5:
 
@@ -135,22 +115,20 @@ guess = {
 print("Your guess:", guess)
 ```
 
-### Step 6. Fit two candidates
+### Step 3. Fit two candidates
 
-Why: fit trains the model on the training rows; predict asks it for an outcome on each validation return.
+Fit trains the model on the training rows; predict asks it for an outcome on each validation return.
 
-1. Run cell 6. It fits a logistic regression, with the amounts put on a common scale first: `StandardScaler` does that, and `make_pipeline` joins the two steps into one model. You should see its validation accuracy, then how many returns it got right.
+1. Run cell 6. It fits a logistic regression, with the amounts put on a common scale first. You should see its validation accuracy and how many returns it got right.
 2. In cell 6, change the one line that names the model. Type this in place of `make_pipeline(StandardScaler(), LogisticRegression())`:
 
 ```python
 DecisionTreeClassifier(max_depth=3, random_state=0)
 ```
 
-`max_depth=3` is a setting: a tree at most three questions deep. `random_state=0` makes every run grow the same tree.
+`max_depth=3` is a setting: a tree at most three questions deep.
 
-3. Run cell 6 again. You should see the tree's accuracy and how many it got right.
-
-Run cell 6 once for each model, by itself. Do not use Run all after the change: it would fit only the tree.
+3. Run cell 6 again, by itself, not with Run all. You should see the tree's accuracy.
 
 Notebook cell 6:
 
@@ -167,15 +145,10 @@ print(name, "validation accuracy:", round(accuracy, 3))
 print("Right:", int((predictions == y_valid).sum()), "of", len(y_valid), "validation returns")
 ```
 
-### Step 7. Set the three numbers side by side
+### Step 4. Set the three numbers side by side, and check
 
-Why: each candidate is read against the baseline, on the same rows.
-
-Run cell 7. You should see three accuracies. Compare them with your guess.
-
-- A large gain is the moment to ask whether a column gave the label away. Every column of cell 3 was known before selection, so the gain comes from what was filed.
-- A candidate that does not beat the baseline is a result too: keep it.
-- A candidate close to 1.000 is a warning: suspect a leak.
+1. Run cell 7. You should see three accuracies on the same validation rows. Compare each with your guess. A large gain is the moment to ask whether a column gave the label away; exercise 1 checked every column of cell 3 before the fit. An accuracy close to 1.000 is a warning: suspect a leak.
+2. Run cell 8. It prints `Done:`, or `Not yet:` and what is left.
 
 Notebook cell 7:
 
@@ -186,14 +159,8 @@ for name in ("baseline", "LogisticRegression", "DecisionTreeClassifier"):
     if name in results:
         print(f"{name}: {results[name]:.3f}")
     else:
-        print(f"{name}: not fitted yet. Step 6.")
+        print(f"{name}: not fitted yet. Step 3.")
 ```
-
-### Step 8. Check
-
-Run cell 8. It prints `Done:` when your guess is typed and both candidates are fitted on the twelve features. Otherwise it prints `Not yet:` and what is left.
-
-Keep this notebook. Exercise 3 asks you for the two accuracies of cell 7.
 
 Notebook cell 8:
 
@@ -209,7 +176,7 @@ print(check_now(globals()))
 
 Optional: cell 8 does not check it.
 
-In cell 9, between the quotes, write one sentence: which candidate beat the baseline, and by how much? Then run cell 9.
+In cell 9, write one sentence: which candidate beat the baseline, and by how many returns? Run cell 9.
 
 Notebook cell 9:
 
@@ -222,7 +189,7 @@ print(by_how_much or "Write your sentence between the quotes.")
 ### Afterwards, together
 
 1. Why measure the baseline again on the validation rows?
-2. What does a gain of 31 returns right not tell you?
+2. What does a gain of 31 more right in 200 not tell you about the 40 change returns?
 3. What would you check first if a candidate's accuracy were 0.999?
 
 The answer, after you try: [`answers/exercise-02-fit-two-candidates`](../answers/exercise-02-fit-two-candidates/).

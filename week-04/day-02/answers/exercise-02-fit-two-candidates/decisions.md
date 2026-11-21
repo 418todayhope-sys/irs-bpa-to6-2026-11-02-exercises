@@ -12,21 +12,27 @@ The answer is `exercise.ipynb` beside this file. Its cell 6 holds the tree's lin
 | 6, first run | `make_pipeline(StandardScaler(), LogisticRegression())` | Validation accuracy 0.955, 191 of 200 right. Unscaled, `LogisticRegression()` did not converge on these dollar amounts (The week's setup note). |
 | 6, second run | `DecisionTreeClassifier(max_depth=3, random_state=0)` | Validation accuracy 0.895, 179 of 200 right. `random_state=0` makes every run grow the same tree, so exercise 3's record matches. The week's setup measured the full-depth tree at 0.910; Monday says Tuesday keeps the tree short. |
 | 7 | run as given | baseline 0.800, LogisticRegression 0.955, DecisionTreeClassifier 0.895. |
-| 9, optional | one sentence | The logistic regression got 31 more right than the baseline, the tree 19 more. |
+| 9, optional | one sentence | Both beat it: the logistic regression by 31 returns, the tree by 19. |
 
-What else the check accepts: nothing else in cell 6; the tree must have `max_depth=3`; the check fits both candidates again on the notebook's rows and compares. A learner who adds `tax_added_by_exam` to the features list gets `Not yet` (cell 3's list), and an accuracy near 1.000 if they look: the debrief's third question.
+What else the check accepts: nothing else in cell 6; the tree must have `max_depth=3`; the check fits both candidates again on the notebook's rows and compares. A learner who adds `tax_added_by_exam` to the features list gets `Not yet` (cell 3's list), and an accuracy near 1.000 if they look (the course measured 0.990 for the logistic regression and 1.000 for the tree): the debrief's third question.
 
 The trainer's demo (slide 31) fits the logistic regression on the same notebook and stops there; the tree is the learners'.
+
+## What version 2.0 cut, and why
+
+Learners of this cohort could not finish some exercises. Same cells, same goal, same check; 15 minutes instead of 25.
+
+- Steps, 8 to 4: cells 1 to 4, which the learner only runs, are one step, and cells 7 and 8 are one step. No cell changed.
+- Typed values stay three: the two guesses and the one model line, each part of the goal.
+- Shorter text: the step that explained the twelve features and the fill is one sentence; the reading and the trainer's demo explain them.
 
 ## Where each rule comes from (for the trainer, never in a learner cell)
 
 | Quote in the exercise | From |
 |---|---|
-| "Train only on the features marked *before*." | `days/day-02/curated.md` § Ask each feature when it was known, The check |
-| "it is important that these transformations are only learnt from the training data" | `days/day-02/curated.md` § Fit two models from the given cells, The fill and the scaling, named only (the scikit-learn guide's words) |
-| "A comparison is fair only on the same rows." | the same section, Compare with the baseline; deck slide 29 |
+| "A comparison is fair only on the same rows." | `days/day-02/curated.md` § Fit two models from the given cells, Compare with the baseline; deck slide 29 |
 | the cells' plain form: `features`, `notna()`, `X_train`, `model = LogisticRegression()`, `fit`, `predict`, `accuracy_score`, `DecisionTreeClassifier(max_depth=3)` | the same section, In general; deck slide 28 |
-| "If a candidate does not beat the baseline, write that down. It is a result." and the accuracy close to 1.000 (our words) | the same section, Compare with the baseline |
+| a large gain is the moment to ask about a leak; an accuracy close to 1.000 is a warning (step 4, our words) | the same section, Compare with the baseline |
 
 The exercise is deck slide 32; its debrief is slide 33; the demo is slide 31.
 
@@ -37,7 +43,7 @@ None beyond the course's tables. Cell 2 adds `deduction_missing` to `train` and 
 ## Where it ran
 
 - Not run in Databricks: a trainer gap. What only a run there confirms: `spark.table` on `course.returns.model_train` and `model_valid` for a learner in `training-students`, and `toPandas()` on them; scikit-learn on the course compute giving 0.955 and 0.895.
-- Run on a laptop, 2026-11-20, Python 3.11.5, scikit-learn 1.3.0, pandas 2.0.3, on a stand-in for the Spark calls and for MLflow, over the course's week 4 tables made by `week-04/setup/day-01-course-data.py`, and again with no table readable (load.py makes the same rows from that file): start `Not yet: 2 left.` (the logistic regression is fitted when the cells run as given), answer `Done:` on both. The same numbers as the week's setup measurement, which used scikit-learn 1.5.2.
+- Run on a laptop, 2026-11-21, Python 3.11.5, scikit-learn 1.3.0, pandas 2.0.3, on a stand-in for the Spark calls, over the course's week 4 tables made by `week-04/setup/day-01-course-data.py`, and again with no table readable (load.py makes the same rows from that file): start `Not yet: 2 left.` (the logistic regression is fitted when the cells run as given), answer `Done:` on both. The same numbers as the week's setup measurement, which used scikit-learn 1.5.2.
 
 ## Pages behind the steps (opened 2026-11-20)
 

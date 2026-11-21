@@ -38,19 +38,19 @@ def left(f: dict) -> list[str]:
     out = []
     if list(f["features"]) != FEATURES:
         out.append("Cell 3 must list the twelve features known before selection, as the course gives them: " + ", ".join(FEATURES)
-                   + ". Run cells 3 and 4 again. Step 3.")
+                   + ". Run cells 3 and 4 again. Step 1.")
     if any(plain(f["guess"].get(name, "")) not in GUESSES for name in NAMES):
-        out.append('Cell 5: type "a lot", "a little" or "not better" for each candidate, before you fit it. Step 5.')
+        out.append('Cell 5: type "a lot", "a little" or "not better" for each candidate, before you fit it. Step 2.')
     for name, line in (("LogisticRegression", "make_pipeline(StandardScaler(), LogisticRegression())"),
                        ("DecisionTreeClassifier", "DecisionTreeClassifier(max_depth=3, random_state=0)")):
         got, want = f["results"].get(name), f["expected"].get(name)
         if got is None:
-            out.append(f"Cell 6 has not fitted {name} yet. Make its model line {line}, then run cells 6 and 7. Step 6.")
+            out.append(f"Cell 6 has not fitted {name} yet. Make its model line {line}, then run cells 6 and 7. Step 3.")
         elif name == "DecisionTreeClassifier" and f.get("tree_depth") != 3:
-            out.append(f"The tree in cell 6 must be {line}: max_depth=3. Run cell 6 again. Step 6.")
+            out.append(f"The tree in cell 6 must be {line}: max_depth=3. Run cell 6 again. Step 3.")
         elif want is None or abs(got - want) > 0.0005:
             out.append(f"The accuracy of {name} does not match a fit of {line} on these rows. Run cells 3 to 7 "
-                       "again, as the course gives them. Step 6.")
+                       "again, as the course gives them. Step 3.")
     return out
 
 

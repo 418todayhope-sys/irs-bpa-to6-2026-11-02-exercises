@@ -1,8 +1,8 @@
-# Exercise 1: Name the label each question learns from (we do)
+# Exercise 1: Name the label each question could learn from (we do)
 
-**Goal:** After this exercise, you can name the past decision that a case-selection question learns from, or say that it has none.
+**Goal:** After this exercise, you can name the label a case-selection question could learn from, or say that it has none.
 
-**Scenario:** Two colleagues each bring a question for a model. The week's return table records one kind of past decision. You decide which question that decision can teach, and which question it cannot.
+**Scenario:** Two teams each bring a case-selection question and ask for a model. Before anyone builds a model, you say which past decision each model could learn from. One of the two questions has none.
 
 **AI tool:** none. This is thinking work: you write text in this notebook. One cell lists the columns of the table.
 
@@ -10,9 +10,9 @@
 
 **Done when:** cell 4 prints `Done:`.
 
-**Optional part:** Finished early? Write a third question in a new cell, and say what kind of answer it needs: yes or no, an amount, or no label.
+**Optional part:** Finished early? In a new cell, write a third question of your own, its label or `no label`, and the kind of answer it needs: yes or no, or an amount.
 
-**What you need to know first:** a label is the past decision recorded for a case. A model learns only from cases that have one.
+**What you need to know first:** a label is the past decision recorded for a return. "A label exists only where someone decided."
 
 **What you have:**
 
@@ -24,9 +24,9 @@
 
 ### Step 1. See which past decisions the table records
 
-Why: "A label is the past decision recorded for a case." So you look first at what the table records.
+Why: a label is a past decision that the table records. So you look first at what the table records.
 
-Run cell 1. You should see 18 column names, from `case_id` to `tax_added_by_exam`. Two of them come from past examinations: `exam_changed_tax` and `tax_added_by_exam`. The other 16 are keys, header fields, a made-up filing channel and the amounts of the return as filed. None of them records what happened after filing.
+Run cell 1. You should see 18 column names, from `case_id` to `tax_added_by_exam`. Two of them come from past examinations: `exam_changed_tax` and `tax_added_by_exam`. The other 16 hold what the return showed when it was filed, such as its keys, its header and its amounts. None of them records what happened after filing.
 
 Notebook cell 1:
 
@@ -38,14 +38,14 @@ print(len(columns), "columns:", ", ".join(columns))
 
 ### Step 2. Name each question's label
 
-Why: "If you cannot name that decision for a question, no model of this week's kind can answer it."
+Why: "If no column records a past decision, it is not classification."
 
-In cell 2, type the label and the reason for each question. Write each answer between the quotes. The table gives each answer and its reason. Copy the table's reason, or write it in your own words: 6 words or more. Type no quotation marks inside an answer: they end it early.
+In cell 2, type the label and the reason for each question, between the quotes. Copy the reason from the table, or write it in your own words: 6 words or more. Type no quotation marks inside an answer: they end it early.
 
 | Question | `label` | `why` |
 |---|---|---|
-| `Q1`: Which of this year's returns would an examination most likely change the tax on? | `exam_changed_tax` | The column records the past decision: yes when an examination changed the tax, no when it did not. The question asks yes or no, so this is its label. |
-| `Q2`: Which of this year's returns will the taxpayer later correct with an amended return? | `no label` | No column records whether a taxpayer amended a past return. A model can learn only from a decision someone recorded in the past. |
+| `Q1`: Which of this year's returns would an examination most likely change the tax on? | `exam_changed_tax` | The column records a past decision, yes or no, and the question asks yes or no. |
+| `Q2`: Which of this year's returns will the taxpayer later correct with an amended return? | `no label` | No column records whether a taxpayer amended a past return. |
 
 Run cell 2. You should see your two answers printed.
 
@@ -63,9 +63,9 @@ for question, answer in answers.items():
 
 ### Step 3. Say what Q2 would need
 
-Why: a question with no label today can get one, if someone records the decision.
+Why: "Either the decision could be recorded and nobody recorded it, so the question gets a label once someone does."
 
-In cell 3, between the quotes of `needs = ""`, write one or two sentences: what would the table have to record for Q2 to have a label? Write 8 words or more. Your sentence names the decision, and says that the table records it for each past return. Run cell 3. You should see your sentence printed.
+In cell 3, between the quotes of `needs = ""`, write what the table would have to record for Q2 to have a label: 8 words or more. Run cell 3. You should see your sentence printed.
 
 <details><summary>Stuck? One way to say it</summary>
 
@@ -100,8 +100,8 @@ Notebook cell 4:
 
 ### Afterwards, together
 
-1. No exam ever: what could Q1 learn from?
-2. Examiners chose the returns: what could a model miss?
-3. When could a wrong return still read no?
+1. What does a model learn from reviewers who set aside too many returns of one kind?
+2. When can a model learn from today's new decisions?
+3. What would you ask about a label before you trust it?
 
 The answer: after the talk together, open `week-04/day-01/answers/exercise-01-name-the-label/` in your Git folder of the course ([link](../answers/exercise-01-name-the-label/)).

@@ -6,7 +6,7 @@ Without Databricks: week-04/day-01/answers/stand_in.py runs the whole notebook.
 
 SOURCE = "course.returns.model_features"
 AMOUNT = "deduction_amt"
-GIVEN = ("tax_to_agi", "wages_amt")
+GIVEN = ("tax_to_agi", "tax_added_by_exam")
 
 
 def flag_facts(spark: object, table: str, flag: str) -> dict:

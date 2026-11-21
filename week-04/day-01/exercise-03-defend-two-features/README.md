@@ -1,8 +1,8 @@
-# Exercise 3: Defend two features and flag a missing amount (we do)
+# Exercise 3: Record two features' defence, then flag a missing amount (we do)
 
-**Goal:** After this exercise, you can record a feature's source field, reason and timing, and add a flag column for a missing amount.
+**Goal:** After this exercise, you can record the defence of a feature and add a flag column for a missing amount.
 
-**Scenario:** A reviewer will ask why each input of Tuesday's model may be used. The feature record starts with two rows that the trainer wrote. You add the deduction, which some returns leave empty, and the flag that keeps those returns apart.
+**Scenario:** On Tuesday a model reads the course's features. Before it does, each feature needs its defence: its source field, its reason, and whether it is known when the case is selected. One amount, the deduction on line 12e, is empty on some returns.
 
 **AI tool:** none.
 
@@ -10,15 +10,15 @@
 
 **Done when:** cell 5 prints `Done:`.
 
-**Optional part:** Finished early? In cell 4, add a row for each other column of `course.returns.model_features` that you would keep. To list them, run `print(spark.table("course.returns.model_features").columns)` in a new cell. Add a row for `name_length` too: start its reason with `strike:`, and name the header field it comes from. Run cells 4 and 5 again: extra rows still give `Done:`.
+**Optional part:** Finished early? In cell 4, record more columns of `course.returns.model_features`. To list them, run `print(spark.table("course.returns.model_features").columns)` in a new cell. Strike `name_length`, whose source field is in the header: start its reason with `strike:`. Run cells 4 and 5 again: extra rows still give `Done:`.
 
-**What you need to know first:** "A feature's defence is three facts written beside it": its source field, its reason and its timing. "An empty line can mean two different things": zero, or unknown.
+**What you need to know first:** a feature's defence is "its source field, its reason, and whether it is known when the case is selected." A missing amount is "an amount that is not on the return, which can mean zero or unknown."
 
 **What you have:**
 
 - `course.returns.model_features`, the week's feature table in Unity Catalog: 1,000 returns, made up by the course.
 - Your own schema, `course.learner_NN`, from week 3. Your number is the same as in week 3.
-- The trainer's example, shown before this exercise: the same cells on `withholding_amt`.
+- The trainer's example, shown before this exercise: two features recorded, and the same count and flag cells on `withholding_amt`.
 - `check.py`, beside this notebook. Cell 5 runs it. It reads the two tables you write.
 
 **Start from:** this notebook as the course gives it, attached to the compute the trainer names. To start again, set the cells you typed back to how the course gives them, and run them again: each one replaces its table. After a restart, run cells 1 to 5 in order: each cell uses a value from the one before it.
@@ -56,14 +56,14 @@ spark.sql(f"SELECT COUNT(*) AS returns, COUNT({amount}) AS filled, COUNT(*) - CO
 
 ### Step 3. Decide what an empty deduction means, and add the flag
 
-Why: "Once a cell is filled, nobody can tell a real 0 from a filled 0." The flag keeps the difference.
+Why: a flag column is "a column that records which amounts were missing." Tuesday's cells fill the empty amounts. After that, only the flag still shows which ones were empty.
 
 In cell 3, type the two values. The table gives each value and its reason.
 
 | Value | Type this | Why |
 |---|---|---|
 | `empty_means` | `unknown` | `deduction_amt` is line 12e, "Standard deduction or itemized deductions (from Schedule A)". Each return takes one or the other, so an empty line 12e cannot mean that the taxpayer had none. |
-| `flag` | `deduction_missing` | The flag "holds 1 where the amount was missing and 0 where it was present". Name it for its amount, as the trainer named `withholding_missing`. |
+| `flag` | `deduction_missing` | The flag holds 1 where line 12e is empty and 0 where it is filled. Its name says which amount it is for. |
 
 Run cell 3. It writes `features_flagged` in your schema: every column of `course.returns.model_features`, and your flag. You should see two rows: `0` with 937 returns, and `1` with 63.
 
@@ -81,33 +81,33 @@ else:
     spark.sql(f"SELECT {flag}, COUNT(*) AS returns FROM {schema}.features_flagged GROUP BY {flag} ORDER BY {flag}").show()
 ```
 
-### Step 4. Write the defence of the two new features
+### Step 4. Write the defence of the deduction and its flag
 
-Why: "If you cannot say where each input came from and why it was used, the score cannot be defended, however accurate it is."
+Why: "A feature you cannot defend is a feature you cannot keep."
 
-In cell 4, fill the two empty rows: `deduction_amt`, and your flag. Keep the two filled rows. Copy each reason, or write it in your own words: 6 words or more. The table gives each answer and its reason. Type each of the four values between its own pair of quotes, in the order the row shows, and keep the commas between them.
+Cell 4 holds the feature record, four rows. The first two are given: `tax_to_agi`, and `tax_added_by_exam`, which is struck. In the `deduction_amt` row, type its source field, its reason, and `yes` or `no`. In your flag's row, type its reason only. Copy each reason from the table, or write it in your own words: 6 words or more.
 
-| Row | Source field | Reason | Known at selection | Why |
-|---|---|---|---|---|
-| `deduction_amt` | Form 1040 line 12e, standard deduction or itemized deductions | A deduction that is large for the income may be claimed in error. A reason is a claim that a reviewer can disagree with. | `yes` | line 12e is on the return as filed |
-| `deduction_missing` | Form 1040 line 12e, empty or not | an empty line may itself be a signal | `yes` | known when the return is filed |
+| Row | Source field | Reason | Known when the case is selected? |
+|---|---|---|---|
+| `deduction_amt` | Form 1040 line 12e, standard deduction or itemized deductions | a deduction lowers the taxable income, so it bears on the tax the return reports | `yes`: line 12e is on the return as filed |
+| `deduction_missing` | given | the flag keeps the returns whose line 12e is empty apart from the others | given |
 
 Run cell 4. You should see `Wrote course.learner_07.model_feature_record: 4 rows`, with your own number.
 
 Notebook cell 4:
 
 ```python
-# 4. Your feature record: one row per feature. Two rows are filled for you. Fill the two empty rows.
-#    Each row: feature, source field, reason, known at selection ("yes" or "no"), why it is known or not.
+# 4. Your feature record: one row per feature. Type between the empty quotes.
+#    Each row: feature, source field, reason, known when the case is selected ("yes" or "no"), why.
 record = [
-    ("tax_to_agi", "Form 1040 line 24, total tax, divided by line 11a, adjusted gross income",
+    ("tax_to_agi", "Form 1040 line 24, total tax; line 11a, adjusted gross income",
      "a return whose tax is far from what its income suggests may hold an error", "yes",
-     "both lines are on the return as filed"),
-    ("wages_amt", "Form 1040 line 1a, total amount from Form(s) W-2, box 1",
-     "wages are the income line that employers' W-2s can confirm", "yes",
-     "line 1a is on the return as filed"),
-    ("deduction_amt", "", "", "", ""),
-    (flag, "", "", "", ""),
+     "both are on the filed return"),
+    ("tax_added_by_exam", "the examination's result",
+     "it moves with the examination's outcome", "no",
+     "written after selection; struck"),
+    ("deduction_amt", "", "", "", "line 12e is on the return as filed"),
+    (flag, "Form 1040 line 12e, empty or not", "", "yes", "whether line 12e is empty shows on the return as filed"),
 ]
 if schema.endswith("_NN"):
     print("Type your number in cell 1 first, then run this cell again.")
@@ -124,8 +124,8 @@ Run cell 5. It prints `Done:` when these things are true:
 
 - `empty_means` is `unknown`.
 - `features_flagged` in your schema has your flag, 1 on each return whose `deduction_amt` is empty and 0 on the others.
-- `model_feature_record` in your schema holds the two given rows, a row for `deduction_amt` and a row for your flag.
-- Each of your two rows has a source field on line 12e, a reason of 6 words or more, `yes` or `no`, and why.
+- `model_feature_record`, the feature record in your schema, holds the two given rows, a row for `deduction_amt` and a row for your flag.
+- Each of these two rows names line 12e, has a reason of 6 words or more, and says `yes` or `no`.
 
 Otherwise it prints `Not yet:` and each thing still to do. It reads your two tables. You do not need to read its code.
 
@@ -138,8 +138,8 @@ Notebook cell 5:
 
 ### Afterwards, together
 
-1. Blanks filled with 0, no flag: what does a model learn?
-2. An all-0 flag: when would it earn its column?
-3. Which column would say no for its timing?
+1. Why is the tax an examination added struck, when the tax withheld stays?
+2. When is a missing amount zero, and when is it unknown?
+3. Why add the flag before the fill, and not after it?
 
 The answer: after the talk together, open `week-04/day-01/answers/exercise-03-defend-two-features/` in your Git folder of the course ([link](../answers/exercise-03-defend-two-features/)).

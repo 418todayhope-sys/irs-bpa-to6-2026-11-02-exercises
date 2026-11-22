@@ -11,7 +11,9 @@ from pathlib import Path
 
 LINES = ("Labelled data", "Cost", "Risk", "Choice", "Decided by")
 EMPTY = "\n" + "\n".join(f"{name}:" for name in LINES) + "\n"
-START = {"payment_plans": EMPTY, "summaries": EMPTY + "Who checks:\n"}
+START = {"payment_plans": EMPTY.replace("Cost:", "Cost: training once; then each new plan costs almost nothing to run, "
+                                        "every week"), "summaries": EMPTY}
+NEGATED = re.compile(r"\b(not|rather than|instead of|no)\s+(a\s+)?(trained model|model trained|prompting|prompts?)\b")
 ROW = re.compile(r"\blabel|\bcost|\bcalls?\b|\brisk", re.I)
 TASKS = (("payment_plans", "Cell 2", "a trained model",
           "What are the many past plans, each labelled kept or missed, for?"),
@@ -26,10 +28,11 @@ def line(text: str, name: str) -> str:
 
 
 def choice(text: str) -> str:
-    """Return the technique a Choice line names: a trained model, prompting, or an empty string."""
-    said = text.lower()
-    trained, prompt = "trained model" in said, "prompt" in said
-    return "a trained model" if trained and not prompt else "prompting" if prompt and not trained else ""
+    """Return the technique a Choice line names: a trained model, prompting, both, or an empty string.
+    A technique the line rules out, such as "not prompting", does not count as named."""
+    said = NEGATED.sub("", text.lower())
+    trained, prompt = bool(re.search(r"\btrain", said)), "prompt" in said
+    return "both" if trained and prompt else "a trained model" if trained else "prompting" if prompt else ""
 
 
 def left(values: dict) -> list[str]:
@@ -48,7 +51,10 @@ def left(values: dict) -> list[str]:
             if len(line(text, row).split()) < 3:
                 out.append(f"{cell}: answer {row} in three words or more, after '{row}:'. Step {cell[-1]}.")
         chosen = choice(line(text, "Choice"))
-        if not chosen:
+        if chosen == "both":
+            out.append(f"{cell}: your Choice line names both a trained model and prompting. Keep only the one you "
+                       f"choose. Step {cell[-1]}.")
+        elif not chosen:
             out.append(f"{cell}: after 'Choice:', write a trained model or prompting. Step {cell[-1]}.")
         elif chosen != right:
             out.append(f"{cell}: look at your Labelled data line again. {question} Step {cell[-1]}.")
@@ -58,10 +64,10 @@ def left(values: dict) -> list[str]:
         elif not ROW.search(decided):
             out.append(f"{cell}: the reason after 'Decided by:' names one of the three rows: labelled data, cost "
                        f"or risk. Which row does your reason belong to? Step {cell[-1]}.")
-    checks = line(values.get("summaries") or "", "Who checks")
-    if len(checks.split()) < 6 or "against" not in checks.lower():
-        out.append("Cell 3: after 'Who checks:', write who checks each summary, and against what, in six words or "
-                   "more with the word against. Step 3.")
+    risk = line(values.get("summaries") or "", "Risk")
+    if len(risk.split()) >= 3 and "against" not in risk.lower():
+        out.append("Cell 3: in the Risk line, say who catches a wrong summary, and against what, with the word "
+                   "against. Step 3.")
     return out
 
 
@@ -69,8 +75,8 @@ def report(values: dict) -> str:
     """Return what cell 4 prints: Done, or Not yet with each thing left."""
     out = left(values)
     if not out:
-        return ("Done: each task has the three answers, a choice, and the row that decided it; you named who checks "
-                "the summaries, and against what.")
+        return ("Done: each task has the three answers, a choice, and the row that decided it; your summaries' Risk "
+                "line says who catches a wrong summary, and against what.")
     return "\n".join([f"Not yet: {len(out)} left."] + ["- " + item for item in out])
 
 

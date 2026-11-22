@@ -57,9 +57,9 @@ print(filled)
 
 A trained model needs many past cases, each with its label. Prompting needs a written instruction and few labelled cases or none.
 
-The task: **the collection team wants to know which new payment plans are likely to be missed. It holds many past plans, each labelled kept or missed.** It gets many new plans each week, and a person on the team calls each taxpayer whose plan is flagged.
+The task: **the collection team wants to know which new payment plans are likely to be missed. It holds many past plans, each labelled kept or missed.** It gets many new plans each week, and a person on the team calls each taxpayer whose plan the model picks out.
 
-1. In cell 2, after each of `Labelled data:`, `Cost:` and `Risk:`, write a few words, three or more.
+1. In cell 2, after `Labelled data:` and `Risk:`, write a few words, three or more. The `Cost:` line is given.
 2. After `Choice:`, write `a trained model` or `prompting`.
 3. After `Decided by:`, write one sentence of six words or more: the row that decided it, as in cell 1, and why.
 4. Run cell 2. You should see your table.
@@ -72,7 +72,7 @@ Notebook cell 2:
 # 2. The payment plans. Write after each colon, one line each.
 payment_plans = """
 Labelled data:
-Cost:
+Cost: training once; then each new plan costs almost nothing to run, every week
 Risk:
 Choice:
 Decided by:
@@ -80,15 +80,14 @@ Decided by:
 print(payment_plans)
 ```
 
-### Step 3. Decide the summaries, and who checks them
+### Step 3. Decide the summaries
 
 "A language model fails in its own way: as week 1 showed, it can write an answer that reads well and is invented." (the day's reading)
 
 The task: **the training team wants each new procedure page summarized in five lines for new staff. It holds no store of approved summaries. Each page has an owner who wrote it.**
 
-1. In cell 3, write the three rows, the choice and the deciding row, as in step 2.
-2. After `Who checks:`, write who checks each summary, and against what, in six words or more. Use the word `against`.
-3. Run cell 3. You should see your table.
+1. In cell 3, write the three rows, the choice and the deciding row, as in step 2. In the `Risk:` line, say who catches a wrong summary, and against what.
+2. Run cell 3. You should see your table.
 
 Notebook cell 3:
 
@@ -100,7 +99,6 @@ Cost:
 Risk:
 Choice:
 Decided by:
-Who checks:
 """
 print(summaries)
 ```

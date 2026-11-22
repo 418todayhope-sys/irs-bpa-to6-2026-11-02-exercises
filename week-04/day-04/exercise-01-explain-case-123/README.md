@@ -97,8 +97,10 @@ print("Your top three:", top_three)
 
 1. In cell 4, type `123` in place of `None`. Until you do, the cell stops with `Type the case id in place of None.`
 2. Run cell 4. You should see the chart, then the same chart as a table: a return with average values first, then the twelve features, largest push first, each with case #123's value and the training average, then case #123's output and its score.
-3. Read the sum under the table. "The exact pushes add up to 3.28; the rounded ones give 3.30, and the difference is rounding." (the day's reading) The third decimal of a push can differ from one compute to another, so your rounded sum may show 3.28 or 3.29: still rounding.
-4. Read the axis label.
+3. Read the axis label: the unit every push is in.
+4. Read the sum under the table. "The exact pushes take -4.55 to 3.28; the pushes shown are rounded to one place, and their roundings add up to the difference." (the day's reading) So the pushes shown add up to 3.15, not 3.28.
+
+"The exact pushes in your notebook can differ in the second decimal place with the version of the library that fits the model; the score 0.964, the order of the pushes and every count in this reading stay the same." (the day's reading)
 
 "The list describes the whole model; one return's pushes may come in another order." (the day's reading) Find `wages_amt` in the table: high on the ranked list, it hardly moves case #123.
 
@@ -111,25 +113,25 @@ assert case_id is not None, "Type the case id in place of None."
 chart = explain(case_id)
 ```
 
-### Step 4. Name the axis, guess, then see
+### Step 4. Guess, then see
 
-1. In cell 5, between the quotes after `axis`, type the unit the axis label names.
-2. Case #123's other income pushes about +3.8 on that axis. In place of `None`, type your guess: if case #123's other income were the training average, 7,584, and everything else stayed as filed, what would its score be? Any number from 0 to 1 counts.
-3. Run cell 5. You should see the score it would have, beside 0.964.
+1. Case #123's other income pushes +3.8 on the log-odds axis. In cell 5, in place of `None`, type your guess: if case #123's other income were the training average, 7,584, and everything else stayed as filed, what would its score be? Any number from 0 to 1 counts.
+2. Run cell 5. You should see your guess beside the score it would have, and beside 0.964.
+
+This is not the reading's 0.904: that score comes from the model fitted again without other income. Here the same model scores the same return, with one value changed.
 
 Then read why: "A step of the same size in log-odds moves the score a great deal near the middle and very little near the ends, so a push has no fixed size in score." (the day's reading)
 
 Notebook cell 5:
 
 ```python
-# 5. The axis, and your guess. Type both, then run this cell.
-axis = ""     # the unit the chart's axis label names
+# 5. Your guess, then the score. Type it, then run this cell.
 guess = None  # case #123's score with its other income at the training average: a number from 0 to 1
 
-if not axis or guess is None:
-    print("Type the axis and your guess, then run this cell again.")
+if guess is None:
+    print("Type your guess, then run this cell again.")
 else:
-    print(what_if(123, "other_income_amt"))
+    print(what_if(123, "other_income_amt", guess))
 ```
 
 ### Step 5. Write the two sentences, and check
@@ -142,7 +144,7 @@ else:
 |---|---|---|
 | 1 | case #123's score, against what a return with average values scores | cell 2, and the first line of cell 4's table as a score: about 0.01 |
 | 2 | the two largest pushes, the largest first: what each feature says about the return, its value against the training average, and the direction it pushed the score | cell 4's table |
-| neither | an amount of push or of score, such as "by 3.82"; anything the taxpayer did | the axis; the examiner decides |
+| neither | an amount of push or of score, such as "by 3.8"; anything the taxpayer did | the axis; the examiner decides |
 
 2. Run cell 6. You should see your sentences.
 3. Run cell 7. It prints `Done:`, or `Not yet:` and what is left.
@@ -173,7 +175,7 @@ print(check_now(globals()))
 
 Optional: cell 7 does not check it.
 
-1. In cell 8, type in place of `None` the id of a return the model left off the list, such as `471`: labelled change, with a score of about 0.18.
+1. In cell 8, type in place of `None` the id of a return the model left off the list, such as `471`: labelled change, with a score of about 0.18. Its pushes point both ways.
 2. Run cell 8. You should see its chart and table.
 3. Between the quotes, write two sentences of the same form. Where a push lowers the score, say so.
 

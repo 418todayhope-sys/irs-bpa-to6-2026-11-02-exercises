@@ -98,7 +98,7 @@ def draw_ranking() -> list:
     plt.close()
     print("Features the model leans on most (average size of push, log-odds):")
     for name, value in ranked.items():
-        print(f"{name:<22} {value:.2f}  {'#' * round(15 * value / ranked.iloc[0])}")
+        print(f"{name:<22} {value:.1f}  {'#' * round(15 * value / ranked.iloc[0])}")
     return list(ranked.index)
 
 
@@ -124,6 +124,12 @@ def shown(number) -> str:
     if abs(number) >= 100 or float(number).is_integer():
         return f"{number:,.0f}"
     return f"{number:.4f}".rstrip("0").rstrip(".")
+
+
+def one_place(push: float) -> str:
+    """A push as the table shows it: to one place, with its sign, and 0.0 with none."""
+    shown_push = round(push, 1) + 0.0
+    return " 0.0" if shown_push == 0 else f"{shown_push:+.1f}"
 
 
 def explain(case_id) -> dict:
@@ -155,25 +161,29 @@ def explain(case_id) -> dict:
     plt.show()
     print(f"The pushes are computed by {chart['how']}.\n")
     print(f"{'case #' + str(chart['case']):<30} {'its value':>10} {'training average':>17} {'push':>7}")
-    print(f"{'a return with average values':<30} {'':>10} {'':>17} {chart['start']:7.3f}")
+    print(f"{'a return with average values':<30} {'':>10} {'':>17} {chart['start']:7.2f}")
     for f in order:
-        print(f"{f:<30} {shown(value[f]):>10} {shown(average[f]):>17} {chart['pushes'][f]:+7.2f}")
+        print(f"{f:<30} {shown(value[f]):>10} {shown(average[f]):>17} {one_place(chart['pushes'][f]):>7}")
     print(f"{'case #' + str(chart['case']):<30} {'':>10} {'':>17} {chart['output']:7.2f} (a score of {chart['score']:.3f})")
-    rounded = round(chart["start"], 3) + sum(round(p, 2) for p in chart["pushes"].values())
-    print(f"\nThe sum: {chart['start']:.3f} plus the twelve rounded pushes gives {rounded:.2f}; "
-          f"the exact pushes give {chart['output']:.2f}. The difference is rounding.")
+    shown_sum = round(chart["start"], 2) + sum(round(p, 1) for p in chart["pushes"].values())
+    print(f"\nThe sum: the exact pushes take {chart['start']:.2f} to {chart['output']:.2f}, a score of "
+          f"{chart['score']:.3f}. The pushes shown, rounded to one place, add up to {shown_sum:.2f}.")
     print(f"The axis: {AXIS}.")
     return chart
 
 
-def what_if(case_id, feature: str) -> str:
-    """The return's score with one feature set to its training average and everything else as filed."""
+def what_if(case_id, feature: str, guess) -> str:
+    """The return's score with one feature set to its training average and everything else as filed,
+    beside the learner's guess."""
     i = row_of(case_id)
     row = valid.loc[[i], features].fillna(0).copy()
     before = float(logistic.predict_proba(row)[0, 1])
     row[feature] = X_train[feature].mean()
     after = float(logistic.predict_proba(row)[0, 1])
     push = case_chart(case_id)["pushes"][feature]
-    return (f"Case #{case_id} with {feature} at the training average, {X_train[feature].mean():,.0f}, everything "
-            f"else as filed: a score of {after:.3f}, against {before:.3f}.\nThe push on the axis was {push:+.2f} "
-            f"log-odds; the score moved {before - after:.3f}. A push is not an amount of score.")
+    return (f"Your guess: {guess}. Case #{case_id} with {feature} at the training average, "
+            f"{X_train[feature].mean():,.0f}, everything else as filed: a score of {after:.3f}, against {before:.3f}.\n"
+            f"The push on the axis was {one_place(push).strip()} log-odds; the score moved {before - after:.3f}. "
+            "A push is not an amount of score.\n"
+            "This is not the reading's 0.904: that is the model fitted again without the feature. Here the same "
+            "model scores the same return with one value changed.")

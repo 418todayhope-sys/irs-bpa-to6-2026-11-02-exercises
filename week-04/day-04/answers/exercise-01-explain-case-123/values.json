@@ -29,7 +29,6 @@
   "wages_amt"
  ],
  "case_id": 123,
- "axis": "log-odds",
  "guess": 0.6,
  "sentences": "The model scored case #123 at 0.964, 11th of the 250 returns of model_valid, where a return with average values scores about 0.01. The two largest reasons were its large other income, 28,500 against an average of 7,584, and its large deduction, 42,000 against 19,453; its low tax for its income came third, and all three pushed the score up."
 }

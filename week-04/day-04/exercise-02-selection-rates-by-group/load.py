@@ -1,8 +1,8 @@
 """Given code for exercise 2: cell 1 runs it. It reads the course's training and validation sets,
 course.returns.model_train and course.returns.model_valid, and all 1,000 returns of
 course.returns.model_features, and adds Monday's flag deduction_missing: 1 where deduction_amt is
-empty. It also gives cell 5 the rates at two other thresholds and the past labels by channel, and the
-proxy step its medians. It changes no table. You do not need to read it."""
+empty. It also gives cell 4 the rates at two other thresholds and the past labels by channel, and the
+optional last step its medians. It changes no table. You do not need to read it."""
 import pandas as pd
 
 NAMES = ("model_train", "model_valid", "model_features")
@@ -62,8 +62,10 @@ def compare() -> None:
     ranked = scores["logistic_score"].sort_values(ascending=False)
     at_50 = ranked.iloc[49]
     print("\nFor comparison, the same 250 returns at two other thresholds:")
-    print(f"- a list of 50 (threshold {at_50:.3f}): " + said(by_channel(scores["logistic_score"] >= at_50)) +
-          f". Your guess: {guess_50}.")
+    at_50_counts = by_channel(scores["logistic_score"] >= at_50)
+    print(f"- a list of 50 (threshold {at_50:.3f}): " + said(at_50_counts) + ".")
+    print(f"  Your guess for channel B's rate on the list of 50: {guess_50}. Its rate: "
+          f"{at_50_counts['B'][0] / at_50_counts['B'][1]:.3f}.")
     print(f"- at 0.5 ({int((scores['logistic_score'] >= 0.5).sum())} on the list): " +
           said(by_channel(scores["logistic_score"] >= 0.5)) + ".")
     examined = all_returns[all_returns["exam_changed_tax"].notna()]
@@ -74,8 +76,12 @@ def compare() -> None:
         f"({row['change'] / row['examined']:.3f})" for name, row in labels.iterrows()) + ".")
 
 
-def medians(feature: str) -> str:
-    """A feature's typical value, its median, in each channel, over all 1,000 returns."""
-    table = all_returns.groupby("made_up_channel")[feature].agg(["size", "median"])
-    return "\n".join(f"Channel {name}: {int(row['size'])} returns, median {feature} {row['median']:,.0f}"
-                     for name, row in table.iterrows())
+def medians(*names: str) -> str:
+    """Each feature's typical value, its median, in each channel, over all 1,000 returns."""
+    table = all_returns.groupby("made_up_channel")[list(names)].median()
+    sizes = all_returns.groupby("made_up_channel").size()
+    lines = [f"{'median over all 1,000 returns':<32}" + "".join(f"{'channel ' + c + ' (' + str(sizes[c]) + ')':>18}"
+                                                             for c in table.index)]
+    for name in names:
+        lines.append(f"{name:<32}" + "".join(f"{table.loc[c, name]:>18,.0f}" for c in table.index))
+    return "\n".join(lines)

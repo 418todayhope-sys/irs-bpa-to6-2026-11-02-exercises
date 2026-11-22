@@ -16,9 +16,9 @@ from pathlib import Path
 START = {"ranked": ["other_income_amt", "tax_to_agi", "wages_amt", "deduction_to_agi", "deduction_amt",
                     "total_tax_amt", "deduction_missing", "taxable_interest_amt", "filing_status", "agi_amt",
                     "total_income", "withholding_amt"],
-         "chart": {"start": -4.553, "output": 3.28, "score": 0.964,
-                   "pushes": {"other_income_amt": 3.82, "deduction_amt": 2.65, "tax_to_agi": 1.24}},
-         "top_three": ["", "", ""], "case_id": None, "axis": "", "guess": None, "sentences": ""}
+         "chart": {"start": -4.55, "output": 3.28, "score": 0.964,
+                   "pushes": {"other_income_amt": 3.8, "deduction_amt": 2.6, "tax_to_agi": 1.2}},
+         "top_three": ["", "", ""], "case_id": None, "guess": None, "sentences": ""}
 FINDING = re.compile(r"underreport|under-report|fraud|evad|evasion|cheat|\blied\b|\bhid\b|guilty|"
                      r"(tax|return) is wrong|wrong tax|identity theft", re.I)
 AMOUNT = re.compile(r"\b(rais\w*|lower\w*|push\w*|mov\w*|increas\w*|add\w*|took|takes)\b[^.;]*?\bby\s+[+-]?\d", re.I)
@@ -53,15 +53,15 @@ def left(f: dict) -> list[str]:
                    "them. The ranked list is the whole model's chart, not case #123's. Step 2.")
     if str(f["case_id"]).strip().lstrip("#") != "123":
         out.append("Cell 4: type 123 as the case id, and run the cell. Step 3.")
-    axis = str(f["axis"]).lower()
-    if not ("log" in axis and "odds" in axis):
-        out.append("Cell 5: type the unit the chart's axis label names, under cell 4's chart and table. Step 4.")
     guess = f["guess"]
     if isinstance(guess, bool) or not isinstance(guess, (int, float)) or not 0 <= guess <= 1:
         out.append("Cell 5: type your guess as a number from 0 to 1, with no quotes. Any number counts. Step 4.")
     text = " ".join(str(f["sentences"]).split())
-    if sentence_count(text) < 2 or len(text.split()) < 20:
+    if sentence_count(text) < 2:
         out.append("Cell 6: write two sentences, each ending with a full stop. Step 5.")
+    elif len(text.split()) < 20:
+        out.append(f"Cell 6: your two sentences have {len(text.split())} words. Give each push's value against the "
+                   "training average, such as 28,500 against 7,584: about 20 words or more. Step 5.")
     if not re.search(r"0?\.96", text) or "average" not in text.lower():
         out.append("Cell 6: the first sentence gives case #123's score, 0.964, against what a return with average "
                    "values scores. Step 5.")
@@ -76,7 +76,7 @@ def left(f: dict) -> list[str]:
         out.append("Cell 6: say the direction each pushed the score: up or down. Step 5.")
     pushes = [abs(v) for v in f["chart"]["pushes"].values()]
     found = [float(n) for n in re.findall(r"(?<![\d,])\d+\.\d+", text.replace(",", ""))]
-    if AMOUNT.search(text) or any(abs(n - p) < 0.015 for n in found for p in pushes):
+    if AMOUNT.search(text) or any(abs(n - p) < 0.06 for n in found for p in pushes):
         out.append("Cell 6: the pushes are on the log-odds axis, so give their order and direction, not an amount "
                    "of score or of push. Step 5.")
     if FINDING.search(text):
@@ -91,7 +91,7 @@ def report(f: dict) -> str:
     if not out:
         c = f["chart"]
         return (f"Done: your top three are {', '.join(f['ranked'][:3])}; case #123's pushes add up from "
-                f"{c['start']:.3f} to {c['output']:.2f} on the log-odds axis, a score of {c['score']:.3f}; and your "
+                f"{c['start']:.2f} to {c['output']:.2f} on the log-odds axis, a score of {c['score']:.3f}; and your "
                 "two sentences name its two largest pushes in order, with their direction and no amount.")
     return "\n".join([f"Not yet: {len(out)} left."] + ["- " + item for item in out])
 
@@ -103,7 +103,7 @@ def facts_of(g: dict) -> dict:
     return {"ranked": list(g["ranked_features"]().index),
             "chart": {"start": chart["start"], "output": chart["output"], "score": chart["score"],
                       "pushes": {name: chart["pushes"][name] for name in largest}},
-            **{name: g.get(name) for name in ("top_three", "case_id", "axis", "guess", "sentences")}}
+            **{name: g.get(name) for name in ("top_three", "case_id", "guess", "sentences")}}
 
 
 def in_notebook(g: dict) -> str:

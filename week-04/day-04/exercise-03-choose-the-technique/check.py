@@ -11,14 +11,14 @@ from pathlib import Path
 
 LINES = ("Labelled data", "Cost", "Risk", "Choice", "Decided by")
 EMPTY = "\n" + "\n".join(f"{name}:" for name in LINES) + "\n"
-START = {"payment_plans": EMPTY.replace("Cost:", "Cost: training once; then each new plan costs almost nothing to run, "
-                                        "every week"), "summaries": EMPTY}
+START = {"late_exams": EMPTY.replace("Cost:", "Cost: training once; then each new examination costs almost nothing to "
+                                     "score, every week"), "drafts": EMPTY}
 NEGATED = re.compile(r"\b(not|rather than|instead of|no)\s+(a\s+)?(trained model|model trained|prompting|prompts?)\b")
 ROW = re.compile(r"\blabel|\bcost|\bcalls?\b|\brisk", re.I)
-TASKS = (("payment_plans", "Cell 2", "a trained model",
-          "What are the many past plans, each labelled kept or missed, for?"),
-         ("summaries", "Cell 3", "prompting",
-          "Is there a store of approved summaries for a model to learn from?"))
+TASKS = (("late_exams", "Cell 2", "a trained model",
+          "What are the many past examinations, each labelled on time or late, for?"),
+         ("drafts", "Cell 3", "prompting",
+          "Is there a store of approved answers for a model to learn from?"))
 
 
 def line(text: str, name: str) -> str:
@@ -39,7 +39,7 @@ def left(values: dict) -> list[str]:
     """Return what is left: one line for each thing that is not yet right.
 
     Args:
-        values: payment_plans and summaries, the text of cells 2 and 3.
+        values: late_exams and drafts, the text of cells 2 and 3.
 
     Returns:
         One line per problem; an empty list when the exercise is done.
@@ -64,9 +64,9 @@ def left(values: dict) -> list[str]:
         elif not ROW.search(decided):
             out.append(f"{cell}: the reason after 'Decided by:' names one of the three rows: labelled data, cost "
                        f"or risk. Which row does your reason belong to? Step {cell[-1]}.")
-    risk = line(values.get("summaries") or "", "Risk")
+    risk = line(values.get("drafts") or "", "Risk")
     if len(risk.split()) >= 3 and "against" not in risk.lower():
-        out.append("Cell 3: in the Risk line, say who catches a wrong summary, and against what, with the word "
+        out.append("Cell 3: in the Risk line, say who catches a wrong draft, and against what, with the word "
                    "against. Step 3.")
     return out
 
@@ -75,19 +75,19 @@ def report(values: dict) -> str:
     """Return what cell 4 prints: Done, or Not yet with each thing left."""
     out = left(values)
     if not out:
-        return ("Done: each task has the three answers, a choice, and the row that decided it; your summaries' Risk "
-                "line says who catches a wrong summary, and against what.")
+        return ("Done: each task has the three answers, a choice, and the row that decided it; your draft answers' "
+                "Risk line says who catches a wrong draft, and against what.")
     return "\n".join([f"Not yet: {len(out)} left."] + ["- " + item for item in out])
 
 
 def in_notebook(g: dict) -> str:
     """Return what cell 4 prints, from the notebook's values (cell 4 passes them)."""
-    return report({"payment_plans": g.get("payment_plans"), "summaries": g.get("summaries")})
+    return report({"late_exams": g.get("late_exams"), "drafts": g.get("drafts")})
 
 
 def facts_of(g: dict) -> dict:
     """The facts the check reads: the text of cells 2 and 3."""
-    return {"payment_plans": g.get("payment_plans"), "summaries": g.get("summaries")}
+    return {"late_exams": g.get("late_exams"), "drafts": g.get("drafts")}
 
 
 if __name__ == "__main__":

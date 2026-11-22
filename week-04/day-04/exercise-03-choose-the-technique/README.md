@@ -2,7 +2,7 @@
 
 **Goal:** After this exercise, you can choose a trained model or prompting for a task and defend the choice by labelled data, cost or risk.
 
-**Scenario:** Two made-up teams each bring a task and ask for a model. A collection team wants to know which new payment plans are likely to be missed. It holds many past plans, each labelled kept or missed. A training team wants each new procedure page summarized in five lines for new staff. It holds no store of approved summaries. For each task you answer the three questions, choose a trained model or prompting, and name the row that decided it.
+**Scenario:** Two made-up teams each bring a task and ask for a model. An examination planning team wants to know which newly opened examinations are likely to run late, past 180 days. It holds many past examinations, each labelled on time or late. A guidance team wants a first draft of the answer to each question staff send about a changed line of Form 1040. It holds no store of approved answers. For each task you answer the three questions, choose a trained model or prompting, and name the row that decided it.
 
 **AI tool:** none. This is thinking work: you type text in this notebook. No cell reads a table, and no cell calls a model.
 
@@ -53,11 +53,11 @@ Decided by:     labelled data: many past examined        labelled data: no appro
 print(filled)
 ```
 
-### Step 2. Decide the payment plans
+### Step 2. Decide the late examinations
 
 A trained model needs many past cases, each with its label. Prompting needs a written instruction and few labelled cases or none.
 
-The task: **the collection team wants to know which new payment plans are likely to be missed. It holds many past plans, each labelled kept or missed.** It gets many new plans each week, and a person on the team calls each taxpayer whose plan the model picks out.
+The task: **the planning team wants to know which newly opened examinations are likely to run late, past 180 days. It holds many past examinations, each labelled on time or late.** Many examinations open each week, and a manager looks at each one the model picks out before moving any staff.
 
 1. In cell 2, after `Labelled data:` and `Risk:`, write a few words, three or more. The `Cost:` line is given.
 2. After `Choice:`, write `a trained model` or `prompting`.
@@ -69,38 +69,38 @@ A reason such as "it is newer" or "it handles text" is not yet a reason. It belo
 Notebook cell 2:
 
 ```python
-# 2. The payment plans. Write after each colon, one line each.
-payment_plans = """
+# 2. The late examinations. Write after each colon, one line each.
+late_exams = """
 Labelled data:
-Cost: training once; then each new plan costs almost nothing to run, every week
+Cost: training once; then each new examination costs almost nothing to score, every week
 Risk:
 Choice:
 Decided by:
 """
-print(payment_plans)
+print(late_exams)
 ```
 
-### Step 3. Decide the summaries
+### Step 3. Decide the draft answers
 
 "A language model fails in its own way: as week 1 showed, it can write an answer that reads well and is invented." (the day's reading)
 
-The task: **the training team wants each new procedure page summarized in five lines for new staff. It holds no store of approved summaries. Each page has an owner who wrote it.**
+The task: **the guidance team wants a first draft of the answer to each question staff send about a changed line of Form 1040. It holds no store of approved answers. About 15 questions come each week, and an analyst who knows the line reads each draft before it is sent.**
 
-1. In cell 3, write the three rows, the choice and the deciding row, as in step 2. In the `Risk:` line, say who catches a wrong summary, and against what.
+1. In cell 3, write the three rows, the choice and the deciding row, as in step 2. In the `Risk:` line, say who catches a wrong draft, and against what.
 2. Run cell 3. You should see your table.
 
 Notebook cell 3:
 
 ```python
-# 3. The summaries. Write after each colon, one line each.
-summaries = """
+# 3. The draft answers. Write after each colon, one line each.
+drafts = """
 Labelled data:
 Cost:
 Risk:
 Choice:
 Decided by:
 """
-print(summaries)
+print(drafts)
 ```
 
 ### Step 4. Check
@@ -138,7 +138,7 @@ print(retrieval or "Write your sentence between the quotes.")
 ### Afterwards, together
 
 1. Which of the three questions decided each task?
-2. What would change your choice for the summaries?
+2. What would change your choice for the draft answers?
 3. Who checks a wrong answer in each task, and how?
 
 The answer, after you try: [`answers/exercise-03-choose-the-technique`](../answers/exercise-03-choose-the-technique/).

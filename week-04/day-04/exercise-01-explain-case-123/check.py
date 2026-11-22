@@ -1,4 +1,4 @@
-"""The done check for exercise 1. In Databricks, cell 6 of the notebook runs it: it reads the ranked
+"""The done check for exercise 1. In Databricks, cell 7 of the notebook runs it: it reads the ranked
 list and case #123's chart from the notebook's model, and compares them with what you typed. Without
 Databricks, from the course folder:
 
@@ -12,75 +12,75 @@ import re
 import sys
 from pathlib import Path
 
-FEATURES = ("tax_to_agi", "wages_change_pct", "withholding_amt", "withholding_missing")
-# The logistic regression's ranked list and case #123's chart, as the notebook computes them.
-START = {"ranked": ["tax_to_agi", "wages_change_pct", "withholding_missing", "withholding_amt"],
-         "chart": {"average": 0.05000, "score": 0.82119,
-                   "pushes": {"tax_to_agi": 0.39991, "wages_change_pct": 0.29000, "withholding_amt": -0.03903,
-                              "withholding_missing": 0.12032}},
-         "top_three": ["", "", ""], "axis": "", "average": None, "score": None,
-         "pushes": {f: None for f in FEATURES}, "sentences": ""}
-FORM_1 = re.compile(r"scored case #?123 at (\d*\.\d+),? against an average of (\d*\.\d+) for all returns", re.I)
-FORM_2 = re.compile(r"two largest reasons were (.+?),? which (?:raised|lowered) the score by (\d*\.\d+),? and (.+?),? "
-                    r"which (?:raised|lowered) it by (\d*\.\d+)", re.I | re.S)
+# The ranked list and case #123's chart on the logistic regression, as the day's reading gives them.
+START = {"ranked": ["other_income_amt", "tax_to_agi", "wages_amt", "deduction_to_agi", "deduction_amt",
+                    "total_tax_amt", "deduction_missing", "taxable_interest_amt", "filing_status", "agi_amt",
+                    "total_income", "withholding_amt"],
+         "chart": {"start": -4.553, "output": 3.28, "score": 0.964,
+                   "pushes": {"other_income_amt": 3.82, "deduction_amt": 2.65, "tax_to_agi": 1.24}},
+         "top_three": ["", "", ""], "case_id": None, "axis": "", "guess": None, "sentences": ""}
 FINDING = re.compile(r"underreport|under-report|fraud|evad|evasion|cheat|\blied\b|\bhid\b|guilty|"
-                     r"(tax|return) is wrong|wrong tax", re.I)
+                     r"(tax|return) is wrong|wrong tax|identity theft", re.I)
+AMOUNT = re.compile(r"\b(rais\w*|lower\w*|push\w*|mov\w*|increas\w*|add\w*|took|takes)\b[^.;]*?\bby\s+[+-]?\d", re.I)
+UP = re.compile(r"\bup\b|\brais\w*|\bhigher\b|\bincreas\w*", re.I)
 
 
-def near(a, b, by: float = 0.006) -> bool:
-    """Whether a typed number is the expected one, to two decimals."""
-    try:
-        return abs(float(a) - float(b)) <= by
-    except (TypeError, ValueError):
-        return False
+def plain(text) -> str:
+    """A typed name as the check reads it: no spaces, quotes or backticks around it."""
+    return str(text).strip().strip("`'\"").strip()
+
+
+def sentence_count(text: str) -> int:
+    """The number of sentences: each ends with a full stop, question or exclamation mark before a space or the end."""
+    return len(re.findall(r"[.!?](?=\s|$)", text.strip()))
 
 
 def left(f: dict) -> list[str]:
     """Return what is left: one line for each thing that is not yet right.
 
     Args:
-        f: the facts: ranked (the model's features in order), chart (case #123's average, pushes and
-            score), and what the learner typed in cells 2, 4 and 5.
+        f: the facts: ranked (the model's features in order), chart (case #123's starting point, its
+            largest pushes, its output and score), and what the learner typed in cells 3 to 6.
 
     Returns:
         One line per problem; an empty list when the exercise is done.
     """
     out = []
-    typed = [str(t).strip().strip("`'\"") for t in (f["top_three"] or [])]
-    if typed != list(f["ranked"][:3]):
-        out.append("Cell 2: type the three longest bars of the ranked list, the longest first, as the chart names "
+    typed = [plain(t) for t in (f["top_three"] or [])]
+    ranked = list(f["ranked"])
+    if len(typed) != 3 or typed[0] != ranked[0] or set(typed[1:]) != set(ranked[1:3]):
+        out.append("Cell 3: type the three longest bars of the ranked list, the longest first, as the chart names "
                    "them. The ranked list is the whole model's chart, not case #123's. Step 2.")
+    if str(f["case_id"]).strip().lstrip("#") != "123":
+        out.append("Cell 4: type 123 as the case id, and run the cell. Step 3.")
     axis = str(f["axis"]).lower()
-    if not re.search(r"score|probabilit", axis) or "log" in axis:
-        out.append("Cell 4: type what the chart's axis is measured in: its label is printed under cell 3. Step 4.")
-    chart = f["chart"]
-    if not near(f["average"], chart["average"]):
-        out.append("Cell 4: the average score is the first line of cell 3's table. Step 4.")
-    pushes = f["pushes"] or {}
-    wrong = [name for name in FEATURES if not near(pushes.get(name), chart["pushes"][name])]
-    if wrong:
-        out.append(f"Cell 4: read the push of {', '.join(wrong)} again from cell 3, with its sign. Step 4.")
-    if not near(f["score"], chart["score"]):
-        out.append("Cell 4: case #123's score is the last line of cell 3's table. Step 4.")
-    text = str(f["sentences"])
-    first, second = FORM_1.search(text), FORM_2.search(text)
-    largest = sorted(chart["pushes"].values(), key=lambda v: -abs(v))[:2]
-    if not first:
-        out.append("Cell 5: write the first sentence in the form: The model scored case #123 at ..., against an "
-                   "average of ... for all returns. Step 5.")
-    elif not (near(first.group(1), chart["score"]) and near(first.group(2), chart["average"])):
-        out.append("Cell 5: the first sentence gives case #123's score and the average score, from cell 3. Step 5.")
-    if not second:
-        out.append("Cell 5: write the second sentence in the form: The two largest reasons were ..., which raised the "
-                   "score by ..., and ..., which raised it by .... Step 5.")
-    else:
-        if not (near(second.group(2), abs(largest[0])) and near(second.group(4), abs(largest[1]))):
-            out.append("Cell 5: the second sentence gives the two largest pushes, the largest first, as amounts of "
-                       "score. Step 5.")
-        if min(len(second.group(1).split()), len(second.group(3).split())) < 2 or "..." in text:
-            out.append("Cell 5: name each reason in two words or more, in words an examiner reads. Step 5.")
+    if not ("log" in axis and "odds" in axis):
+        out.append("Cell 5: type the unit the chart's axis label names, under cell 4's chart and table. Step 4.")
+    guess = f["guess"]
+    if isinstance(guess, bool) or not isinstance(guess, (int, float)) or not 0 <= guess <= 1:
+        out.append("Cell 5: type your guess as a number from 0 to 1, with no quotes. Any number counts. Step 4.")
+    text = " ".join(str(f["sentences"]).split())
+    if sentence_count(text) < 2 or len(text.split()) < 20:
+        out.append("Cell 6: write two sentences, each ending with a full stop. Step 5.")
+    if not re.search(r"0?\.96", text) or "average" not in text.lower():
+        out.append("Cell 6: the first sentence gives case #123's score, 0.964, against what a return with average "
+                   "values scores. Step 5.")
+    other = re.search(r"other[ _]income", text, re.I)
+    deduction = re.search(r"deduction(?![ _]to)", text, re.I)
+    if not (other and deduction):
+        out.append("Cell 6: the second sentence names the two largest pushes, in words an examiner reads: case "
+                   "#123's other income and its deduction. Step 5.")
+    elif other.start() > deduction.start():
+        out.append("Cell 6: give the two largest pushes in their order, the largest first. Step 5.")
+    if not UP.search(text):
+        out.append("Cell 6: say the direction each pushed the score: up or down. Step 5.")
+    pushes = [abs(v) for v in f["chart"]["pushes"].values()]
+    found = [float(n) for n in re.findall(r"(?<![\d,])\d+\.\d+", text.replace(",", ""))]
+    if AMOUNT.search(text) or any(abs(n - p) < 0.015 for n in found for p in pushes):
+        out.append("Cell 6: the pushes are on the log-odds axis, so give their order and direction, not an amount "
+                   "of score or of push. Step 5.")
     if FINDING.search(text):
-        out.append("Cell 5: a push says where the model looked, not what the taxpayer did. Leave out any finding "
+        out.append("Cell 6: a push says where the model looked, not what the taxpayer did. Leave out any finding "
                    "about the taxpayer. Step 5.")
     return out
 
@@ -89,22 +89,27 @@ def report(f: dict) -> str:
     """Return what the check cell prints: Done, or Not yet with each thing left."""
     out = left(f)
     if not out:
+        c = f["chart"]
         return (f"Done: your top three are {', '.join(f['ranked'][:3])}; case #123's pushes add up from "
-                f"{f['chart']['average']:.2f} to {f['chart']['score']:.2f}, and your two sentences give the two "
-                "largest in the axis's unit.")
+                f"{c['start']:.3f} to {c['output']:.2f} on the log-odds axis, a score of {c['score']:.3f}; and your "
+                "two sentences name its two largest pushes in order, with their direction and no amount.")
     return "\n".join([f"Not yet: {len(out)} left."] + ["- " + item for item in out])
 
 
 def facts_of(g: dict) -> dict:
     """The facts, from the notebook's values: the model's ranked list and case #123's chart."""
-    chart = g["numbers"]("123")
-    return {"ranked": list(g["weights"]().index),
-            "chart": {"average": chart["average"], "score": chart["score"], "pushes": chart["pushes"]},
-            **{name: g.get(name) for name in ("top_three", "axis", "average", "score", "pushes", "sentences")}}
+    chart = g["case_chart"](123)
+    largest = sorted(chart["pushes"], key=lambda name: -abs(chart["pushes"][name]))[:3]
+    return {"ranked": list(g["ranked_features"]().index),
+            "chart": {"start": chart["start"], "output": chart["output"], "score": chart["score"],
+                      "pushes": {name: chart["pushes"][name] for name in largest}},
+            **{name: g.get(name) for name in ("top_three", "case_id", "axis", "guess", "sentences")}}
 
 
 def in_notebook(g: dict) -> str:
-    """Return what the check cell prints, from the notebook's values (cell 6 passes them)."""
+    """Return what the check cell prints, from the notebook's values (cell 7 passes them)."""
+    if "logistic" not in g:
+        return "Not yet: 1 left.\n- Run cells 1 and 2 first. Step 1."
     return report(facts_of(g))
 
 

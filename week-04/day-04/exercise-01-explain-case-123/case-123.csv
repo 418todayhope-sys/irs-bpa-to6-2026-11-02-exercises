@@ -1,3 +1,0 @@
-# Made up by the course for week 4, day 4: case #123, a new return. It has no label: it has not been examined. Its withholding amount is missing. No real return or taxpayer.
-return_id,tax_to_agi,wages_change_pct,withholding_amt,label
-#123,0.03,-0.45,,

@@ -1,141 +1,168 @@
-# Exercise 1: Name the top three features, then explain case #123 in two sentences
+# Exercise 1: Name the top three features, then explain case #123 in two sentences (we do)
 
-**Goal:** After this exercise, you can name your model's top three features and explain case #123's score in two sentences an examiner could read.
+**Goal:** After this exercise, you can name the three features your model leans on most and explain case #123's score in two sentences an examiner could read.
 
-**Scenario:** A made-up examiner opens the made-up case #123 on the list, sees one number, 0.82, and asks why it is there. You read your candidate's ranked chart and name its top three features. Then you read case #123's chart and write the two sentences the examiner reads.
+**Scenario:** A made-up examiner opens case #123 on Wednesday's list of 25, sees one number, 0.964, and asks why it is there. You read the model's ranked chart and name its top three features. Then you read case #123's chart and write the two sentences the examiner reads.
 
 **AI tool:** none.
 
-**Time:** 25 minutes: 21 to do it, 4 for setup problems.
+**Time:** 15 minutes: 11 to do it, 4 for setup problems.
 
 **Where you work:** this notebook, `week-04/day-04/exercise-01-explain-case-123/exercise.ipynb`, in your Git folder of the course in Databricks.
 
-**Done when:** cell 6 prints `Done:`.
+**Done when:** cell 7 prints `Done:`.
 
-**Optional part:** Finished early? Cell 7 explains a return that the model left off the list.
+**Cells:** a cell's number is the `# N.` comment on its first line, such as `# 1.`; text cells have no number.
+
+**Optional part:** Finished early? Cell 8 draws the chart of a return the model left off the list.
 
 **What you have:**
 
-- `train-returns.csv`: 2,000 made-up training returns with three of Tuesday's features and the label. Cell 1 adds the fourth, Monday's flag `withholding_missing`: 1 where the withholding amount is missing. The average score in the chart is taken over them.
-- `case-123.csv`: case #123's four features and no label. It is a new return, not yet examined. Its withholding amount is missing.
-- `ten-returns.csv`: Wednesday's ten made-up returns, with their features.
-- `load.py` and `check.py`: given code that cells 1 and 6 run. Cell 1 fits Tuesday's two candidates again, on the training returns.
+- `course.returns.model_train` and `course.returns.model_valid`, as on Wednesday. If they cannot be read, cell 1 makes the same rows from the course's setup file and says so.
+- `load.py` and `check.py`, given code that cells 1 and 7 run. `load.py` draws the charts: with the SHAP library where it is on the compute, and by the same exact formula where it is not.
 
-**Start from:** this notebook as the course gives it, attached to the compute the trainer names. No cell reads or changes your tables. New here: the ranked chart, and case #123's chart.
+**Start from:** this notebook as the course gives it, attached to the compute the trainer names. No cell changes your tables. New here: the ranked chart, and one return's chart.
 
-### Step 1. Fit your candidate
+### Step 1. Fit the model again
 
-Why: you explain the model that gave the score, the candidate you chose on Wednesday.
+Run cells 1 and 2. You do not need to change them. You should see:
 
-1. In cell 1, after `chosen =`, type the candidate you chose on Wednesday: `logistic-regression` or `decision-tree`. If you chose none, keep `logistic-regression`.
-2. Run cell 1. You do not need to read its code. You should see `Read 2000 made-up training returns, case #123 and Wednesday's ten`, then your candidate.
+1. Which tables cell 1 uses, then 500 returns in `model_train` and 250 in `model_valid`.
+2. Cell 2 fits Tuesday's logistic regression again, with Tuesday's lines, on the 400 examined returns of `model_train`, and scores every return of `model_valid`. You should see case #123's score, 0.964, at place 11 of 250: on Wednesday's list of 25.
 
-The slides follow the logistic regression. If you chose the tree, your charts differ from the slides. The method is the same.
+The model is the candidate you chose on Wednesday, the logistic regression. A score is one return's number from 0 to 1: a relative risk indicator that a person acts on, never a finding about the taxpayer.
 
 Notebook cell 1:
 
 ```python
-# 1. Your candidate from Wednesday, fitted again on the made-up training returns.
-chosen = "logistic-regression"  # or "decision-tree", the candidate you chose on Wednesday
+# 1. Read the course's tables. You do not need to change this cell.
 import os
-folder = os.getcwd().split("/week-04/")[0] + "/week-04/day-04/exercise-01-explain-case-123"
-exec(open(f"{folder}/load.py", encoding="utf-8").read())  # reads the files beside this notebook
+course_folder = os.getcwd().split("/week-04/")[0]  # your Git folder of the course
+folder = f"{course_folder}/week-04/day-04/exercise-01-explain-case-123"
+try:
+    train_table = spark.table("course.returns.model_train")  # the training set: tax years 2020 and 2021
+    valid_table = spark.table("course.returns.model_valid")  # the validation set: tax year 2022
+except Exception:
+    train_table, valid_table = None, None  # not there: load.py makes the same rows
+exec(open(f"{folder}/load.py", encoding="utf-8").read())  # you do not need to read load.py
+train, valid = load_sets(train_table, valid_table)
 ```
-
-### Step 2. Name the top three features
-
-Why: "The chart is a *ranked list*: the features in order, with the one the model leans on most at the top." (the day's reading)
-
-1. Run cell 2. You should see a chart of four bars, the longest at the top, then the same list as text.
-2. In cell 2, between the quotes, type the names of the three longest bars, the longest first.
-3. Run cell 2 again. You should see your top three.
-
-The number beside each bar is its weight. Read the order, not the amounts. The list describes the model. It does not say what made a tax wrong.
 
 Notebook cell 2:
 
 ```python
-# 2. The ranked list of your model's features. Then type the top three, the longest bar first.
+# 2. Tuesday's logistic regression, fitted again as Tuesday fitted it; it scores every return of model_valid.
+assert "valid" in globals(), "Run cell 1 first."
+from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+
+features = ["filing_status", "wages_amt", "taxable_interest_amt", "other_income_amt",
+            "total_income", "agi_amt", "deduction_amt", "deduction_missing",
+            "total_tax_amt", "withholding_amt", "tax_to_agi", "deduction_to_agi"]  # Tuesday's twelve
+examined = train[train["exam_changed_tax"].notna()]  # the 400 examined returns of model_train
+X_train, y_train = examined[features].fillna(0), examined["exam_changed_tax"]
+logistic = make_pipeline(StandardScaler(), LogisticRegression()).fit(X_train, y_train)
+
+scores = valid[["case_id"]].copy()  # all 250 returns of model_valid
+scores["logistic_score"] = logistic.predict_proba(valid[features].fillna(0))[:, 1]  # column 1 is "yes"
+place_123 = int((scores["logistic_score"] > scores.loc[scores["case_id"] == 123, "logistic_score"].iloc[0]).sum()) + 1
+print(len(scores), "returns of model_valid scored. Case #123:",
+      f"{scores.loc[scores['case_id'] == 123, 'logistic_score'].iloc[0]:.3f}, place {place_123} of {len(scores)}.")
+```
+
+### Step 2. Name the top three features
+
+"The chart is a *ranked list*: the features in order, with the one the model leans on most at the top." (the day's reading)
+
+1. Run cell 3. You should see twelve bars, the longest at the top, then the same list as text. Each bar is the average size of a feature's push, up or down, over the 250 returns of `model_valid`.
+2. In cell 3, between the quotes, type the names of the three longest bars, the longest first. Two may be level: type them in the chart's order.
+3. Run cell 3 again. You should see your top three.
+
+Set the list beside your feature record: the feature at the top has no row in it yet. The list describes the model. It does not say what made a tax wrong.
+
+Notebook cell 3:
+
+```python
+# 3. The ranked list: the features the model leans on most. Then type the top three, the longest bar first.
+assert "logistic" in globals(), "Run cells 1 and 2 first."
 ranked = draw_ranking()
 top_three = ["", "", ""]
 print("Your top three:", top_three)
 ```
 
-### Step 3. Draw case #123's chart
+### Step 3. Draw case #123's chart, and check the sum
 
-Why: "Your job is to read the chart." (the day's reading) Where the SHAP library is on the compute, the given code uses it and draws its chart. Where it is not, the given code computes the same pushes and says so.
+"So read the axis label before you write a number: here, log-odds." (the day's reading)
 
-1. In cell 3, type `123` in place of `None`. Until you do, the cell stops with `Type the case id in place of None.`
-2. Run cell 3. You should see case #123's row as read, with its missing withholding amount empty (`NaN` or `NULL`), then a chart with one bar for each feature, then the same chart as a table: the average score, one line for each feature with its push, and the score of case #123.
-3. Read the axis label under the chart first. The table repeats it on its last line.
+1. In cell 4, type `123` in place of `None`. Until you do, the cell stops with `Type the case id in place of None.`
+2. Run cell 4. You should see the chart, then the same chart as a table: a return with average values first, then the twelve features, largest push first, each with case #123's value and the training average, then case #123's output and its score.
+3. Read the sum under the table. "The exact pushes add up to 3.28; the rounded ones give 3.30, and the difference is rounding." (the day's reading) The third decimal of a push can differ from one compute to another, so your rounded sum may show 3.28 or 3.29: still rounding.
+4. Read the axis label.
 
-Case #123's withholding amount was missing, so its line shows the value that Tuesday's fill put in its place, marked `(filled)`: 937, the middle value of the training returns' amounts. So one missing amount moves the score twice: through the flag, and through the filled amount.
-
-Notebook cell 3:
-
-```python
-# 3. One return's chart: the average score, each feature's push, the return's score. Change only the case id.
-case_id = None  # the return to explain, such as 311
-assert case_id is not None, "Type the case id in place of None."
-spark.sql(f"SELECT * FROM returns_to_explain WHERE return_id = '#{case_id}'").show()  # the return as read
-chart = explain(case_id)
-```
-
-### Step 4. Read the chart, and check the sum
-
-Why: "the average score plus all the pushes equals the return's score." (the day's reading) The sum is how you check your reading.
-
-1. In cell 4, between the quotes after `axis`, type the unit the axis label names, such as `score` or `log-odds`.
-2. Type in place of each `None` the number from cell 3's table, to two decimals: the average score, each feature's push with its sign, and case #123's score. Type a minus sign before a push that lowers the score, such as `-0.07`.
-3. Run cell 4. You should see the average plus the pushes, and the score. The two agree to about 0.01. If not, read the table again.
+"The list describes the whole model; one return's pushes may come in another order." (the day's reading) Find `wages_amt` in the table: high on the ranked list, it hardly moves case #123.
 
 Notebook cell 4:
 
 ```python
-# 4. Cell 3's chart, as numbers. Type each to two decimals, with its sign.
-axis = ""        # what the axis is measured in
-average = None   # the average score of all returns
-pushes = {
-    "tax_to_agi": None,
-    "wages_change_pct": None,
-    "withholding_missing": None,
-    "withholding_amt": None,
-}
-score = None     # case #123's score
-if None in (average, score, *pushes.values()):
-    print("Type each number in place of None.")
-else:
-    print(f"The average plus the pushes: {average + sum(pushes.values()):.2f}. The score: {score:.2f}.")
+# 4. One return's chart: a return with average values, each feature's push, the return's output. Change only the case id.
+case_id = None  # the return to explain: 123
+assert case_id is not None, "Type the case id in place of None."
+chart = explain(case_id)
 ```
 
-### Step 5. Write the two sentences
+### Step 4. Name the axis, guess, then see
 
-Why: "So the explanation is a comparison. You do not say that 0.82 is high. You say what made it higher than 0.05." (the day's reading)
+1. In cell 5, between the quotes after `axis`, type the unit the axis label names.
+2. Case #123's other income pushes about +3.8 on that axis. In place of `None`, type your guess: if case #123's other income were the training average, 7,584, and everything else stayed as filed, what would its score be? Any number from 0 to 1 counts.
+3. Run cell 5. You should see the score it would have, beside 0.964.
 
-1. In cell 5, replace each `...` in the two sentences. Give the score and the average score from cell 3.
-2. For each of the two largest pushes, write what the feature says about the return, in words an examiner reads, such as "the fall in its wages since last year". Then give its push as an amount of score.
-3. Run cell 5. You should see your two sentences.
-
-If you chose the tree, give your own score and pushes, and where one of the two largest pushes lowers the score, write `lowered` in place of `raised`. The axis is the score, so you may give amounts. The sentences say what moved the score. They do not say why the taxpayer did something, or that the return is wrong: the examiner decides.
+Then read why: "A step of the same size in log-odds moves the score a great deal near the middle and very little near the ends, so a push has no fixed size in score." (the day's reading)
 
 Notebook cell 5:
 
 ```python
-# 5. The two sentences an examiner reads. Replace each ... .
-sentences = "The model scored case #123 at ..., against an average of ... for all returns. The two largest reasons were ..., which raised the score by ..., and ..., which raised it by ...."
-print(sentences)
+# 5. The axis, and your guess. Type both, then run this cell.
+axis = ""     # the unit the chart's axis label names
+guess = None  # case #123's score with its other income at the training average: a number from 0 to 1
+
+if not axis or guess is None:
+    print("Type the axis and your guess, then run this cell again.")
+else:
+    print(what_if(123, "other_income_amt"))
 ```
 
-### Step 6. Check
+### Step 5. Write the two sentences, and check
 
-Run cell 6. It prints `Done:`, or `Not yet:` and what is left.
+"The pushes are in log-odds, so you give their order and direction, and the values that made them, not an amount of score" (the day's reading).
+
+1. In cell 6, between the quotes, write the two sentences. The table says what each holds.
+
+| Sentence | It says | Read it from |
+|---|---|---|
+| 1 | case #123's score, against what a return with average values scores | cell 2, and the first line of cell 4's table as a score: about 0.01 |
+| 2 | the two largest pushes, the largest first: what each feature says about the return, its value against the training average, and the direction it pushed the score | cell 4's table |
+| neither | an amount of push or of score, such as "by 3.82"; anything the taxpayer did | the axis; the examiner decides |
+
+2. Run cell 6. You should see your sentences.
+3. Run cell 7. It prints `Done:`, or `Not yet:` and what is left.
+
+"A push says that the model moved the score because of this value, not that the value is wrong." (the day's reading)
 
 Keep this notebook. Friday's challenge asks for the same two sentences.
 
 Notebook cell 6:
 
 ```python
-# 6. Check. You do not need to read this code. It runs check.py, beside this notebook.
+# 6. The two sentences an examiner reads.
+sentences = ""
+print(sentences or "Write your two sentences between the quotes.")
+```
+
+Notebook cell 7:
+
+```python
+# 7. Check. You do not need to read this code. It runs check.py, beside this notebook.
 _check = {"__name__": "check"}
 exec(open(f"{folder}/check.py", encoding="utf-8").read(), _check)
 check_now = _check["in_notebook"]
@@ -144,17 +171,17 @@ print(check_now(globals()))
 
 ### Finished early?
 
-Optional: cell 6 does not check it.
+Optional: cell 7 does not check it.
 
-1. In cell 7, type in place of `None` the id of a return from Wednesday's ten that is off the list, such as `644`.
-2. Run cell 7. You should see that return's chart.
-3. Between the quotes, write two sentences of the same form. Where a push lowers the score, write `lowered` in place of `raised`.
+1. In cell 8, type in place of `None` the id of a return the model left off the list, such as `471`: labelled change, with a score of about 0.18.
+2. Run cell 8. You should see its chart and table.
+3. Between the quotes, write two sentences of the same form. Where a push lowers the score, say so.
 
-Notebook cell 7:
+Notebook cell 8:
 
 ```python
-# 7. Optional: explain a return that the model left off the list.
-other_id = None  # a return off the list, such as 644
+# 8. Optional: explain a return that the model left off the list.
+other_id = None  # a return off the list, such as 471
 if other_id is not None:
     other = explain(other_id)
 other_sentences = ""
@@ -165,6 +192,6 @@ print(other_sentences or "Write your two sentences between the quotes.")
 
 1. Why does the top feature say nothing about what the taxpayer did?
 2. How do you check that case #123's pushes are read right?
-3. When would you give a push's direction but not its amount?
+3. Why give a push's direction and order, not an amount of score?
 
 The answer, after you try: [`answers/exercise-01-explain-case-123`](../answers/exercise-01-explain-case-123/).

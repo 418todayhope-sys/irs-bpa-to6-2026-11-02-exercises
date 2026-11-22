@@ -1,33 +1,35 @@
 {
  "ranked": [
+  "other_income_amt",
   "tax_to_agi",
-  "wages_change_pct",
-  "withholding_missing",
+  "wages_amt",
+  "deduction_to_agi",
+  "deduction_amt",
+  "total_tax_amt",
+  "deduction_missing",
+  "taxable_interest_amt",
+  "filing_status",
+  "agi_amt",
+  "total_income",
   "withholding_amt"
  ],
  "chart": {
-  "average": 0.04999999317345426,
-  "score": 0.8211932751433486,
+  "start": -4.553082873112105,
+  "output": 3.2804718052602633,
+  "score": 0.9637527689794351,
   "pushes": {
-   "tax_to_agi": 0.3999070399094339,
-   "wages_change_pct": 0.2899986298097127,
-   "withholding_amt": -0.03902998066180174,
-   "withholding_missing": 0.1203175929125498
+   "other_income_amt": 3.818420199868141,
+   "deduction_amt": 2.6454274948715715,
+   "tax_to_agi": 1.2374963655730646
   }
  },
  "top_three": [
+  "other_income_amt",
   "tax_to_agi",
-  "wages_change_pct",
-  "withholding_missing"
+  "wages_amt"
  ],
- "axis": "the score, from 0 to 1",
- "average": 0.05,
- "score": 0.82,
- "pushes": {
-  "tax_to_agi": 0.4,
-  "wages_change_pct": 0.29,
-  "withholding_missing": 0.12,
-  "withholding_amt": -0.04
- },
- "sentences": "The model scored case #123 at 0.82, against an average of 0.05 for all returns. The two largest reasons were its low tax for its income, which raised the score by 0.40, and the fall in its wages since last year, which raised it by 0.29."
+ "case_id": 123,
+ "axis": "log-odds",
+ "guess": 0.6,
+ "sentences": "The model scored case #123 at 0.964, 11th of the 250 returns of model_valid, where a return with average values scores about 0.01. The two largest reasons were its large other income, 28,500 against an average of 7,584, and its large deduction, 42,000 against 19,453; its low tax for its income came third, and all three pushed the score up."
 }

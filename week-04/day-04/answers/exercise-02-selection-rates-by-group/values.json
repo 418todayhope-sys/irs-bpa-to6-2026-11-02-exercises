@@ -1,0 +1,22 @@
+{
+ "groups": {
+  "A": {
+   "returns": 600,
+   "on_list": 24
+  },
+  "B": {
+   "returns": 400,
+   "on_list": 6
+  }
+ },
+ "feature_in_100": {
+  "A": 35.0,
+  "B": 5.0
+ },
+ "guess": "A",
+ "group_column": "synthetic_group",
+ "rate_a": 0.04,
+ "rate_b": 0.015,
+ "result": "The model puts 24 of group A's 600 returns on the list, 4 in 100, and 6 of group B's 400, 1.5 in 100: a gap of 2.5 in 100, a result that needs a reason.",
+ "proxy_sentence": "amended_last_year could stand in for the group, because 35 in 100 of group A's returns hold 1, against 5 in 100 of group B's."
+}

@@ -1,0 +1,33 @@
+{
+ "ranked": [
+  "tax_to_agi",
+  "wages_change_pct",
+  "withholding_missing",
+  "withholding_amt"
+ ],
+ "chart": {
+  "average": 0.04999999317345426,
+  "score": 0.8211932751433486,
+  "pushes": {
+   "tax_to_agi": 0.3999070399094339,
+   "wages_change_pct": 0.2899986298097127,
+   "withholding_amt": -0.03902998066180174,
+   "withholding_missing": 0.1203175929125498
+  }
+ },
+ "top_three": [
+  "tax_to_agi",
+  "wages_change_pct",
+  "withholding_missing"
+ ],
+ "axis": "the score, from 0 to 1",
+ "average": 0.05,
+ "score": 0.82,
+ "pushes": {
+  "tax_to_agi": 0.4,
+  "wages_change_pct": 0.29,
+  "withholding_missing": 0.12,
+  "withholding_amt": -0.04
+ },
+ "sentences": "The model scored case #123 at 0.82, against an average of 0.05 for all returns. The two largest reasons were its low tax for its income, which raised the score by 0.40, and the fall in its wages since last year, which raised it by 0.29."
+}

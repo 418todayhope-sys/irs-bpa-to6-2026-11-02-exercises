@@ -74,6 +74,8 @@ def compare() -> None:
     print("The past labels, the examined returns of all four tax years: " + "; ".join(
         f"channel {name} {int(row['change'])} of {int(row['examined'])} labelled change "
         f"({row['change'] / row['examined']:.3f})" for name, row in labels.iterrows()) + ".")
+    print("In the course's made-up past, an examination's outcome follows the amounts on the return, never the "
+          "channel: a gap in the labels says the past decisions differ, not that either channel's filers comply less.")
 
 
 def medians(*names: str) -> str:

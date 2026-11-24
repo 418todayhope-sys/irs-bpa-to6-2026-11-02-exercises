@@ -100,7 +100,7 @@ print("Your guess:", "(not yet)" if guess_50 is None else guess_50)
 "The *selection rate* of a group is the share of its returns that the model puts on the list." (the day's reading)
 
 1. In cell 4, type in place of each `None` the channel's rate as a division, with no quotes: its returns on the list, divided by its returns in `model_valid`, such as `3 / 50`.
-2. Run cell 4. You should see each rate and the gap, then the same at two other thresholds (compare the list of 50 with your guess), then the past labels by channel.
+2. Run cell 4. You should see each rate and the gap, then the same at two other thresholds (compare the list of 50 with your guess), then the past labels by channel. In the course's made-up data an examination's outcome follows the amounts on the return, never the channel, so a gap in the labels says the past decisions differ, not that either channel's filers comply less.
 3. Between the quotes after `result`, write the result in one sentence. The table says what it holds.
 
 | Part | Give | Read it from |

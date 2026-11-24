@@ -44,8 +44,10 @@ Cost:           training once; then each score costs     nothing to train; a sma
                 almost nothing, for every return filed   and only the returns on the list need one
 Risk:           examiner hours on a return labelled      the text may state a reason that is not in
                 no change, or a missed return labelled   the chart; a person checks the sentences
-                change; the examiner reviews each case   against the chart
-                on the list
+                change; the examiner catches a return    against the chart
+                on the list that should not be; a
+                missed return is off the list, and
+                only recall shows it
 Choice:         a trained model                          prompting
 Decided by:     labelled data: many past examined        labelled data: no approved explanations
                 returns, each with its label             to learn from

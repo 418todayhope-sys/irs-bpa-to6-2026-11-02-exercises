@@ -33,7 +33,7 @@ def has(found: list[float], *wanted: float) -> bool:
 def proxy_left(f: dict) -> list[str]:
     """The optional last step's lines, when the notebook has the step and it ran: could the feature stand in?
     The step goes with the proxy segment: without it, nothing here is asked."""
-    if "proxy_sentence" not in f:
+    if not str(f.get("proxy_sentence") or "").strip():  # optional: only a sentence the learner wrote is checked
         return []
     proxy = str(f["proxy_sentence"])
     a, b = f["medians"]["A"], f["medians"]["B"]
@@ -102,7 +102,8 @@ def report(f: dict) -> str:
     out = left(f)
     a, b = f["groups"]["A"], f["groups"]["B"]
     if not out:
-        proxy = (" and whether other_income_amt could stand in for the channel" if "proxy_sentence" in f else "")
+        proxy = (" and whether other_income_amt could stand in for the channel"
+                 if str(f.get("proxy_sentence") or "").strip() else "")
         return (f"Done: at {f['threshold']:.3f}, channel A has {a['on_list']} of {a['returns']} on the list and "
                 f"channel B {b['on_list']} of {b['returns']}; you stated the gap with its counts{proxy}.")
     return "\n".join([f"Not yet: {len(out)} left."] + ["- " + item for item in out])

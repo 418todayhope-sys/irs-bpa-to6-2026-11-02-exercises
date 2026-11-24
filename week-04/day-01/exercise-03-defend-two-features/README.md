@@ -1,4 +1,4 @@
-# Exercise 3: Record two features' defence, then flag a missing amount (we do)
+# Exercise 3: Record a feature's defence, then flag a missing amount (we do)
 
 **Goal:** After this exercise, you can record the defence of a feature and add a flag column for a missing amount.
 
@@ -14,7 +14,7 @@
 
 1. In a new cell, run `print(spark.table("course.returns.model_features").columns)`. It lists the columns.
 2. In cell 4, add a row for each column you would keep.
-3. Add a row for `name_length` too. Its source field is `filer_name`, a header field. Type `no` and `struck: header field` in its last two slots.
+3. Add a row for `name_length` too. Its source field is `filer_name`, a header field. Type `yes` and `struck: header field, on the filed return` in its last two slots: the name is on the return when it is filed, so it is known at selection, but a header field is never a feature.
 4. Run cells 4 and 5 again. Extra rows still give `Done:`.
 
 **What you need to know first:** a feature's defence is "its source field, its reason, and whether it is known when the case is selected." A missing amount is "an amount that is not on the return, which can mean zero or unknown."

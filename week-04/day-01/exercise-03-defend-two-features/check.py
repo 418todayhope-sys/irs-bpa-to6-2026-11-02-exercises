@@ -32,8 +32,11 @@ def record_left(rows: list[dict], flag: str) -> list[str]:
             out.append(f"Cell 4: the source field of {name} names its line of the form, 12e. Step 4.")
         if len(str(row["reason"]).split()) < 6:
             out.append(f"Cell 4: write the reason for {name} in 6 words or more. Step 4.")
-        if str(row["known_at_selection"]).strip().lower() not in ("yes", "no"):
+        known = str(row["known_at_selection"]).strip().lower()
+        if known not in ("yes", "no"):
             out.append(f'Cell 4: type "yes" or "no" for {name}: is it known when the case is selected? Step 4.')
+        elif known != "yes":
+            out.append(f"Cell 4: read the timing of {name} again: is line 12e on the return when it is filed? Step 4.")
         if len(str(row["timing"]).split()) < 4:
             out.append(f"Cell 4: say why {name} is known at selection or not, 4 words or more. Step 4.")
     return out

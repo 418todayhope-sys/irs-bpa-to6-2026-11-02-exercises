@@ -124,7 +124,8 @@ else:
 Notebook cell 5:
 
 ```python
-# 5. Precision and recall at 0.5, by hand. Type each as a division of two counts from cell 4, such as 3 / 5.
+# 5. Precision and recall at 0.5, by hand. Type each as a division of two counts from cell 4, such as 3 / 5,
+#    with no quotes around it.
 by_hand = {
     "logistic-regression": {"precision": None, "recall": None},
     "decision-tree": {"precision": None, "recall": None},
@@ -132,7 +133,8 @@ by_hand = {
 assert "counts" in globals(), "Run cell 4 first."
 for name, measures in by_hand.items():
     c = counts[name]
-    shown = {k: ("not yet" if v is None else round(v, 3)) for k, v in measures.items()}
+    shown = {k: ("not yet" if v is None else "type it with no quotes" if isinstance(v, str) else round(v, 3))
+             for k, v in measures.items()}
     print(f"{name} at 0.5 | accuracy {(c['TP'] + c['TN']) / sum(c.values()):.3f} | precision {shown['precision']} | recall {shown['recall']}")
 ```
 
@@ -155,8 +157,8 @@ experiment = f"/Users/{user}/week-04-candidates"      # Tuesday's experiment
 mlflow.set_experiment(experiment)
 runs = mlflow.search_runs(experiment_names=[experiment])  # every run, newest first
 for name, measures in by_hand.items():
-    if None in measures.values():
-        print(f"Type the two divisions of {name} in cell 5 first.")
+    if None in measures.values() or any(isinstance(v, str) for v in measures.values()):
+        print(f"Type the two divisions of {name} in cell 5 first, with no quotes.")
         continue
     found = runs[runs["tags.mlflow.runName"] == name] if len(runs) else runs
     run_id = found["run_id"].iloc[0] if len(found) else None  # the newest run of this name

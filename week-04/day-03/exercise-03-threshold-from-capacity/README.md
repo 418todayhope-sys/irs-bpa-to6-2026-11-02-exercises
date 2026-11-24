@@ -160,13 +160,14 @@ So your cost sentence of cell 3 decides:
 - A false negative costs more: ask for `more capacity`.
 - A false positive costs more: `accept` the list of 25, and say how many returns labelled change it misses.
 
-The candidate is the logistic regression, for the reading's two reasons: at 0.5 it is ahead on both measures, and the tree's 25 returns tie at 1.0, so its scores cannot choose a list of 20 or 10.
+Then choose the candidate you put in front of the manager, and say why with counts. Two things decide it: the precision and recall of each candidate at 0.5, from exercise 2, and whether its scores can choose a list of any size the examiners' capacity asks for, such as 20 or 10 (cell 4 shows them).
 
 1. In cell 6, type your decision for the examiners' manager. The table says what each value holds.
 
 | Value | Type this | Why |
 |---|---|---|
-| `chosen` | `logistic-regression` | the candidate you put in front of the manager, for the two reasons above |
+| `chosen` | `logistic-regression` or `decision-tree` | the candidate you put in front of the manager |
+| `why_chosen` | one sentence of eight words or more, with counts | why this candidate and not the other |
 | `decision` | `more capacity` or `accept` | the one your cost sentence of cell 3 decides |
 | `why` | one sentence of eight words or more, with the counts of cell 5 | if you accept, it says how many returns labelled change the list misses |
 
@@ -179,10 +180,12 @@ Notebook cell 6:
 
 ```python
 # 6. Your decision for the examiners' manager.
-chosen = ""    # the candidate: logistic-regression
+chosen = ""      # the candidate: logistic-regression or decision-tree
+why_chosen = ""  # one sentence: why this candidate, with counts
 decision = ""  # more capacity, or accept
 why = ""       # one sentence, with the counts of cell 5
 print("Chosen:", chosen or "(not yet)", "| decision:", decision or "(not yet)")
+print("Why this candidate:", why_chosen or "(not yet)")
 print("Why:", why or "(not yet)")
 ```
 

@@ -16,7 +16,7 @@ CAPACITY = 25
 NAMES = ("logistic-regression", "decision-tree")
 DECISIONS = ("accept", "more capacity")
 START = {"cost_sentence": "", "guess_30": None, "k": None, "threshold": None, "expected_threshold": 0.844,
-         "missed_at_k": 20, "chosen": "", "decision": "", "why": ""}
+         "missed_at_k": 20, "chosen": "", "why_chosen": "", "decision": "", "why": ""}
 FORM = re.compile(r"a (false negative|false positive) costs? more than a (false negative|false positive),? because (.*)")
 
 
@@ -53,11 +53,16 @@ def left(f: dict) -> list[str]:
     elif round(float(f["threshold"]), 3) != round(float(f["expected_threshold"]), 3):
         out.append(f"Cell 5: the threshold is the score at place {CAPACITY} of cell 4, to three places. Step 4.")
     if plain(f["chosen"]) == "decision-tree":
-        out.append("Cell 6: the reading gives two reasons for the logistic regression: at 0.5 it is ahead on both "
-                   "measures, and the tree's 25 returns tie at 1.0, so its scores cannot choose a list of 20 or 10. "
-                   "Type logistic-regression as chosen. Step 5.")
+        out.append("Cell 6: look again at the two things that decide the candidate: each one's precision and "
+                   "recall at 0.5 in exercise 2, and whether its scores can choose a list of any size the capacity "
+                   "asks for, such as 20 or 10 (cell 4 shows how many of the tree's returns share its highest "
+                   "score). Step 5.")
     elif plain(f["chosen"]) not in NAMES:
-        out.append("Cell 6: type logistic-regression as chosen. Step 5.")
+        out.append("Cell 6: type logistic-regression or decision-tree as chosen. Step 5.")
+    why_chosen = str(f.get("why_chosen", ""))
+    if len(why_chosen.split()) < 8 or not re.search(r"\d", why_chosen):
+        out.append("Cell 6: write why_chosen, why this candidate and not the other, in one sentence of eight words "
+                   "or more, with counts. Step 5.")
     if plain(f["decision"]) not in DECISIONS:
         out.append("Cell 6: type more capacity or accept as decision. Step 5.")
     elif form and form.group(1) != form.group(2):
@@ -94,7 +99,7 @@ def facts_of(g: dict) -> dict:
             "k": k if isinstance(k, int) and not isinstance(k, bool) else None,
             "threshold": g.get("threshold"), "expected_threshold": float(top["logistic_score"].iloc[-1]),
             "missed_at_k": 40 - int((top["label"] == "change").sum()),
-            "chosen": g.get("chosen", ""), "decision": g.get("decision", ""), "why": g.get("why", "")}
+            "chosen": g.get("chosen", ""), "why_chosen": g.get("why_chosen", ""), "decision": g.get("decision", ""), "why": g.get("why", "")}
 
 
 def in_notebook(g: dict) -> str:

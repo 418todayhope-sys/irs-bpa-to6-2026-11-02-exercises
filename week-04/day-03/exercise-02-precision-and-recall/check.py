@@ -25,7 +25,9 @@ def plain(text) -> str:
 
 
 def close(a, b) -> bool:
-    return a is not None and b is not None and abs(float(a) - float(b)) < 0.0005
+    if a is None or b is None or isinstance(a, str) or isinstance(b, str):  # a quoted division is not a number
+        return False
+    return abs(float(a) - float(b)) < 0.0005
 
 
 def left(f: dict) -> list[str]:
@@ -48,6 +50,9 @@ def left(f: dict) -> list[str]:
         for measure, divide in (("precision", "TP + FP"), ("recall", "TP + FN")):
             if typed.get(measure) is None:
                 out.append(f"Cell 5: type the {measure} of {name}. Step 3.")
+            elif isinstance(typed[measure], str):
+                out.append(f"Cell 5: type the {measure} of {name} with no quotes, such as 3 / 5, so Python "
+                           "divides it. Step 3.")
             elif abs(float(typed[measure]) - want[measure]) < 0.006 and not close(typed[measure], want[measure]):
                 top, bottom = c["TP"], c["TP"] + (c["FP"] if measure == "precision" else c["FN"])
                 out.append(f"Cell 5: the {measure} of {name} is rounded. Type it as a division, such as "
@@ -107,7 +112,7 @@ def facts_of(g: dict) -> dict:
         on = examined[column] >= 0.5
         counts[name] = {"TP": int((on & change).sum()), "FP": int((on & ~change).sum()),
                         "FN": int((~on & change).sum()), "TN": int((~on & ~change).sum())}
-    number = lambda v: None if v is None else float(v)
+    number = lambda v: v if v is None or isinstance(v, str) else float(v)  # a quoted division stays text
     return {"guess": g.get("guess"),
             "by_hand": {n: {k: number(v) for k, v in m.items()} for n, m in g["by_hand"].items()},
             "counts": counts,

@@ -84,7 +84,7 @@ for name, accuracy in expected.items():
 1. Run cell 5. You should see `Recorded the run logistic-regression`.
 2. In cell 5, type `decision-tree` in place of `logistic-regression`. Change nothing else. Run cell 5 again. You should see `Recorded the run decision-tree`.
 
-`start_run` starts a run; each `log_param` writes one parameter, a setting, into it; `log_metric` writes the measured accuracy; `log_model` saves the fitted model with the run, and `set_tag` notes that it did. Red warnings while the model is saved are normal. If cell 5 stops with a `TypeError` on `name`, the model was not saved: ask the trainer, then run cell 5 again for that run name.
+`start_run` starts a run; each `log_param` writes one parameter, a setting, into it; `log_metric` writes the measured accuracy; `log_model` saves the fitted model with the run, and `set_tag` notes that it did. Red warnings while the model is saved are normal. The cell works on any MLflow version: an older one calls the model's name `artifact_path`, and the cell tries that when `name` fails.
 
 Notebook cell 5:
 
@@ -101,7 +101,10 @@ with mlflow.start_run(run_name=run_name):
     mlflow.log_param("split", split)                      # the rows it was fitted and measured on
     mlflow.log_param("measure", "accuracy")               # how it was measured
     mlflow.log_metric("validation_accuracy", accuracy)    # a measured result
-    mlflow.sklearn.log_model(model, name="model")         # the fitted model itself
+    try:
+        mlflow.sklearn.log_model(model, name="model")     # the fitted model itself
+    except TypeError:                                     # an older MLflow names it artifact_path
+        mlflow.sklearn.log_model(model, artifact_path="model")
     mlflow.set_tag("model_logged", "yes")                 # reached only once the model is saved
 print("Recorded the run", run_name)
 ```

@@ -17,6 +17,9 @@ FILE = "fields.csv"
 GIVEN = {"tax_to_agi": "before", "deduction_amt": "before", "deduction_missing": "before",
          "tax_added_by_exam": "after"}  # Monday's record marks these four; cell 7 gives them
 EXAMINER = ("exam", "auditor", "agent")  # "exam" covers examiner and examination
+# Stages of the tax work that change the tax on an account after the return is filed
+STEPS_AFTER_FILING = ("exam", "audit", "assess", "adjust", "amend", "aur", "underreport", "cp2000", "cp 2000",
+                      "notice", "posting", "posted", "correction", "math error", "collection")
 MADE_BY = ("course", "synthetic", "made up", "made-up", "simulated", "fake", "not real", "generated", "invented")
 START = {"schema": "course.learner_NN", "label_column": "refund_held",
          "origin": {"decision": "", "made by": "", "when": ""},
@@ -68,7 +71,7 @@ def left(f: dict) -> list[str]:
         out.append(f"Cell 6: type the name of the column of {FILE} that agrees with {LABEL} on nearly every "
                    "return, as cell 5 counted it. Step 5.")
     trace = {k: plain(v) for k, v in f["trace"].items()}
-    if not any(w in trace.get("which step wrote it", "") for w in ("exam", "audit", "assess", "adjust")):
+    if not any(w in trace.get("which step wrote it", "") for w in STEPS_AFTER_FILING):
         out.append("Cell 6: answer which step of the tax work wrote the column: what changes the tax on an account "
                    "after a return is filed? Then run cell 6. Step 5.")
     wanted = dict(GIVEN, **{column: ("after" if column == leak else "before") for column in found})

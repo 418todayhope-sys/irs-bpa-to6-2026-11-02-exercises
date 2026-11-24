@@ -35,8 +35,9 @@ small practice file from a Python cell:
 from pathlib import Path
 import json
 
-# Copy your fork's Git folder absolute path from its Workspace menu; include /Workspace/.
-task_root = Path("/Workspace/Users/YOUR-USER/YOUR-GIT-FOLDER/week-04/day-05")
+# This notebook's own folder, found when the cell runs: no path is typed, so none is saved.
+notebook_path = dbutils.notebook.entry_point.getDbutils().notebook().getContext().notebookPath().get()
+task_root = Path("/Workspace" + notebook_path).parent
 assert (task_root / "CHALLENGE.md").is_file(), "Check the Git folder path"
 practice_result = spark.sql("SELECT 1 AS connection_check").first().asDict()
 assert practice_result == {"connection_check": 1}
@@ -63,8 +64,8 @@ defines `INPUT_SCHEMA`, `CLOSED_TABLE`, `NEW_TABLE` and `EXPERIMENT`. Read the i
 descriptions in Catalog Explorer. Do not change the shared input tables.
 
 Record your runs in the experiment the setup cell names; open it from the workspace's
-**Experiments** page to see them. Write `outputs/runs.csv` from the runs as MLflow returns them,
-not from numbers you type. Genie Code may help if enabled; review and check its suggestions.
+**Experiments** page to see them. The notebook's given cell under heading 3 writes
+`outputs/runs.csv` from the runs, keeping only the columns the brief lists. Genie Code may help if enabled; review and check its suggestions.
 
 Edit `SUBMISSION.md` in the Databricks file editor, or write it from a notebook Python cell with
 `(task_root / "SUBMISSION.md").write_text(your_text, encoding="utf-8")`. Use the practice

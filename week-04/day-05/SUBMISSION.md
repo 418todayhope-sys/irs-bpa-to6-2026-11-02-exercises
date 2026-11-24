@@ -9,12 +9,12 @@ your fork's base URL, `main` and the final commit SHA in Classroom
 
 ## The group's result
 
-What the label records, what past decision made it, who made it and when; its counts before
-training; the accuracy every candidate must beat, and on which returns.
+What the label records; its counts before training; the accuracy every candidate must beat, and
+on which returns.
 
 ## What the model learns from
 
-Each feature kept: its source field, its reason, its timing. Each column left out, and why.
+Each feature kept: its source field, its reason, its timing. The columns left out, in one line.
 How empty amounts were handled.
 
 ## Two candidates, from the record
@@ -22,20 +22,17 @@ How empty amounts were handled.
 The two runs (names and IDs), what each recorded, and how they compare with each other and with
 the accuracy they must beat.
 
-When the chosen model should be retrained, and why: one sentence.
-
 ## Which error costs more for this group, and the list
 
 Your sentence on which error costs more for this group, and why. For each candidate on the 2023
 returns: the four counts, precision and recall. The candidate and threshold you chose and how
 your sentence decided them; the group's capacity; whether returns share the score at the cut, and
-how the group chooses between them so that the list holds no more than the capacity; what the
-threshold trades against 0.5, with counts. The 2024
+how the group chooses between them so that the list holds no more than the capacity. The 2024
 list: how many returns, and where it is.
 
 ## Why a return is on the list
 
-The features the chosen model leans on most. The top 2024 return, explained in two sentences an
+The top 2024 return, explained in two sentences an
 examiner can read.
 
 ## Groups A and B

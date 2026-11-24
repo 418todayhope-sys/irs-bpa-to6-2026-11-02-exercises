@@ -75,8 +75,10 @@ These are the group's, not engineering choices. How you meet them is yours.
    train a model or any step fitted to the data.
 6. **Two candidates of different model types**, each recorded as its own MLflow run, compared
    from what the runs recorded.
-7. **The list is read from the group's capacity: 4 returns for every 100 scored.** For example,
-   on 500 scored returns the threshold is the score of the 20th return. The list never holds more
+7. **The list is read from the group's capacity: 4 returns for every 100 scored.** Count the
+   hundreds on the returns the list is read from: when you judge a candidate on 2023, the 2023
+   returns that have a closed result; when you give the group its list, the 2024 returns. For
+   example, on 500 scored returns the threshold is the score of the 20th return. The list never holds more
    returns than the capacity: when returns share the score at the cut, you break the tie, and you
    write down how the group chooses between them.
 8. **Nothing you write makes a finding about a taxpayer.** The explanation says what moved a score.
@@ -85,21 +87,21 @@ These are the group's, not engineering choices. How you meet them is yours.
 
 Work toward these connected outcomes. Choose the implementation yourself.
 
-1. **Know the group's result.** Say what the label is, what past decision made it, who made it and
-   when. Count its values before training, and set the accuracy every candidate must beat.
+1. **Know the group's result.** Say what the label records. Count its values before training,
+   and set the accuracy every candidate must beat.
 2. **Choose what the model may learn from.** Defend each feature you keep by its source field, its
-   reason and its timing; say which columns you leave out and why. Handle empty amounts so that a
+   reason and its timing; name the columns you leave out, in one line. Handle empty amounts so that a
    missing amount and a true zero stay different.
 3. **Train and record two candidates.** Record each as its own run; compare them from the runs,
-   beside the accuracy they must beat. Say when the chosen model should be retrained, and
-   why.
+   beside the accuracy they must beat. The notebook's given cell writes `outputs/runs.csv` from
+   the runs.
 4. **Set the group's list.** On the 2023 returns, count each candidate's correct and wrong calls of
    both kinds, with precision and recall. Write which error costs more **for this group**, and why.
-   Choose the candidate and the threshold by that sentence, read within the group's capacity, and
-   state what the threshold trades against the default of 0.5, with counts. Then score the 2024
+   Choose the candidate and the threshold by that sentence, read within the group's capacity
+   (rule 7). Then score the 2024
    returns with the chosen candidate and give the group its list.
-5. **Make the list defensible.** Name the features the chosen model leans on most. Explain the
-   return at the top of the 2024 list in two sentences an examiner can read. Compare how much of
+5. **Make the list defensible.** Explain the return at the top of the 2024 list in two
+   sentences an examiner can read; the notebook's given cell shows what moved its score. Compare how much of
    group A's and group B's 2023 returns the list takes, with the counts, as a result that needs a
    reason. The group also proposes `prior_year_amended` as a new feature: check whether it could
    stand in for group A or B, and say whether you would add it.
@@ -120,8 +122,9 @@ Your public fork's `main` branch must contain, in its `week-04/day-05/` folder:
 
 - `notebook.py`: readable notebook source with your implementation and its checks.
 - `SUBMISSION.md`: your report to the group, under its headings.
-- `outputs/runs.csv`: your two candidates' runs as read back from MLflow (run ID, run name, the
-  settings, split and measure recorded, and the metrics).
+- `outputs/runs.csv`: your two candidates' runs as read back from MLflow, written by the
+  notebook's given cell. It keeps only the run ID, the run name, the parameters recorded (the
+  settings, split and measure) and the metrics: never your user name or a notebook path.
 - `outputs/new_returns_list.csv`: the 500 new returns with `return_id`, the chosen candidate's
   score and whether the return is on the list.
 

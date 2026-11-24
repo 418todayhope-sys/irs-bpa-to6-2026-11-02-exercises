@@ -77,10 +77,15 @@ class BoundaryTests(unittest.TestCase):
 
     def test_browser_scaffold_uses_the_same_authenticated_schema(self):
         notebook = (Path(__file__).parent / 'notebook.py').read_text()
+        setup = notebook.split('# MAGIC ## 1.')[0]  # the setup cell only; later cells need Databricks
         for username in ('alice@example.test', 'Learner.MixedCase@example.test'):
             spark = NS(sql=lambda query: NS(first=lambda: {'username': username}))
-            scope = {'spark': spark, 'print': lambda *args: None}
-            exec(compile(notebook, 'notebook.py', 'exec'), scope)
+            path = f'/Users/{username}/fork/week-04/day-05/notebook'
+            context = NS(notebookPath=lambda: NS(get=lambda: path))
+            dbutils = NS(notebook=NS(entry_point=NS(getDbutils=lambda: NS(notebook=lambda: NS(getContext=lambda: context)))))
+            scope = {'spark': spark, 'dbutils': dbutils, 'print': lambda *args: None}
+            exec(compile(setup, 'notebook.py', 'exec'), scope)
+            self.assertEqual(scope['TASK_ROOT'].as_posix(), f'/Workspace/Users/{username}/fork/week-04/day-05')
             expected = p.identity_config(username, 'https://github.com/alice/work')
             self.assertEqual(scope['OUTPUT_SCHEMA'], expected['output_schema'])
             self.assertEqual(scope['INPUT_SCHEMA'], expected['input_schema'])

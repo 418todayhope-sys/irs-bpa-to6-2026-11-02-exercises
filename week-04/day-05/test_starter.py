@@ -28,13 +28,14 @@ class StarterTests(unittest.TestCase):
                         "### The cover-sheet summary", "### Letters about paying over time",
                         "## Files and limits"):
             self.assertIn(heading, text)
-        self.assertIn("When the chosen model should be retrained, and why", text)
+        self.assertNotIn("retrained", text)  # cut on 2026-11-24 to fit the day
 
-    def test_brief_asks_for_two_tasks_retraining_and_written_reasons(self):
+    def test_brief_asks_for_two_tasks_and_written_reasons(self):
         text = " ".join((ROOT / "CHALLENGE.md").read_text(encoding="utf-8").split())
         self.assertIn("Our mail room keeps 6,000 past letters of this kind", text)
         self.assertIn("**Choose the technique for two tasks.**", text)
-        self.assertIn("Say when the chosen model should be retrained, and why.", text)
+        self.assertNotIn("retrained", text)  # cut on 2026-11-24 to fit the day
+        self.assertIn("never your user name or a notebook path", text)
         self.assertIn("explain one choice aloud for 2 to 3 minutes", text)
 
     def test_brief_keeps_the_tie_rule(self):

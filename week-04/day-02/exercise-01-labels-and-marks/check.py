@@ -21,7 +21,7 @@ EXAMINER = ("exam", "auditor", "agent")  # "exam" covers examiner and examinatio
 STEPS_AFTER_FILING = ("exam", "audit", "assess", "adjust", "amend", "aur", "underreport", "cp2000", "cp 2000",
                       "notice", "posting", "posted", "correction", "math error", "collection")
 MADE_BY = ("course", "synthetic", "made up", "made-up", "simulated", "fake", "not real", "generated", "invented")
-START = {"schema": "course.learner_NN", "label_column": "refund_held",
+START = {"label_column": "refund_held",
          "origin": {"decision": "", "made by": "", "when": ""},
          "beside": "refund-held.csv", "agreement_label": "refund_held", "agreement": {"refund_hold_days": 16},
          "labelled": 16, "suspect": "", "file_agreement": {},
@@ -39,7 +39,7 @@ def left(f: dict) -> list[str]:
     """Return what is left: one line for each thing that is not yet right.
 
     Args:
-        f: the facts: schema, label_column, origin, beside (the file cell 5 read), agreement_label (the
+        f: the facts: label_column, origin, beside (the file cell 5 read), agreement_label (the
             label cell 5 used), suspect, trace, marks, file_agreement (how often each column of fields.csv
             agrees with exam_changed_tax, counted by the check), and the counts of exam_changed_tax in train.
 
@@ -48,8 +48,6 @@ def left(f: dict) -> list[str]:
         gives the label away before cell 6 names it.
     """
     out = []
-    if f["schema"].endswith("_NN"):
-        out.append("Cell 1 still names course.learner_NN. Type your own number. Step 1.")
     if f["label_column"] != LABEL:
         out.append(f"Cell 3 counts {f['label_column']}. Type {LABEL} in its place, then run cell 3. Step 2.")
     origin = {k: plain(v) for k, v in f["origin"].items()}
@@ -112,13 +110,13 @@ def report(f: dict) -> str:
     return "\n".join([f"Not yet: {len(out)} left."] + ["- " + item for item in out]) + note(f)
 
 
-def facts_of(schema: str, values: dict, folder: str) -> dict:
+def facts_of(values: dict, folder: str) -> dict:
     """The facts, from the notebook's values: the label counted again in the training set, and each
     column of fields.csv put beside it by this check, not taken from cell 5."""
     import pandas as pd
     values = dict(values)
     train = values.pop("train")
-    facts = dict(START, schema=schema, **values)
+    facts = dict(START, **values)
     facts["marks"] = {k: list(v) if isinstance(v, (tuple, list)) else [v, ""] for k, v in facts["marks"].items()}
     labels = train[LABEL]
     facts["counts"] = {str(k): int(v) for k, v in labels[labels.notna()].value_counts().items()}
@@ -129,16 +127,15 @@ def facts_of(schema: str, values: dict, folder: str) -> dict:
     return facts
 
 
-def in_notebook(schema: str, values: dict, folder: str) -> str:
+def in_notebook(values: dict, folder: str) -> str:
     """Return what the check cell prints, from the notebook's values (cell 8 passes them).
 
     Args:
-        schema: the learner's schema, such as course.learner_07.
         values: train (the DataFrame cell 2 loaded), label_column, origin, beside, agreement_label,
             agreement, labelled, suspect, trace and marks, as the cells hold them.
         folder: the exercise's folder, where fields.csv is.
     """
-    return report(facts_of(schema, values, folder))
+    return report(facts_of(values, folder))
 
 
 if __name__ == "__main__":

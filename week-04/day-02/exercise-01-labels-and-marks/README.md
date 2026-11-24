@@ -19,45 +19,39 @@
 **What you have:**
 
 - `course.returns.model_train`, the course's training set, as on Monday. Its label `exam_changed_tax` is `yes` when an examination changed the tax, `no` when it did not, and empty when nobody examined the return. If it cannot be read, cell 2 makes the same rows from the course's setup file and says so.
-- `course.learner_NN.model_feature_record`, your feature record from Monday, four rows (`NN`: your number). If it cannot be read, cell 2 shows Monday's answer.
+- Monday's feature record, four rows, as Monday's exercise 3 ends: cell 2 prints it. You need nothing saved from Monday.
 - `fields.csv`: two made-up columns, matched to the returns by `return_id`. Its first lines say what each column holds.
 - `refund-held.csv` (the trainer's demo), `load.py` and `check.py` (given code).
 
 **Start from:** this notebook as the course gives it, on the trainer's compute. No cell changes your tables. New here: a column beside the course tables that gives the label away.
 
-### Step 1. Name your schema, and load
+### Step 1. Load
 
-1. In cell 1, type your number in place of `NN`. Run cell 1.
-2. Run cell 2. You should see which table it uses, then your feature record's four rows.
+1. Run cell 1. You should see your Git folder of the course.
+2. Run cell 2. You should see which table it uses, then the four rows of Monday's feature record. You need nothing saved from Monday: the notebook gives the record.
 
 Notebook cell 1:
 
 ```python
-# 1. Your schema, where your feature record is. Type your number in place of NN.
-schema = "course.learner_NN"
-
+# 1. Find your Git folder of the course. Run it; you change nothing.
 import os
 course_folder = os.getcwd().split("/week-04/")[0]  # your Git folder of the course
-print("Your tables are in", schema)
+print("Your Git folder of the course:", course_folder)
 ```
 
 Notebook cell 2:
 
 ```python
-# 2. Load the course's training set, the made-up columns, and your feature record from Monday.
+# 2. Load the course's training set, the made-up columns, and Monday's feature record.
 try:
     train_table = spark.table("course.returns.model_train")  # the course's training set
 except Exception:
     train_table = None  # not there: load.py makes the same rows
-try:
-    record_table = spark.table(f"{schema}.model_feature_record")  # Monday's feature record
-except Exception:
-    record_table = None
 
 # You do not need to read the lines below. They run load.py.
 folder = f"{course_folder}/week-04/day-02/exercise-01-labels-and-marks"
 exec(open(f"{folder}/load.py", encoding="utf-8").read())
-train, record = load_day(train_table, record_table, schema)
+train, record = load_day(train_table)
 ```
 
 ### Step 2. Count each value of your label
@@ -186,7 +180,7 @@ Notebook cell 8:
 # 8. Check. You do not need to read this code. It runs check.py, beside this notebook.
 _check = {"__name__": "check"}
 exec(open(f"{folder}/check.py", encoding="utf-8").read(), _check)
-print(_check["in_notebook"](schema, {
+print(_check["in_notebook"]({
     "train": train, "label_column": label_column, "origin": origin, "beside": beside,
     "agreement_label": agreement_label, "agreement": agreement, "labelled": len(labelled),
     "suspect": suspect, "trace": trace, "marks": marks}, folder))

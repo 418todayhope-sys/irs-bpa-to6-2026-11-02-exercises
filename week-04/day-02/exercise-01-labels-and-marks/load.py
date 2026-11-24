@@ -1,14 +1,15 @@
 """Given code for exercise 1: cell 2 runs it. It reads the course's training set,
 course.returns.model_train, and puts the made-up columns of two files beside it, matched by
 return_id: the columns of fields.csv, and the demo's label refund_held with refund_hold_days from
-refund-held.csv. It also reads your feature record from Monday, model_feature_record. It changes no
-table. You do not need to read it."""
+refund-held.csv. It also gives Monday's feature record, as Monday's exercise 3 ends, so nothing saved
+from Monday is read. It changes no table. You do not need to read it."""
 import pandas as pd
 
 FOLDER = f"{course_folder}/week-04/day-02/exercise-01-labels-and-marks"
 COPY = ("The table course.returns.model_train couldn't be read, so this notebook makes the same rows from "
         "the course's setup file, week-04/setup/day-01-course-data.py. Every count is the same.")
-# Monday's feature record as the answer to Monday's exercise 3 gives it: used when yours is not there.
+# Monday's feature record as the answer to Monday's exercise 3 gives it. Nothing saved from Monday is read:
+# learners found it hard when one day's exercises carried into the next.
 MONDAY_RECORD = [
     ("tax_to_agi", "Form 1040 line 24, total tax; line 11a, adjusted gross income", "yes"),
     ("tax_added_by_exam", "the examination's result", "no"),
@@ -43,8 +44,8 @@ def read_notes(name: str) -> dict:
     return notes
 
 
-def load_day(train_table, record_table, schema: str):
-    """Return (the training set with the files' made-up columns, your feature record as
+def load_day(train_table):
+    """Return (the training set with the files' made-up columns, Monday's feature record as
     (feature, source field, known at selection)). Print which table is used, then the record."""
     try:
         train = train_table.toPandas() if train_table is not None else None
@@ -59,17 +60,8 @@ def load_day(train_table, record_table, schema: str):
     train = train.merge(read_csv("refund-held.csv"), on="return_id", how="left")
     for column in ("exam_changed_tax", "refund_held"):
         train[column] = train[column].where(train[column].notna(), None)
-    record = []
-    try:
-        if record_table is not None:
-            record = [(r["feature"], r["source_field"], r["known_at_selection"]) for r in record_table.collect()]
-    except Exception:
-        record = []
-    if not record:
-        record = MONDAY_RECORD
-        print("Your table model_feature_record wasn't found" + (" (cell 1 still says learner_NN)" if
-              schema.endswith("_NN") else "") + ", so the rows below are Monday's answer.")
-    print("Your feature record:")
+    record = MONDAY_RECORD
+    print("Monday's feature record:")
     for feature, source, known in record:
         print(f"  {feature}: {source}. Known when the case is selected: {known}")
     return train, record

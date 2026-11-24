@@ -1,12 +1,12 @@
 # Exercise 1: decisions
 
-The answer is `exercise.ipynb` beside this file, with the schema `course.learner_00`. This day follows Monday, so the training set is the course's shared `course.returns.model_train` and Monday's record is `model_feature_record`, four rows: `tax_to_agi`, `tax_added_by_exam` (struck on timing), `deduction_amt` and `deduction_missing`.
+The answer is `exercise.ipynb` beside this file. This day follows Monday, so the training set is the course's shared `course.returns.model_train`, and Monday's record, four rows, is given by `load.py` (nothing saved from Monday is read): `tax_to_agi`, `tax_added_by_exam` (struck on timing), `deduction_amt` and `deduction_missing`.
 
 ## Each answer, and why
 
 | Cell | Answer | Why |
 |---|---|---|
-| 1, 2 | `schema = "course.learner_00"`; cell 2 run as given | Cell 2 prints the record's four rows. Without the table, it prints Monday's answer. |
+| 1, 2 | cells 1 and 2 run as given | Cell 2 prints Monday's record, four rows. |
 | 3 | `label_column = "exam_changed_tax"` | The course's label. `refund_held` is the demo's, made up. Cell 3 then prints `no: 320`, `empty: 100`, `yes: 80`, Monday's counts. An empty label is not a no: nobody examined that return, so its outcome is unknown. |
 | 4 | decision: an examination's result, did it change the tax; made by: the course's data, made up in place of an examiner; when: after the return was filed, selected and examined | The three questions of a label's origin. The returns are synthetic, so no examiner made these labels: the course did. |
 | 5 | `beside = "fields.csv"` | Cell 5 puts both columns of the file beside the label: `days_to_file` agrees on 80 of 400 labelled returns (it is above zero on every return, so it agrees only with the 80 `yes`), `account_change_amt` on 399 of 400 (above zero on 79 of the 80 `yes`, zero on all 320 `no`). It then prints what the file says of each column: what it holds, not when it is written. |
@@ -50,7 +50,7 @@ Each file says on its first line that the course made it up. Cell 2 joins them t
 
 ## Where it ran
 
-- Not run in Databricks: a trainer gap. What only a run there confirms: `spark.table` on `course.returns.model_train` for a learner in `training-students`, and `toPandas()` on it; `model_feature_record` in the learner's own schema; reading a CSV file in the Git folder by the path from `os.getcwd()`.
+- Not run in Databricks: a trainer gap. What only a run there confirms: `spark.table` on `course.returns.model_train` for a learner in `training-students`, and `toPandas()` on it; reading a CSV file in the Git folder by the path from `os.getcwd()`.
 - Run on a laptop, 2026-11-21, Python 3.11.5, scikit-learn 1.3.0, pandas 2.0.3, on a stand-in for the Spark calls, over the course's week 4 tables made by `week-04/setup/day-01-course-data.py`, and again with no table readable (load.py makes the same rows from that file): start `Not yet: 7 left.`, answer `Done:` on both.
 
 ## Modelled on

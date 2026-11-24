@@ -1,5 +1,4 @@
 {
- "schema": "course.learner_00",
  "label_column": "exam_changed_tax",
  "origin": {
   "decision": "an examination's result: did it change the tax",

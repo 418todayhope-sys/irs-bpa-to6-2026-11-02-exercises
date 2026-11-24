@@ -95,7 +95,7 @@ Work toward these connected outcomes. Choose the implementation yourself.
 3. **Train and record two candidates.** Record each as its own run; compare them from the runs,
    beside the accuracy they must beat. The notebook's given cell writes `outputs/runs.csv` from
    the runs.
-4. **Set the group's list.** On the 2023 returns, count each candidate's correct and wrong calls of
+4. **Set the group's list.** On the 2023 returns, count each candidate's correct and wrong predictions of
    both kinds, with precision and recall. Write which error costs more **for this group**, and why.
    Choose the candidate and the threshold by that sentence, read within the group's capacity
    (rule 7). Then score the 2024

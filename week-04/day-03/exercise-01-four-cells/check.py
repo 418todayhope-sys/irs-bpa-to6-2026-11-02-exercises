@@ -82,7 +82,7 @@ def report(f: dict) -> str:
         a = f["all_counts"]
         return (f"Done: at 0.5, the ten returns are {m['TP']} TP, {m['FP']} FP, {m['FN']} FN, {m['TN']} TN; "
                 f"the 200 examined returns are {a['TP']} TP, {a['FP']} FP, {a['FN']} FN, {a['TN']} TN. "
-                f"Your guess was {f['guess']} of the {a['FN']} missed scoring above 0.4.")
+                f"Your guess, written before you counted: {f['guess']} of the {a['FN']} missed scoring above 0.4.")
     return "\n".join([f"Not yet: {len(out)} left."] + ["- " + item for item in out])
 
 

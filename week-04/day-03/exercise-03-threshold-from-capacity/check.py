@@ -74,9 +74,9 @@ def left(f: dict) -> list[str]:
     why = str(f["why"])
     if len(why.split()) < 8 or not re.search(r"\d", why):
         out.append("Cell 6: write why in one sentence of eight words or more, with the counts of cell 5. Step 5.")
-    elif plain(f["decision"]) == "accept" and str(f["missed_at_k"]) not in re.findall(r"\d+", why):
-        out.append(f"Cell 6: you accept the list of {CAPACITY}, so say in why how many returns labelled change it "
-                   "misses (cell 5). Step 5.")
+    elif str(f["missed_at_k"]) not in re.findall(r"\d+", why):
+        out.append(f"Cell 6: say in why how many returns labelled change the list of {CAPACITY} misses (cell 5): "
+                   "that count is what the decision rests on. Step 5.")
     return out
 
 

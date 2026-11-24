@@ -1,6 +1,6 @@
 # Exercise 2: decisions
 
-The answer is `exercise.ipynb` beside this file. Its cell 6 holds the tree's line, as a learner leaves it after the second fit; the logistic regression is fitted first, with the line as the course gives it. It uses the course's shared tables, the setup's twelve features, and its fill (an empty amount read as 0, with `deduction_missing`).
+The answer is `exercise.ipynb` beside this file. Its cell 6 holds the tree's line, as a learner leaves it after the second fit; the logistic regression is fitted first, with the line as the course gives it. So Run all on this answer ends at `Not yet`: the check needs both fits, and this copy holds only the second. To see `Done:`, run cell 6 with the course's line first, then with the tree's line, then the check. It uses the course's shared tables, the setup's twelve features, and its fill (an empty amount read as 0, with `deduction_missing`).
 
 ## Each answer, and why
 

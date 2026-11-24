@@ -86,6 +86,11 @@ def left(f: dict) -> list[str]:
         out.append(f"Cell 4: give the threshold, {f['threshold']:.3f}: a gap belongs to a threshold. Step 3.")
     if not has(found, round(gap, 3), round(gap * 100, 1)):
         out.append("Cell 4: state the gap, the difference between the two rates, to three places. Step 3.")
+    high, low = ("B", "A") if rate_b > rate_a else ("A", "B")
+    if (re.search(rf"channel {low}\b[^.;]*\b(higher|more|larger)\b", result, re.I)
+            or re.search(rf"channel {high}\b[^.;]*\b(lower|less|smaller)\b", result, re.I)
+            or re.search(rf"\btowards? channel {low}\b", result, re.I)):
+        out.append("Cell 4: check which channel's rate is the higher one: compare the two divisions of cell 4. Step 3.")
     if not re.search(r"\breason", result, re.I):
         out.append("Cell 4: say that the gap needs a reason. Step 3.")
     if VERDICT.search(result) and not NOT.search(result):

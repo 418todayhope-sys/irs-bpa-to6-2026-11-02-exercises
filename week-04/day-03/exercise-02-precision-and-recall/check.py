@@ -81,7 +81,7 @@ def report(f: dict) -> str:
             c = f["counts"][name]
             parts.append(f"{name} precision {c['TP']} of {c['TP'] + c['FP']}, recall {c['TP']} of {c['TP'] + c['FN']}")
         return ("Done: at 0.5, " + "; ".join(parts) + ". Both are logged with the threshold in their runs. "
-                f"Your guess at 0.4: {f['guess']} of the 40.")
+                f"Your guess at 0.4, written before you counted: {f['guess']} of the 40.")
     return "\n".join([f"Not yet: {len(out)} left."] + ["- " + item for item in out])
 
 

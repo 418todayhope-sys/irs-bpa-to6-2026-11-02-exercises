@@ -1,6 +1,6 @@
 # Week 4, day 5: Challenge 4, a second examination group's list
 
-This is Challenge 4. Status: provisional draft for review, 2026-11-21; not released to learners.
+This is Challenge 4. Status: draft for review, updated 2026-11-24; released to learners when the course team approves it.
 
 A made-up examination group that has never used a model asks for its own list of new returns to
 open first, learned from its own past results. Decide which error costs more for this group, set

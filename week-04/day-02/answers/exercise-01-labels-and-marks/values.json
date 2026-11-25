@@ -1,0 +1,55 @@
+{
+ "label_column": "exam_changed_tax",
+ "origin": {
+  "decision": "an examination's result: did it change the tax",
+  "made by": "the course's data, made up in place of an examiner",
+  "when": "after the return was filed, selected and examined"
+ },
+ "beside": "fields.csv",
+ "agreement_label": "exam_changed_tax",
+ "agreement": {
+  "days_to_file": 80,
+  "account_change_amt": 399
+ },
+ "labelled": 400,
+ "suspect": "account_change_amt",
+ "file_agreement": {
+  "days_to_file": 80,
+  "account_change_amt": 399
+ },
+ "trace": {
+  "which table holds it": "fields.csv",
+  "which step wrote it": "the examination, when it closed"
+ },
+ "marks": {
+  "tax_to_agi": [
+   "before",
+   "both amounts are on the filed return"
+  ],
+  "deduction_amt": [
+   "before",
+   "line 12e is on the filed return"
+  ],
+  "deduction_missing": [
+   "before",
+   "whether line 12e is empty shows on the filed return"
+  ],
+  "tax_added_by_exam": [
+   "after",
+   "written when the examination closed"
+  ],
+  "account_change_amt": [
+   "after",
+   "written when the examination closed, months after selection"
+  ],
+  "days_to_file": [
+   "before",
+   "the return is received before any selection"
+  ]
+ },
+ "counts": {
+  "no": 320,
+  "yes": 80
+ },
+ "empty": 100
+}

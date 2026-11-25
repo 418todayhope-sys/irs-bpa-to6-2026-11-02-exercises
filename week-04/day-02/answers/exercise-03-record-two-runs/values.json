@@ -1,0 +1,39 @@
+{
+ "experiment": "/Users/learner00@example.com/week-04-candidates",
+ "runs": {
+  "decision-tree": {
+   "params": {
+    "model_type": "DecisionTreeClassifier",
+    "split": "train: tax years 2020 to 2021; validation: tax year 2022, 200 returns with a label",
+    "measure": "accuracy",
+    "max_depth": "3"
+   },
+   "metrics": {
+    "validation_accuracy": 0.895
+   },
+   "tags": {
+    "mlflow.runName": "decision-tree",
+    "model_logged": "yes"
+   }
+  },
+  "logistic-regression": {
+   "params": {
+    "model_type": "LogisticRegression",
+    "split": "train: tax years 2020 to 2021; validation: tax year 2022, 200 returns with a label",
+    "measure": "accuracy"
+   },
+   "metrics": {
+    "validation_accuracy": 0.955
+   },
+   "tags": {
+    "mlflow.runName": "logistic-regression",
+    "model_logged": "yes"
+   }
+  }
+ },
+ "accuracy": {
+  "logistic-regression": 0.955,
+  "decision-tree": 0.895
+ },
+ "higher": "logistic-regression"
+}

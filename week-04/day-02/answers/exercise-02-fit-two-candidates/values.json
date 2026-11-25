@@ -1,0 +1,32 @@
+{
+ "features": [
+  "filing_status",
+  "wages_amt",
+  "taxable_interest_amt",
+  "other_income_amt",
+  "total_income",
+  "agi_amt",
+  "deduction_amt",
+  "deduction_missing",
+  "total_tax_amt",
+  "withholding_amt",
+  "tax_to_agi",
+  "deduction_to_agi"
+ ],
+ "guess": {
+  "LogisticRegression": "a lot",
+  "DecisionTreeClassifier": "a little"
+ },
+ "results": {
+  "baseline": 0.8,
+  "LogisticRegression": 0.955,
+  "DecisionTreeClassifier": 0.895
+ },
+ "tree_depth": 3,
+ "expected": {
+  "baseline": 0.8,
+  "LogisticRegression": 0.955,
+  "DecisionTreeClassifier": 0.895
+ },
+ "valid_rows": 200
+}

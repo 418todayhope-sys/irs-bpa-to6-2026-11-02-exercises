@@ -40,7 +40,7 @@ print(len(columns), "columns:", ", ".join(columns))
 
 Why: "If no column records a past decision, it is not classification."
 
-In cell 2, type the label and the reason for each question, between the quotes. Copy the reason from the table, or write it in your own words: 6 words or more. Type no quotation marks inside an answer: they end it early.
+In cell 2, type the label and the reason for each question, between the quotes. Copy the reason from the table below, or write it in your own words: 6 words or more. Type no quotation marks inside an answer: they end it early.
 
 | Question | `label` | `why` |
 |---|---|---|
@@ -63,7 +63,7 @@ for question, answer in answers.items():
 
 ### Step 3. Say what Q2 would need
 
-Why: "Either the decision could be recorded and nobody recorded it, so the question gets a label once someone does."
+Why: the reading gives two reasons a question can lack a label. Q2 has the first: "the decision could be recorded and nobody recorded it, so the question gets a label once someone does." So you say what the table would have to record.
 
 In cell 3, between the quotes of `needs = ""`, write what the table would have to record for Q2 to have a label: 8 words or more. Run cell 3. You should see your sentence printed.
 

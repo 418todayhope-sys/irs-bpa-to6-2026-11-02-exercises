@@ -58,7 +58,7 @@ train, record = load_day(train_table)
 
 "A return with an empty label is not counted as either outcome, and it is left out of training." (the day's reading)
 
-In cell 3, type `exam_changed_tax` in place of `refund_held`, and run it. You should see Monday's counts: `no` 320, `yes` 80, `empty` 100.
+Cell 3 counts `refund_held`, the made-up label of the trainer's demo. In cell 3, type `exam_changed_tax`, the course's label, in its place, and run it. You should see Monday's counts: `no` 320, `yes` 80, `empty` 100.
 
 Notebook cell 3:
 
@@ -100,7 +100,7 @@ for question, answer in origin.items():
 
 "A feature that matches the label almost exactly is a warning sign of leakage." (the day's reading)
 
-In cell 5, type `fields.csv` in place of `refund-held.csv`, and run it. For each column of the file, you should see how many labelled returns agree with the label (above zero with `yes`, or zero with `no`), then what the file says of each column.
+In cell 5, type `fields.csv` in place of `refund-held.csv`, and run it. For each column of the file, you should see how many labelled returns agree with the label (a value above zero where the label is `yes`, or zero where it is `no`), then what the file says of each column.
 
 Notebook cell 5:
 
@@ -125,7 +125,7 @@ for column, note in read_notes(beside).items():
 "When you find such a feature, trace it to where it came from: which table holds it, which step wrote it, and when. The answer to *when* decides." (the day's reading) Here *step* means a stage of the tax work, not a step of this exercise.
 
 1. In cell 6, type the name of the column that agrees with the label on nearly every return.
-2. Answer which step of the tax work wrote it: what changes the tax on an account after a return is filed? The table is given: the file. Its timing, *when*, is your mark in cell 7. Run cell 6.
+2. Answer which step of the tax work wrote it: what changes the tax on an account after a return is filed? The trace's first question, which table holds it, is filled in for you: `fields.csv`. Its last, *when*, is your mark in cell 7. Run cell 6.
 
 Notebook cell 6:
 
@@ -143,7 +143,7 @@ for question, answer in trace.items():
 
 ### Step 6. Mark each feature `before` or `after`
 
-"was it known before the case was selected? Mark each feature *before* or *after*. Train only on the features marked *before*." (the day's reading)
+Ask one question of each feature: "was it known before the case was selected? Mark each feature *before* or *after*. Train only on the features marked *before*." (the day's reading)
 
 Monday's record already marks its four rows, so cell 7 gives them. In cell 7, mark the column you traced: its slot already holds its name. Type `before` or `after`, then a reason of three words or more: the reason is *when* it was written. The other column cell 5 counted, `days_to_file`, is given, marked the same way. Run cell 7. You should see four features under `Train on:` and two under `Leave out:`.
 

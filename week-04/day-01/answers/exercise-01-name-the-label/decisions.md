@@ -25,7 +25,7 @@ Lines are those of `days/day-01/curated.md` in the Program repository, version 2
 | "A label exists only where someone decided." (What you need to know first) | line 98, § Name the label a question can learn from |
 | a label is the past decision recorded for a return (What you need to know first, Step 1's why, in plain words) | line 21, Today's words, Label; line 90, § Name the label, In general |
 | "If no column records a past decision, it is not classification." (Step 2) | line 294, § Where today goes wrong |
-| "Either the decision could be recorded and nobody recorded it, so the question gets a label once someone does." (Step 3) | line 76, § See what a model does with one return, Named, not taught: anomaly detection |
+| "the decision could be recorded and nobody recorded it, so the question gets a label once someone does." (Step 3, the first of the reading's two reasons a question can lack a label) | line 76, § See what a model does with one return, Named, not taught: anomaly detection |
 | Debrief 1, which returns would still have no label | line 76 (a label once someone records it) and line 98 (a label exists only where someone decided) |
 | Debrief 2, today's new decisions | line 307, § The trade-off: a decision arrives only after an examination ends |
 | Debrief 3, what to ask about a label | line 100: the proxy-label caution |

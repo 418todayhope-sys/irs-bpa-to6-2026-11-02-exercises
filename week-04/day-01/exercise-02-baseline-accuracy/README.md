@@ -45,7 +45,7 @@ else:
 
 ### Step 2. Guess the baseline's accuracy
 
-Why: a guess you write before cell 3 divides shows what you expected. Then the number can surprise you.
+Why: a guess you write before cell 3 divides the right predictions by the labelled returns shows what you expected. Then the number can surprise you.
 
 The baseline always predicts `no`, the most common outcome. In cell 2, replace `None` with your guess of its accuracy, a share from 0 to 1, such as `0.6`. Any share counts. Run cell 2. You should see your guess printed.
 
@@ -59,9 +59,9 @@ print("Your guess:", guess)
 
 ### Step 3. Compute the baseline's accuracy
 
-Why: "A prediction is right or wrong only against a recorded decision."
+Why: "A prediction is right or wrong only against a recorded decision." So the returns never examined, which have no label, are left out of the count.
 
-In cell 3, type the two numbers from cell 1's counts. The table gives each number and its reason.
+In cell 3, type the two numbers from cell 1's counts. The table below gives each number and its reason.
 
 | Value | Type this | Why |
 |---|---|---|

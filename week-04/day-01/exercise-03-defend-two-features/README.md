@@ -14,7 +14,7 @@
 
 1. In a new cell, run `print(spark.table("course.returns.model_features").columns)`. It lists the columns.
 2. In cell 4, add a row for each column you would keep.
-3. Add a row for `name_length` too. Its source field is `filer_name`, a header field. Type `yes` and `struck: header field, on the filed return` in its last two slots: the name is on the return when it is filed, so it is known at selection, but a header field is never a feature.
+3. Add a row for `name_length` too. Its source field is `filer_name`, a header field. Type `yes` and `struck: names the taxpayer, on the filed return` in its last two slots: the name is on the return when it is filed, so it is known at selection, but `filer_name` says who the taxpayer is, so a feature built from it is never kept.
 4. Run cells 4 and 5 again. Extra rows still give `Done:`.
 
 **What you need to know first:** a feature's defence is "its source field, its reason, and whether it is known when the case is selected." A missing amount is "an amount that is not on the return, which can mean zero or unknown."
@@ -63,7 +63,7 @@ spark.sql(f"SELECT COUNT(*) AS returns, COUNT({amount}) AS filled, COUNT(*) - CO
 
 Why: a flag column is "a column that records which amounts were missing." Tuesday's cells fill the empty amounts. After that, only the flag still shows which ones were empty.
 
-You decide what an empty line 12e means. `deduction_amt` is line 12e of Form 1040. Read what the form says that line holds, then decide.
+You decide what an empty line 12e means. `deduction_amt` is line 12e of Form 1040, which the 2025 form calls “Standard deduction or itemized deductions (from Schedule A)”. Read what that line holds, then decide.
 
 In cell 3, type two values between the quotes:
 
@@ -101,7 +101,7 @@ else:
 
 Why: "A feature you cannot defend is a feature you cannot keep."
 
-Cell 4 holds the feature record, four rows. The first two are given: `tax_to_agi`, and `tax_added_by_exam`, which is struck. Your flag's row is given too. In the `deduction_amt` row, type three values: its source field, its reason, and `yes` or `no`. A comment beside each slot names it. Copy the reason from the table, or write it in your own words: 6 words or more.
+Cell 4 holds the feature record, four rows. The first two are given, the reading's two examples: `tax_to_agi`, and `tax_added_by_exam`, which is struck. Your flag's row is given too. In the `deduction_amt` row, type three values: its source field, its reason, and `yes` or `no`. A comment beside each slot names it. Copy the reason from the table below, or write it in your own words: 6 words or more.
 
 | Row | Source field | Reason | Known when the case is selected? |
 |---|---|---|---|
@@ -148,7 +148,7 @@ Run cell 5. It prints `Done:` when these things are true:
 - `empty_means` is the reading that line 12e supports, and `why_empty` has 6 words or more.
 - `features_flagged` in your schema has the flag, 1 on each return whose `deduction_amt` is empty and 0 on the others.
 - `model_feature_record`, the feature record in your schema, holds the two given rows, a row for `deduction_amt` and a row for your flag.
-- Each of these two rows names line 12e, has a reason of 6 words or more, and says `yes` or `no`.
+- The `deduction_amt` row and the flag's row each name line 12e, has a reason of 6 words or more, and says `yes` or `no`.
 
 Otherwise it prints `Not yet:` and each thing still to do. It reads your two tables. You do not need to read its code.
 

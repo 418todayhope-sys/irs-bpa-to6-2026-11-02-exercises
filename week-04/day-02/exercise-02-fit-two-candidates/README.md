@@ -31,7 +31,7 @@ Run cells 1 to 4. You do not need to change them. You should see:
 
 1. Which tables cell 2 uses.
 2. 400 training rows and 200 validation rows with a label. Cell 3 keeps the twelve features known before selection and reads an empty amount as 0; `deduction_missing` still says which deduction lines were empty.
-3. The baseline, always `no`: 0.8 on the training rows, Monday's way, and 0.8 on the validation rows. One more return right moves an accuracy by 0.005.
+3. The baseline, always `no`: 0.8 on the training rows, counted as in Monday's exercise 2, and 0.8 on the validation rows. One more return right moves an accuracy by 0.005.
 
 Notebook cell 1:
 
@@ -100,7 +100,7 @@ print("The baseline on the validation rows:", round(baseline_accuracy, 3))
 
 ### Step 2. Write your guess, before you fit
 
-In cell 5, type your guess for each candidate: will it beat the baseline? Then run cell 5.
+In cell 5, type your guess for each candidate, the logistic regression and the decision tree you fit in step 3: will it beat the baseline? Then run cell 5.
 
 - `a lot`: twenty or more returns more right than the baseline, of 200.
 - `a little`: one to nineteen more right.

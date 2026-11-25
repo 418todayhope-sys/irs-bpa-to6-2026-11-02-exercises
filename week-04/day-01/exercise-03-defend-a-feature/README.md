@@ -6,7 +6,7 @@
 
 **AI tool:** none.
 
-**Where you work:** the notebook `week-04/day-01/exercise-03-defend-two-features/exercise.ipynb` in your Git folder of the course, in Databricks. You type in the code cells marked `# 1.` to `# 4.`: cell 1 is the code cell whose first line starts with `# 1.`, and so on. Cell 5 checks what you made.
+**Where you work:** the notebook `week-04/day-01/exercise-03-defend-a-feature/exercise.ipynb` in your Git folder of the course, in Databricks. You type in the code cells marked `# 1.` to `# 4.`: cell 1 is the code cell whose first line starts with `# 1.`, and so on. Cell 5 checks what you made.
 
 **Done when:** cell 5 prints `Done:`.
 
@@ -165,4 +165,4 @@ Notebook cell 5:
 2. When is a missing amount zero, and when is it unknown?
 3. Why add the flag before the fill, and not after it?
 
-The answer: after the talk together, open `week-04/day-01/answers/exercise-03-defend-two-features/` in your Git folder of the course ([link](../answers/exercise-03-defend-two-features/)).
+The answer: after the talk together, open `week-04/day-01/answers/exercise-03-defend-a-feature/` in your Git folder of the course ([link](../answers/exercise-03-defend-a-feature/)).

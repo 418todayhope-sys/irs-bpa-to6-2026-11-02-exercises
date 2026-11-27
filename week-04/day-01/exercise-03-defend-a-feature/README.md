@@ -74,7 +74,7 @@ In cell 3, type two values between the quotes:
 
 The flag's name is given: `deduction_missing`. It holds 1 where line 12e is empty and 0 where it is filled.
 
-Stuck? Ask the trainer. The reason is in the answer folder, after the talk together.
+Stuck? Cell 3's comment gives an example reason for a different line, not 12e. Copy its shape, not its answer: what the line holds, so what its being empty tells you.
 
 Run cell 3. It writes `features_flagged` in your schema: every column of `course.returns.model_features`, and the flag. You should see two rows: `0` with 937 returns, and `1` with 63.
 
@@ -83,10 +83,10 @@ Notebook cell 3:
 ```python
 # 3. What an empty line 12e means, and why. Then the flag, named for you.
 empty_means = ""   # "zero" or "unknown"
-why_empty = ""
+why_empty = ""   # example for a different line, not 12e: "Line 2b holds taxable interest, and a filer with no interest leaves it empty, so empty means zero."
 flag = "deduction_missing"
 if schema.endswith("_NN") or not flag:
-    print("Type your number in cell 1 first, then run this cell again.")
+    print("Type the part of your schema's name after learner_ in cell 1 first, then run this cell again.")
 else:
     spark.sql(f"CREATE OR REPLACE TABLE {schema}.features_flagged AS SELECT *, "
               f"CASE WHEN deduction_amt IS NULL THEN 1 ELSE 0 END AS {flag} FROM course.returns.model_features")
@@ -129,7 +129,7 @@ record = [
      "whether line 12e is empty shows on the return as filed"),   # why: given
 ]
 if schema.endswith("_NN"):
-    print("Type your number in cell 1 first, then run this cell again.")
+    print("Type the part of your schema's name after learner_ in cell 1 first, then run this cell again.")
 else:
     spark.createDataFrame(record, "feature string, source_field string, reason string, "
                                   "known_at_selection string, timing string") \

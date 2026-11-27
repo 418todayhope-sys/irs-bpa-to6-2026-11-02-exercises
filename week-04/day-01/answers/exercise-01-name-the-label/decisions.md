@@ -10,6 +10,8 @@ The answer is `exercise.ipynb` beside this file.
 | 2 | Q2: `no label` | No column of `course.returns.model_returns` records whether a taxpayer amended a past return. So no past decision answers Q2 in this table. |
 | 3 | `needs`: a column that records, for each past return, whether the taxpayer later filed an amended return | Q2 lacks a label because nobody recorded the decision, not because no decision could record it. So it gets a label once someone records it. |
 
+The Stuck? hint of Step 3 sends the learner here, after the talk. One way to say it: "A column that records, for each past return, whether the taxpayer later filed an amended return, yes or no." It was a folded hint in the notebook, where Databricks shows it open.
+
 What else the check accepts: any `why` of 6 words or more and any `needs` of 8 words or more. It checks the two labels, not the reasons. The debrief takes the reasons.
 
 Step 1 says what the other columns hold in general words (keys, header, amounts). Of the one column the course made up for a later day, it says only that nothing today uses it.

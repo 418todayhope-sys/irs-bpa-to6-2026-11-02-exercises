@@ -67,11 +67,7 @@ Why: the reading gives two reasons a question can lack a label. Q2 has the first
 
 In cell 3, between the quotes of `needs = ""`, write what the table would have to record for Q2 to have a label: 8 words or more. Run cell 3. You should see your sentence printed.
 
-<details><summary>Stuck? One way to say it</summary>
-
-A column that records, for each past return, whether the taxpayer later filed an amended return, yes or no.
-
-</details>
+Stuck? Ask the trainer. One way to say it is in the answer folder, after the talk together.
 
 Notebook cell 3:
 

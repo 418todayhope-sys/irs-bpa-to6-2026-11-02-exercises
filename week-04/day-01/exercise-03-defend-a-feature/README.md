@@ -83,7 +83,7 @@ Notebook cell 3:
 ```python
 # 3. What an empty line 12e means, and why. Then the flag, named for you.
 empty_means = ""   # "zero" or "unknown"
-why_empty = ""   # example for a different line, not 12e: "Line 2b holds taxable interest, and a filer with no interest leaves it empty, so empty means zero."
+why_empty = ""   # example for a different line, not 12e: "On a paper Form 1040, a filer with no taxable interest may leave line 2b blank, so a blank line 2b there means zero."
 flag = "deduction_missing"
 if schema.endswith("_NN") or not flag:
     print("Type the part of your schema's name after learner_ in cell 1 first, then run this cell again.")

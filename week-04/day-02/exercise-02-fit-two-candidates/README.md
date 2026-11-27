@@ -147,7 +147,7 @@ model.fit(X_train, y_train)                      # fit: training, on the trainin
 predictions = model.predict(X_valid)             # predict: one outcome for each validation return
 accuracy = accuracy_score(y_valid, predictions)  # accuracy: the share of predictions that match the label
 kind = type(model[-1] if hasattr(model, "steps") else model).__name__  # its type, inside the pipeline
-name = {"LogisticRegression": "logistic-regression", "DecisionTreeClassifier": "decision-tree"}[kind]  # as exercise 3 names its runs
+name = {"LogisticRegression": "logistic-regression", "DecisionTreeClassifier": "decision-tree"}.get(kind, kind)  # as exercise 3 names its runs
 results[name], fitted[name] = accuracy, model
 print(name, "validation accuracy:", round(accuracy, 3))
 print("Right:", int((predictions == y_valid).sum()), "of", len(y_valid), "validation returns")
